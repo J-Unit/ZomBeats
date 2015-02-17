@@ -17,7 +17,7 @@ ResourceLoader* ResourceLoader::gLoader = NULL;
  */
 ResourceLoader::ResourceLoader() {
     // Load the font.
-    TTFConfig* font = new TTFConfig("fonts/Marker Felt.ttf",24,GlyphCollection::DYNAMIC);
+    TTFConfig* font = new TTFConfig("../Resources/fonts/Marker Felt.ttf",24,GlyphCollection::DYNAMIC);
     if (!FontAtlasCache::getFontAtlasTTF(*font)) {
         // Failed to load font.
         delete font;
@@ -27,22 +27,22 @@ ResourceLoader::ResourceLoader() {
 
     // Load the textures (Autorelease objects)
     Texture2D* text;
-    text = Director::getInstance()->getTextureCache()->addImage("textures/space.png");
+    text = Director::getInstance()->getTextureCache()->addImage("../Resources/textures/space.png");
     if (text) {
         text->retain();
         textures["space"] = text;
     }
-    text = Director::getInstance()->getTextureCache()->addImage("textures/ships.png");
+    text = Director::getInstance()->getTextureCache()->addImage("../Resources/textures/ships.png");
     if (text) {
         text->retain();
         textures["ship"] = text;
     }
-    text = Director::getInstance()->getTextureCache()->addImage("textures/planet1.png");
+    text = Director::getInstance()->getTextureCache()->addImage("../Resources/textures/planet1.png");
     if (text) {
         text->retain();
         textures["planet1"] = text;
     }
-    text = Director::getInstance()->getTextureCache()->addImage("textures/planet2.png");
+    text = Director::getInstance()->getTextureCache()->addImage("../Resources/textures/planet2.png");
     if (text) {
         text->retain();
         textures["planet2"] = text;
