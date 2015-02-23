@@ -7,6 +7,8 @@
 #include "AppDelegate.h"
 #include "GameController.h"
 #include "ResourceLoader.h"
+#include "LevelMap.h"
+
 
 USING_NS_CC;
 
@@ -53,13 +55,15 @@ bool AppDelegate::applicationDidFinishLaunching() {
         glview = GLViewImpl::create("ShipDemo");
         director->setOpenGLView(glview);
     }
+	LevelMap m;
+	m.shortestPath(NULL, NULL);
+
 
     // Turn on display FPS
     //director->setDisplayStats(true);
 
     // Set FPS. The default value is 1.0/60 if you don't call this
     director->setAnimationInterval(1.0 / 60);
-
     // Create a scene. This is an autorelease object
     auto scene = GameController::createScene();
 
