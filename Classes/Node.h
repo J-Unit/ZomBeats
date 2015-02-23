@@ -31,11 +31,3 @@ inline int operator < (const MapNode& a, const MapNode& b)
 	return a.pathCost + a.heuristicCost < b.pathCost + b.heuristicCost;
 }
 
-struct DereferenceCompareNode : public std::binary_function<MapNode*, MapNode*, bool>
-{
-	bool operator()(const MapNode* lhs, const MapNode* rhs) const
-	{
-		return lhs->cost > rhs->cost;
-	}
-};
-
