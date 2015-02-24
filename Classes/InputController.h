@@ -4,7 +4,6 @@
 //
 //  Created by Walker White on 1/18/15.
 //
-#ifndef __TD_INPUT_CONTROLLER_H__
 #define __TD_INPUT_CONTROLLER_H__
 
 #include <stdio.h>
@@ -167,4 +166,3 @@ public:
 	void    mouseReleasedCB(Event *event);
 };
 
-#endif /* defined(__TD_INPUT_CONTROLLER_H__) */

@@ -17,9 +17,8 @@ public:
 
 	void shortestPath(MapNode *from, MapNode *to);
 
-	LevelMap();
 
-	LevelMap(int width, int height) : LevelMap(){
+	LevelMap(int width, int height){
 		//initialize level and tile dimensions
 		levelWidth = width;
 		levelHeight = height;
@@ -29,7 +28,7 @@ public:
 		//initialize the mesh node array
 		for (int r = 0; r < BLOCKS_X; r++){
 			for (int c = 0; c < BLOCKS_Y; c++){
-				mesh[r][c] = MapNode(r, c);
+				mesh[r][c].setXY(r, c);
 			}
 		}
 	}

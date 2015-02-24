@@ -7,7 +7,6 @@
 #include "AppDelegate.h"
 #include "GameController.h"
 #include "ResourceLoader.h"
-#include "LevelMap.h"
 
 
 USING_NS_CC;

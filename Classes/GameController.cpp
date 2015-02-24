@@ -19,6 +19,7 @@
 #define PLANET1_POS  Vec2(950, 1100)
 #define PLANET2_POS  Vec2(1600, 1500)
 #define HUD_OFFSET   Vec2(10.0f,10.f)
+#define WORLD_SIZE  SPACE_TILE * TILE_AMOUNT
 
 /**
  * Creates a new game with an instance of this controller class.
@@ -68,6 +69,7 @@ bool GameController::init() {
     ResourceLoader::loadContent();
 
 	world = new b2World(b2Vec2(0.0f, 0.0f));
+	level = new LevelMap(WORLD_SIZE, WORLD_SIZE);
     // Build the scene graph and create the ship model.
     buildScene();
     shipModel = new Ship(world,SPACE_TILE*5.0f,SPACE_TILE*5.0f);

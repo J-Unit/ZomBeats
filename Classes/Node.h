@@ -12,8 +12,11 @@ struct MapNode {
 	float heuristicCost;
 	int status;
 
+	MapNode(){
+		walkable = true;
+	}
 
-	MapNode(int xx, int yy, bool w){
+	/*MapNode(int xx, int yy, bool w){
 		x = xx;
 		y = yy;
 		walkable = w;
@@ -22,7 +25,12 @@ struct MapNode {
 		prev = 0;
 		status = INITIAL;
 	}
-	MapNode(int xx, int yy) : MapNode(xx, yy, true){}
+	MapNode(int xx, int yy) : MapNode(xx, yy, true){}*/
+
+	void setXY(int xx, int yy){
+		x = xx;
+		y = yy;
+	}
 
 	/////// PQ STUFF DO NOT ALTER ///////
 	int pqIndex;

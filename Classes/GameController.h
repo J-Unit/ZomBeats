@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include "cocos2d.h"
 #include "Box2D.h"
+#include "LevelMap.h"
 
 using namespace cocos2d;
 using namespace std;
@@ -64,6 +65,10 @@ protected:
    
 	// Box2D world for physics, collisions etc.
 	b2World* world;
+
+	//Movement stuff
+	LevelMap* level;
+	MapNode* destination;
 
     /** 
      * Writes the current ship position to the HUD.
