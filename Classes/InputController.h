@@ -33,7 +33,8 @@ private:
     /** Listener to process accelerometer events */
     EventListenerAcceleration*  accelListener;
     /** Listener to process keyboard events */
-    EventListenerKeyboard*      keybdListener;
+    //EventListenerKeyboard*      keybdListener;
+	EventListenerMouse* mouseListener;
     
     /** Whether or not this controller is currently active. */
     bool active;
@@ -64,6 +65,7 @@ private:
     // TOUCH SUPPORT
     /** Location of the initial touch */
     Vec2  startTouch;
+
 
 protected:
     /** The event dispatching handling input for this controller */
@@ -152,7 +154,8 @@ public:
      * @param keyCode   The key pressed
      * @param event     The associated event
      */
-    void    keyPressedCB(EventKeyboard::KeyCode keyCode, Event* event);
+    //void    keyPressedCB(EventKeyboard::KeyCode keyCode, Event* event);
+	void    mousePressedCB(Event *event);
 
     /**
      * Callback for a key release.
@@ -160,7 +163,8 @@ public:
      * @param keyCode   The key released
      * @param event     The associated event
      */
-    void    keyReleasedCB(EventKeyboard::KeyCode keyCode, Event* event);
+    //void    keyReleasedCB(EventKeyboard::KeyCode keyCode, Event* event);
+	void    mouseReleasedCB(Event *event);
 };
 
 #endif /* defined(__TD_INPUT_CONTROLLER_H__) */

@@ -66,16 +66,25 @@ InputController::InputController(cocos2d::EventDispatcher* dispatcher) {
     accelListener = EventListenerAcceleration::create(CC_CALLBACK_2(InputController::accleromCB, this));
     
     // Create the keyboard listener. This is an autorelease object.
-    keybdListener = EventListenerKeyboard::create();
-    keybdListener->onKeyPressed = [=](EventKeyboard::KeyCode keyCode, Event* event) {
-                                        this->keyPressedCB(keyCode,event);
-                                    };
-    keybdListener->onKeyReleased = [=](EventKeyboard::KeyCode keyCode, Event* event) {
-                                        this->keyReleasedCB(keyCode,event);
-                                    };
-    
+    //keybdListener = EventListenerKeyboard::create();
+    //keybdListener->onKeyPressed = [=](EventKeyboard::KeyCode keyCode, Event* event) {
+    //                                   this->keyPressedCB(keyCode,event);
+    //                                };
+    //keybdListener->onKeyReleased = [=](EventKeyboard::KeyCode keyCode, Event* event) {
+    //                                    this->keyReleasedCB(keyCode,event);
+    //                                };
+	mouseListener = EventListenerMouse::create();
+	mouseListener->onMouseDown = [=](Event* event){
+		this->mousePressedCB(event);
+	};
+	mouseListener->onMouseUp = [=](Event* event){
+		this->mouseReleasedCB(event);
+	};
+
+
     // Register the listeners
-    dispatcher->addEventListenerWithFixedPriority(keybdListener,1);
+	dispatcher->addEventListenerWithFixedPriority(mouseListener, 1);
+    //dispatcher->addEventListenerWithFixedPriority(keybdListener,1);
     dispatcher->addEventListenerWithFixedPriority(touchListener,2);
     dispatcher->addEventListenerWithFixedPriority(accelListener,3);
 }
@@ -86,10 +95,12 @@ InputController::InputController(cocos2d::EventDispatcher* dispatcher) {
 InputController::~InputController() {
     dispatcher->removeEventListener(touchListener);
     dispatcher->removeEventListener(accelListener);
-    dispatcher->removeEventListener(keybdListener);
+    //dispatcher->removeEventListener(keybdListener);
+	dispatcher->removeEventListener(mouseListener);
     touchListener = NULL; // Reference counting handles deletion.
     accelListener = NULL;
-    keybdListener = NULL;
+    //keybdListener = NULL;
+	mouseListener = NULL;
     dispatcher = NULL;
 }
 
@@ -126,6 +137,7 @@ void InputController::stopInput() {
  */
 void InputController::update() {
     // Right now, we only use this to process the keyboard.
+	/*
     if (active && keyCount > 0) {
         // Forces increase the longer you hold a key.
         forceLeft  += (keyLeft  ? KEYBOARD_FORCE_INCREMENT : 0.0f);
@@ -150,7 +162,7 @@ void InputController::update() {
         // Transfer to main thrust. This keeps us from "adding" to accelerometer or touch.
         inputThrust.x = keybdThrust.x/X_ADJUST_FACTOR;
         inputThrust.y = keybdThrust.y/Y_ADJUST_FACTOR;
-    }
+    }*/
 }
 
 /**
@@ -200,7 +212,8 @@ void InputController::accleromCB(Acceleration *acc, Event *event) {
  * @param keyCode   The key pressed
  * @param event     The associated event
  */
-void InputController::keyPressedCB(EventKeyboard::KeyCode keyCode, Event* event) {
+
+/*void InputController::keyPressedCB(EventKeyboard::KeyCode keyCode, Event* event) {
     switch(keyCode) {
         case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
             keyCount++;
@@ -225,7 +238,7 @@ void InputController::keyPressedCB(EventKeyboard::KeyCode keyCode, Event* event)
         default:
             break;
     }
-}
+}*/
 
 /**
  * Callback for a key release.
@@ -233,7 +246,7 @@ void InputController::keyPressedCB(EventKeyboard::KeyCode keyCode, Event* event)
  * @param keyCode   The key released
  * @param event     The associated event
  */
-void InputController::keyReleasedCB(EventKeyboard::KeyCode keyCode, Event* event) {
+/*void InputController::keyReleasedCB(EventKeyboard::KeyCode keyCode, Event* event) {
     switch(keyCode) {
         case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
             keyCount--;
@@ -264,4 +277,22 @@ void InputController::keyReleasedCB(EventKeyboard::KeyCode keyCode, Event* event
     }
 	inputThrust.x = keybdThrust.x / X_ADJUST_FACTOR;
 	inputThrust.y = keybdThrust.y / Y_ADJUST_FACTOR;
+}*/
+
+
+void InputController::mousePressedCB(Event* event) {
+	EventMouse* mouseEvent = dynamic_cast<EventMouse*>(event);
+	Vec2 mouseTouch = mouseEvent->getLocation();
+	mouseTouch.x = RANGE_CLAMP(mouseTouch.x, -INPUT_MAXIMUM_FORCE, INPUT_MAXIMUM_FORCE);
+	mouseTouch.y = RANGE_CLAMP(mouseTouch.y, -INPUT_MAXIMUM_FORCE, INPUT_MAXIMUM_FORCE);
+
+	// Go ahead and apply to thrust now.
+	inputThrust.x = mouseTouch.x / X_ADJUST_FACTOR;
+	inputThrust.y = mouseTouch.y / Y_ADJUST_FACTOR;
+
+}
+
+void InputController::mouseReleasedCB(Event* event) {
+	inputThrust.x = 0.0f / X_ADJUST_FACTOR;
+	inputThrust.y = 0.0f / Y_ADJUST_FACTOR;
 }
