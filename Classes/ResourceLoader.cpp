@@ -27,7 +27,7 @@ ResourceLoader::ResourceLoader() {
 
     // Load the textures (Autorelease objects)
     Texture2D* text;
-    text = Director::getInstance()->getTextureCache()->addImage("../Resources/textures/space.png");
+    text = Director::getInstance()->getTextureCache()->addImage("../Resources/textures/wood.png");
     if (text) {
         text->retain();
         textures["space"] = text;

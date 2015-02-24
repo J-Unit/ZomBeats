@@ -10,18 +10,21 @@ class LevelMap
 {
 public:
 	
-	
+	LevelMap();
+	LevelMap(int px, int py) : LevelMap(){
+
+	}
 
 	void shortestPath(MapNode *from, MapNode *to);
 
-	LevelMap();
+	
 	
 	~LevelMap();
 
 private:
-	int OFF_X[8] = { -1, -1, -1, 0, 0, 1, 1, 1 };
-	int OFF_Y[8] = { -1, 0, 1, -1, 1, -1, 0, 1 };
-	float DIST[8] = { 1.41421356, 1, 1.41421356, 1, 1, 1.41421356, 1, 1.41421356 };
+	static const int OFF_X[8]; 
+	static const int OFF_Y[8];
+	static const float DIST[8];
 
 	void reversePath(MapNode *to);
 

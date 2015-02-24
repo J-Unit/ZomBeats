@@ -12,10 +12,10 @@
 #include <math.h>
 
 // Macros to eliminate magic numbers
-#define SPACE_TILE   512
-#define TILE_AMOUNT  5
+#define SPACE_TILE   256
+#define TILE_AMOUNT	 10
 #define PLANET_SCALE 0.25f
-#define PARALLAX_AMT 0.1f
+#define PARALLAX_AMT 0.0f
 #define PLANET1_POS  Vec2(950, 1100)
 #define PLANET2_POS  Vec2(1600, 1500)
 #define HUD_OFFSET   Vec2(10.0f,10.f)
@@ -70,7 +70,7 @@ bool GameController::init() {
 	world = new b2World(b2Vec2(0.0f, 0.0f));
     // Build the scene graph and create the ship model.
     buildScene();
-    shipModel = new Ship(world,SPACE_TILE*2.5f,SPACE_TILE*2.5f);
+    shipModel = new Ship(world,SPACE_TILE*5.0f,SPACE_TILE*5.0f);
     shipModel->setSprite(shipImage);
 	world->SetContactListener(this);
 
@@ -97,7 +97,7 @@ void GameController::update(float deltaTime) {
 	if (shipModel->isDestroyed){
 		world->DestroyBody(shipModel->body);
 		delete shipModel;
-		shipModel = new Ship(world, SPACE_TILE*2.5f, SPACE_TILE*2.5f);
+		shipModel = new Ship(world, SPACE_TILE*5.0f, SPACE_TILE*5.0f);
 		shipModel->setSprite(shipImage);
 	}
 
@@ -112,7 +112,7 @@ void GameController::update(float deltaTime) {
     // "Drawing" code.  Move everything BUT the ship
     // Update the HUD
     displayPosition(coordHUD, shipModel->body->GetPosition());
-    
+
 	b2Vec2 pos = shipModel->body->GetPosition();
     Vec2 offset = Vec2(pos.x,pos.y) - farSpace->getPosition();
     Vec2 center(0.5f,0.5f);
@@ -120,14 +120,16 @@ void GameController::update(float deltaTime) {
     // Anchor points are in texture coordinates (0 to 1). Scale it.
     offset.x = offset.x/allSpace->getContentSize().width;
     offset.y = offset.y/allSpace->getContentSize().height;
-    
+
     // Reanchor the node at the center of the screen and rotate about center.
     farSpace->setAnchorPoint(offset*PARALLAX_AMT+center);
-    farSpace->setRotation(-shipModel->body->GetAngle());
+    //farSpace->setRotation(-shipModel->body->GetAngle());
     
     // Reanchor the node at the center of the screen and rotate about center.
     nearSpace->setAnchorPoint(offset+center);
-    nearSpace->setRotation(-shipModel->body->GetAngle());
+    //nearSpace->setRotation(-shipModel->body->GetAngle());
+	shipImage->setRotation(shipModel->body->GetAngle());
+
 }
 
 /**

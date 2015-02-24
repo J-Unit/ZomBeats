@@ -55,8 +55,8 @@ bool AppDelegate::applicationDidFinishLaunching() {
         glview = GLViewImpl::create("ShipDemo");
         director->setOpenGLView(glview);
     }
-	LevelMap m;
-	m.shortestPath(NULL, NULL);
+	//LevelMap m;
+	//m.shortestPath(NULL, NULL);
 
 
     // Turn on display FPS

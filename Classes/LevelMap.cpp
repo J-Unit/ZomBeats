@@ -2,12 +2,17 @@
 #include <iostream>
 #include "PriorityQueue.h"
 
+const int LevelMap::OFF_X[8] = { -1, -1, -1, 0, 0, 1, 1, 1 };
+const int LevelMap::OFF_Y[8] = { -1, 0, 1, -1, 1, -1, 0, 1 };
+const float LevelMap::DIST[8] = { 1.41421356, 1, 1.41421356, 1, 1, 1.41421356, 1, 1.41421356 };
 
-// Reverses prev backpointers into next pointers so path can be followed
+
+
+
+// Reverses prev backpointers into forward next pointers so path can be followed
 void LevelMap::reversePath(MapNode* last)
 {
-	MapNode* cur;
-	cur = last->prev;
+	MapNode* cur = last->prev;
 	while (cur != 0){
 		cur->next = last;
 		last = cur;
@@ -15,7 +20,7 @@ void LevelMap::reversePath(MapNode* last)
 	}
 }
 
-float heuristicDistance(MapNode *a, MapNode *b){
+float LevelMap::heuristicDistance(MapNode *a, MapNode *b){
 	float x = a->x - b->x;
 	float y = a->y - b->y;
 	return sqrt(x*x + y*y);
@@ -53,7 +58,7 @@ void LevelMap::shortestPath(MapNode *from, MapNode *to){
 						neighbor->pathCost = c;
 						neighbor->prev = node;
 						neighbor->status = FRONTIER;
-						neighbor->heuristicCost = heuristicDistance(neighbor, to);
+						neighbor->heuristicCost = this->heuristicDistance(neighbor, to);
 						pq.Insert(neighbor);
 						break;
 					case FRONTIER:

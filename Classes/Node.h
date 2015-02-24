@@ -24,6 +24,17 @@ struct MapNode {
 		status = INITIAL;
 	}
 	MapNode(int xx, int yy) : MapNode(xx, yy, true){}
+
+	/////// PQ STUFF DO NOT ALTER ///////
+	int pqIndex;
+	int& Index(void) {
+		return pqIndex;
+	}
+	int Index(void) const {
+		return pqIndex;
+	}
+	/////////////////////////////////////
+
 };
 
 inline int operator < (const MapNode& a, const MapNode& b)
