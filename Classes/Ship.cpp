@@ -108,7 +108,7 @@ void Ship::update(float deltaTime, Vec2 thrust) {
    // forward = RANGE_CLAMP(forward, -SHIP_MAX_SPEED, SHIP_MAX_SPEED);
    // turning = RANGE_CLAMP(turning, -SHIP_MAX_TURN, SHIP_MAX_TURN);
     if (sprite != NULL) {
-        advanceFrame();
+        //advanceFrame();
     }
     
     // Process the ship thrust.
@@ -134,7 +134,7 @@ void Ship::update(float deltaTime, Vec2 thrust) {
  * This method includes some dampening of the turn, and should be called before
  * moving the ship.
  */
-void Ship::advanceFrame() {
+/*void Ship::advanceFrame() {
     // Our animation depends on the current frame.
     unsigned int frame = sprite->getFrame();
     
@@ -167,5 +167,5 @@ void Ship::advanceFrame() {
     }
     
     sprite->setFrame(frame);
-}
+}*/
 

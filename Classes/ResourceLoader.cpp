@@ -32,7 +32,8 @@ ResourceLoader::ResourceLoader() {
         text->retain();
         textures["space"] = text;
     }
-    text = Director::getInstance()->getTextureCache()->addImage("../Resources/textures/ships.png");
+    //text = Director::getInstance()->getTextureCache()->addImage("../Resources/textures/ships.png");
+	text = Director::getInstance()->getTextureCache()->addImage("../Resources/textures/chuck.png");
     if (text) {
         text->retain();
         textures["ship"] = text;

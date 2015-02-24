@@ -231,8 +231,9 @@ void GameController::buildScene() {
     planet->setAnchorPoint(anchor);
     enviornment->addChild(planet);
     
-    shipImage = FilmStrip::create(ResourceLoader::getInstance()->getTexture("ship"),4,5,18);
-    
+    //shipImage = FilmStrip::create(ResourceLoader::getInstance()->getTexture("ship"),4,5,18);
+	shipImage = FilmStrip::create(ResourceLoader::getInstance()->getTexture("ship"), 1, 1, 1);
+
     coordHUD = Label::create();
     coordHUD->setTTFConfig(*ResourceLoader::getInstance()->getFont("MarkerFelt"));
     coordHUD->setPosition(HUD_OFFSET);

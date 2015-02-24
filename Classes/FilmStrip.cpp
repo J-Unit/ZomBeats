@@ -66,6 +66,7 @@ bool FilmStrip::init(Texture2D* texture, int rows, int cols, int size) {
     }
     this->cols = cols;
     this->size = size;
+
     rect.size.setSize(texture->getPixelsWide()/cols, texture->getPixelsHigh()/rows);
     return this->initWithTexture(texture, rect);
 }
