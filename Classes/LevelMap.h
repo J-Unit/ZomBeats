@@ -10,14 +10,29 @@ class LevelMap
 {
 public:
 	
-	LevelMap();
-	LevelMap(int px, int py) : LevelMap(){
-
-	}
+	int levelWidth;
+	int levelHeight;
+	float tileWidth;
+	float tileHeight;
 
 	void shortestPath(MapNode *from, MapNode *to);
 
-	
+	LevelMap();
+
+	LevelMap(int width, int height) : LevelMap(){
+		//initialize level and tile dimensions
+		levelWidth = width;
+		levelHeight = height;
+		tileWidth = levelWidth / (float)BLOCKS_X;
+		tileHeight = levelHeight / (float)BLOCKS_Y;
+
+		//initialize the mesh node array
+		for (int r = 0; r < BLOCKS_X; r++){
+			for (int c = 0; c < BLOCKS_Y; c++){
+				mesh[r][c] = MapNode(r, c);
+			}
+		}
+	}
 	
 	~LevelMap();
 
@@ -30,7 +45,8 @@ private:
 
 	float heuristicDistance(MapNode *a, MapNode *b);
 
-	
+	MapNode *locateCharacter(float charX, float charY);
+
 	MapNode mesh[BLOCKS_X][BLOCKS_Y];
 
 }; 

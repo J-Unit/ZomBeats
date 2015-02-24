@@ -1,5 +1,3 @@
-#include <functional>
-
 #define INITIAL 0
 #define FRONTIER 1
 #define VISITED 2
@@ -13,6 +11,7 @@ struct MapNode {
 	float pathCost;
 	float heuristicCost;
 	int status;
+
 
 	MapNode(int xx, int yy, bool w){
 		x = xx;

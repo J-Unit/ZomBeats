@@ -7,8 +7,6 @@ const int LevelMap::OFF_Y[8] = { -1, 0, 1, -1, 1, -1, 0, 1 };
 const float LevelMap::DIST[8] = { 1.41421356, 1, 1.41421356, 1, 1, 1.41421356, 1, 1.41421356 };
 
 
-
-
 // Reverses prev backpointers into forward next pointers so path can be followed
 void LevelMap::reversePath(MapNode* last)
 {
@@ -24,6 +22,11 @@ float LevelMap::heuristicDistance(MapNode *a, MapNode *b){
 	float x = a->x - b->x;
 	float y = a->y - b->y;
 	return sqrt(x*x + y*y);
+}
+
+//locate which MapNode a character is at given its X,Y position
+MapNode *LevelMap::locateCharacter(float charX, float charY){
+	return &mesh[int(charX / tileWidth)][int(charY / tileHeight)];
 }
 
 // A* implementation
