@@ -51,9 +51,11 @@ protected:
     /** Node to hold all of our graphics. Necesary for resolution indepedence. */
     Node*   allSpace;
     /** Background in animation parallax. Stores the field of stars */
-    Node*   farSpace;
+    Node*   background;
     /** Foreground in animation parallax. Stores the planets. */
-    Node*   nearSpace;
+    //Node*   nearSpace;
+
+	Node*   enviornment;
 
     // MODEL
     // A page-out could dispose of the view as long as it just has this.

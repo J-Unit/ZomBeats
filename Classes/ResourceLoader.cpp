@@ -37,12 +37,12 @@ ResourceLoader::ResourceLoader() {
         text->retain();
         textures["ship"] = text;
     }
-    text = Director::getInstance()->getTextureCache()->addImage("../Resources/textures/planet1.png");
+    text = Director::getInstance()->getTextureCache()->addImage("../Resources/textures/zombie.png");
     if (text) {
         text->retain();
         textures["planet1"] = text;
     }
-    text = Director::getInstance()->getTextureCache()->addImage("../Resources/textures/planet2.png");
+    text = Director::getInstance()->getTextureCache()->addImage("../Resources/textures/zombie.png");
     if (text) {
         text->retain();
         textures["planet2"] = text;

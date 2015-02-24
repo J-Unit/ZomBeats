@@ -14,7 +14,7 @@
 // Macros to eliminate magic numbers
 #define SPACE_TILE   256
 #define TILE_AMOUNT	 10
-#define PLANET_SCALE 0.25f
+#define PLANET_SCALE 0.5f
 #define PARALLAX_AMT 0.0f
 #define PLANET1_POS  Vec2(950, 1100)
 #define PLANET2_POS  Vec2(1600, 1500)
@@ -114,7 +114,7 @@ void GameController::update(float deltaTime) {
     displayPosition(coordHUD, shipModel->body->GetPosition());
 
 	b2Vec2 pos = shipModel->body->GetPosition();
-    Vec2 offset = Vec2(pos.x,pos.y) - farSpace->getPosition();
+	Vec2 offset = Vec2(pos.x, pos.y);// -enviornment->getPosition();
     Vec2 center(0.5f,0.5f);
     
     // Anchor points are in texture coordinates (0 to 1). Scale it.
@@ -122,11 +122,12 @@ void GameController::update(float deltaTime) {
     offset.y = offset.y/allSpace->getContentSize().height;
 
     // Reanchor the node at the center of the screen and rotate about center.
-    farSpace->setAnchorPoint(offset*PARALLAX_AMT+center);
+    //farSpace->setAnchorPoint(offset*PARALLAX_AMT+center);
     //farSpace->setRotation(-shipModel->body->GetAngle());
-    
-    // Reanchor the node at the center of the screen and rotate about center.
-    nearSpace->setAnchorPoint(offset+center);
+	//shipImage->setAnchorPoint(-offset);
+	enviornment->setAnchorPoint(offset);
+	// Reanchor the node at the center of the screen and rotate about center.
+    //nearSpace->setAnchorPoint(offset+center);
     //nearSpace->setRotation(-shipModel->body->GetAngle());
 	shipImage->setRotation(shipModel->body->GetAngle());
 
@@ -171,10 +172,16 @@ void GameController::buildScene() {
     
     // Everything else is relative to all space, not the screen!
     center.set(allSpace->getContentSize().width/2.0f,allSpace->getContentSize().height/2.0f);
-    farSpace = Node::create();
-    farSpace->setContentSize(allSpace->getContentSize());
-    farSpace->setPosition(center);
-    farSpace->setAnchorPoint(anchor);
+    background = Node::create();
+	background->setContentSize(allSpace->getContentSize());
+	background->setPosition(center);
+    background->setAnchorPoint(anchor);
+
+	enviornment = Node::create();
+	enviornment->setContentSize(allSpace->getContentSize());
+	enviornment->setPosition(center);
+	enviornment->setAnchorPoint(anchor);
+	enviornment->addChild(background);
     
     // Tile the background with deep space
     Vec2 rivet;
@@ -183,25 +190,26 @@ void GameController::buildScene() {
         for(int jj = -TILE_AMOUNT/2; jj <= TILE_AMOUNT/2; jj++) {
             // Create a new autorelease sprite for each tile
             auto tile = Sprite::createWithTexture(bkgd);
-            rivet.x = farSpace->getContentSize().width/2.0f+ii*SPACE_TILE;
-            rivet.y = farSpace->getContentSize().height/2.0f+jj*SPACE_TILE;
+            rivet.x = background->getContentSize().width/2.0f+ii*SPACE_TILE;
+            rivet.y = background->getContentSize().height/2.0f+jj*SPACE_TILE;
             tile->setPosition(rivet);
             tile->setAnchorPoint(anchor);
-            farSpace->addChild(tile);
+            background->addChild(tile);
         }
     }
     
     // Put planets in the foreground.
-    nearSpace = Node::create();
+    /*nearSpace = Node::create();
     nearSpace->setContentSize(allSpace->getContentSize());
     nearSpace->setPosition(center);
-    nearSpace->setAnchorPoint(anchor);
+    nearSpace->setAnchorPoint(anchor);*/
     
     Sprite* planet = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("planet1"));
     planet->setScale(PLANET_SCALE,PLANET_SCALE);
     planet->setPosition(PLANET1_POS);
     planet->setAnchorPoint(anchor);
-    nearSpace->addChild(planet);
+	enviornment->addChild(planet);
+   // nearSpace->addChild(planet);
 	b2BodyDef b1, b2;
 	b1.position.Set(PLANET1_POS.x, PLANET1_POS.y);
 	b2.position.Set(PLANET2_POS.x, PLANET2_POS.y);
@@ -210,8 +218,8 @@ void GameController::buildScene() {
 	b1b = world->CreateBody(&b1);
 	b2b = world->CreateBody(&b2);
 	b2CircleShape c1, c2;
-	c1.m_radius = 70;
-	c2.m_radius = 70;
+	c1.m_radius = 60;
+	c2.m_radius = 60;
 	b1b->CreateFixture(&c1, 0.0f);
 	b2b->CreateFixture(&c2, 0.0f);
 	//b2b-
@@ -221,7 +229,7 @@ void GameController::buildScene() {
     planet->setScale(PLANET_SCALE,PLANET_SCALE);
     planet->setPosition(PLANET2_POS);
     planet->setAnchorPoint(anchor);
-    nearSpace->addChild(planet);
+    enviornment->addChild(planet);
     
     shipImage = FilmStrip::create(ResourceLoader::getInstance()->getTexture("ship"),4,5,18);
     
@@ -241,8 +249,8 @@ void GameController::buildScene() {
 	thrustHUD->setAnchorPoint(Vec2::ZERO);
     
     // Remove the welcome screen and display the game.
-    allSpace->addChild(farSpace,0);
-    allSpace->addChild(nearSpace,0.5);
+    allSpace->addChild(enviornment,0);
+    //allSpace->addChild(nearSpace,0.5);
     allSpace->addChild(shipImage,1);
     this->addChild(allSpace);
     this->addChild(coordHUD);  // On top of scene graph.
