@@ -130,11 +130,16 @@ void GameController::update(float deltaTime) {
 	if (!input->clickProcessed){
 		//if on beat then flag it
 		onBeat = currentSong->isOnBeat(elapsedTime);
-			
-		MapNode *dest = level->locateCharacter((input->lastClick.x - screen_size_x/2.0) + x, 
-			-(input->lastClick.y - screen_size_y/2.0) + y);
-		level->shortestPath(from, dest);
-		destination = from->next;
+		if (!onBeat) {
+			shipModel->body->SetLinearVelocity(b2Vec2_zero);
+			destination = 0;
+		}
+		else{
+			MapNode *dest = level->locateCharacter((input->lastClick.x - screen_size_x/2.0) + x, 
+				-(input->lastClick.y - screen_size_y/2.0) + y);
+			level->shortestPath(from, dest);
+			destination = from->next;
+		}
 		input->clickProcessed = true;
 	}
 	if (destination != 0 && from == destination){
