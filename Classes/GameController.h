@@ -55,6 +55,7 @@ protected:
 	Label*	velHUD;
 	Label*	thrustHUD;
 	Label*  beatHUD;
+	Label*  mainBeatHUD;
     /** Node to hold all of our graphics. Necesary for resolution indepedence. */
     Node*   allSpace;
     /** Background in animation parallax. Stores the field of stars */

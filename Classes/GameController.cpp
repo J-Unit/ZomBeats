@@ -110,6 +110,7 @@ void GameController::update(float deltaTime) {
     //input->update();
 	Vec2 thrust = input->lastClick;
 	elapsedTime += deltaTime; //a float in seconds
+
 	//cout << "Elapsed time: "<< elapsedTime <<endl;
 	// Read the thrust from the user input
 	input->update();
@@ -210,6 +211,13 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 			cur = cur->next;
 		} while (cur != 0);
 		
+	}
+
+	if (currentSong->isOnBeat(elapsedTime)){
+		mainBeatHUD->setString("BEAT!");
+	}
+	else{
+		mainBeatHUD->setString("");
 	}
 
 	/*if (!input->clickProcessed) {
@@ -345,6 +353,11 @@ void GameController::buildScene() {
 	beatHUD->setTTFConfig(*ResourceLoader::getInstance()->getFont("MarkerFelt"));
 	beatHUD->setPosition(Vec2(HUD_OFFSET.x, HUD_OFFSET.y*40));
 	beatHUD->setAnchorPoint(Vec2::ZERO);
+
+	mainBeatHUD = Label::create();
+	mainBeatHUD->setTTFConfig(*ResourceLoader::getInstance()->getFont("MarkerFelt"));
+	mainBeatHUD->setPosition(Vec2(HUD_OFFSET.x, HUD_OFFSET.y * 50));
+	mainBeatHUD->setAnchorPoint(Vec2::ZERO);
     
     // Remove the welcome screen and display the game.
     allSpace->addChild(enviornment,0);
@@ -355,5 +368,6 @@ void GameController::buildScene() {
 	this->addChild(velHUD);
 	this->addChild(thrustHUD);
 	this->addChild(beatHUD);
+	this->addChild(mainBeatHUD);
 }
 
