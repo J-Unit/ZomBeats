@@ -14,6 +14,7 @@
 #define SHIP_MAX_TURN      1.0f
 #define SHIP_MAX_SPEED    10.0f
 #define SHIP_THRUST_FACTOR 0.4f
+#define IMPULSE 800
 
 #define DCOS_90(a)  (cos(M_PI*(a+90.0f)/180.0f))
 #define DSIN_90(a)  (sin(M_PI*(a+90.0f)/180.0f))
@@ -50,8 +51,8 @@ Ship::Ship(b2World *world, float x, float y) {
 	fixtureDef.density = 1.0f;
 	fixtureDef.friction = 0.3f;
 	body->CreateFixture(&fixtureDef);
-	body->SetLinearDamping(0.5f);
-	body->SetAngularDamping(0.5f);
+	body->SetLinearDamping(2.0f);
+	//body->SetAngularDamping(0.5f);
 
     sprite  = NULL;
 }
@@ -99,7 +100,7 @@ void Ship::setSprite(FilmStrip* value) {
 void Ship::update(float deltaTime, Vec2 dir) {
     
 	//float32 angle = body->GetAngle();
-	body->ApplyLinearImpulse(b2Vec2(dir.x * 300, dir.y * 300), body->GetPosition(), true);
+	body->ApplyLinearImpulse(b2Vec2(dir.x * IMPULSE, dir.y * IMPULSE), body->GetPosition(), true);
 	//body->ApplyForceToCenter(b2Vec2(thrust.y * 1000 * DCOS_90(angle)  * SHIP_THRUST_FACTOR, thrust.y * 1000 * (-DSIN_90(angle)) * SHIP_THRUST_FACTOR), true);
 	//body->ApplyTorque(10*thrust.x, true);
 	//body->ApplyAngularImpulse(4000.0f * thrust.x, true);

@@ -111,10 +111,11 @@ void GameController::update(float deltaTime) {
 	float y = shipModel->body->GetPosition().y;
 	MapNode *from = level->locateCharacter(x, y);
 	if (!input->clickProcessed){
-		MapNode *dest = level->locateCharacter(input->lastClick.x - screen_size_x/2.0 + x, 
-			input->lastClick.y - screen_size_y/2.0 + y);
+		MapNode *dest = level->locateCharacter((input->lastClick.x - screen_size_x/2.0) + x, 
+			-(input->lastClick.y - screen_size_y/2.0) + y);
 		level->shortestPath(from, dest);
 		destination = from->next;
+		input->clickProcessed = true;
 	}
 	if (destination != 0 && from == destination){
 			destination = from->next;
