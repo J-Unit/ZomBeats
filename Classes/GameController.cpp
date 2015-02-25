@@ -200,7 +200,7 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 	s << "Speed: " << shipModel->body->GetLinearVelocity().Length();
 	velHUD->setString(s.str());
 	stringstream sss;
-	sss << "Thrust: (" << input->lastClick.x << "," << input->lastClick.y << ")";
+	sss << "Click: (" << input->lastClick.x << "," << input->lastClick.y << ")";
 	thrustHUD->setString(sss.str());
 	path->clear();
 	if (destination != 0){
@@ -280,7 +280,7 @@ void GameController::buildScene() {
 	for (int i = 0; i < BLOCKS_X; i++) for (int j = 0; j < BLOCKS_Y; j++){
 		MapNode *n = &(level->mesh[i][j]);
 		Vec2 loc = Vec2(level->getTileCenterX(n), level->getTileCenterY(n));
-		meshVis->drawPoint(loc, 10.0f, cocos2d::ccColor4F(0, 0, 0, 1.0f));
+		meshVis->drawPoint(loc, 7.0f, cocos2d::ccColor4F(0, 0, 0, 0.7f));
 	}
 	path = DrawNode::create();
 	path->setContentSize(allSpace->getContentSize());
@@ -357,11 +357,13 @@ void GameController::buildScene() {
 	beatHUD = Label::create();
 	beatHUD->setTTFConfig(*ResourceLoader::getInstance()->getFont("MarkerFelt"));
 	beatHUD->setPosition(Vec2(HUD_OFFSET.x, HUD_OFFSET.y*40));
+	beatHUD->setScale(2.0f);
 	beatHUD->setAnchorPoint(Vec2::ZERO);
 
 	mainBeatHUD = Label::create();
 	mainBeatHUD->setTTFConfig(*ResourceLoader::getInstance()->getFont("MarkerFelt"));
 	mainBeatHUD->setPosition(Vec2(HUD_OFFSET.x, HUD_OFFSET.y * 50));
+	mainBeatHUD->setScale(1.6f);
 	mainBeatHUD->setAnchorPoint(Vec2::ZERO);
     
     // Remove the welcome screen and display the game.
