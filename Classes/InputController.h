@@ -70,10 +70,13 @@ protected:
     /** The event dispatching handling input for this controller */
     EventDispatcher* dispatcher;
     
-    /** The thrust produced by the player input */
-    Vec2 inputThrust;
+
+
     
 public:
+	boolean clickProcessed;
+	Vec2 lastClick;
+
     /**
      * Creates a new input controller for the given dispatcher.
      *
@@ -116,7 +119,7 @@ public:
      *
      * @return The input thrust
      */
-    const Vec2& getThrust() { return inputThrust; }
+   // const Vec2& getThrust() { return inputThrust; }
     
     // TOUCH CALLBACKS
     /**

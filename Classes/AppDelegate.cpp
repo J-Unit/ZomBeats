@@ -54,9 +54,9 @@ bool AppDelegate::applicationDidFinishLaunching() {
         glview = GLViewImpl::create("ShipDemo");
         director->setOpenGLView(glview);
     }
+	cocos2d::Size winsize = director->getWinSizeInPixels();
 	//LevelMap m;
 	//m.shortestPath(NULL, NULL);
-
 
     // Turn on display FPS
     //director->setDisplayStats(true);
@@ -64,7 +64,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     // Set FPS. The default value is 1.0/60 if you don't call this
     director->setAnimationInterval(1.0 / 60);
     // Create a scene. This is an autorelease object
-    auto scene = GameController::createScene();
+    auto scene = GameController::createScene(winsize.width, winsize.height);
 
     // Run the game until the app quits
     director->runWithScene(scene);

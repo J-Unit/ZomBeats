@@ -96,13 +96,13 @@ void Ship::setSprite(FilmStrip* value) {
  *
  * @param deltaTime Time elapsed since last called.
  */
-void Ship::update(float deltaTime, Vec2 thrust) {
+void Ship::update(float deltaTime, Vec2 dir) {
     
-	float32 angle = body->GetAngle();
-	body->ApplyLinearImpulse(b2Vec2(thrust.y * 100 * DCOS_90(angle)  * SHIP_THRUST_FACTOR, thrust.y * 100 * (-DSIN_90(angle)) * SHIP_THRUST_FACTOR), body->GetPosition(), true);
+	//float32 angle = body->GetAngle();
+	body->ApplyLinearImpulse(b2Vec2(dir.x * 300, dir.y * 300), body->GetPosition(), true);
 	//body->ApplyForceToCenter(b2Vec2(thrust.y * 1000 * DCOS_90(angle)  * SHIP_THRUST_FACTOR, thrust.y * 1000 * (-DSIN_90(angle)) * SHIP_THRUST_FACTOR), true);
 	//body->ApplyTorque(10*thrust.x, true);
-	body->ApplyAngularImpulse(4000.0f * thrust.x, true);
+	//body->ApplyAngularImpulse(4000.0f * thrust.x, true);
 
     // Adjust the active forces.
    // forward = RANGE_CLAMP(forward, -SHIP_MAX_SPEED, SHIP_MAX_SPEED);

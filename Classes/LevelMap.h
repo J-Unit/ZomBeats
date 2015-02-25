@@ -1,8 +1,9 @@
 #include <vector>
 #include "Node.h"
+#include "cocos2d.h"
 
-#define BLOCKS_X 20
-#define BLOCKS_Y 20
+#define BLOCKS_X 50
+#define BLOCKS_Y 50
 
 //struct MapNode;
 
@@ -32,6 +33,12 @@ public:
 			}
 		}
 	}
+	MapNode *locateCharacter(float charX, float charY);
+
+	float getTileCenterX(MapNode *tile);
+	float getTileCenterY(MapNode *tile);
+
+	MapNode mesh[BLOCKS_X][BLOCKS_Y];
 	
 	~LevelMap();
 
@@ -44,9 +51,9 @@ private:
 
 	float heuristicDistance(MapNode *a, MapNode *b);
 
-	MapNode *locateCharacter(float charX, float charY);
+	
 
-	MapNode mesh[BLOCKS_X][BLOCKS_Y];
+
 
 }; 
 

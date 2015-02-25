@@ -28,12 +28,14 @@
  * to the caller; we return a Scene that has the GameController as an immediate
  * child. That is because a Scene anchors to the drawing window for display.
  */
-Scene* GameController::createScene() {
+Scene* GameController::createScene(int w, int h) {
     // 'scene' is an autorelease object
     auto scene = Scene::create();
     
     // 'layer' (this object) is an autorelease object
     auto layer = GameController::create();
+	layer->screen_size_x = w;
+	layer->screen_size_y = h;
     
     // add layer as a child to scene
     scene->addChild(layer);
@@ -70,6 +72,7 @@ bool GameController::init() {
 
 	world = new b2World(b2Vec2(0.0f, 0.0f));
 	level = new LevelMap(WORLD_SIZE, WORLD_SIZE);
+	destination = 0;
     // Build the scene graph and create the ship model.
     buildScene();
     shipModel = new Ship(world,SPACE_TILE*5.0f,SPACE_TILE*5.0f);
@@ -94,20 +97,41 @@ bool GameController::init() {
  */
 void GameController::update(float deltaTime) {
     // Read the thrust from the user input
-    input->update();
-    Vec2 thrust = input->getThrust();
+    //input->update();
+	Vec2 thrust = input->lastClick;
 	if (shipModel->isDestroyed){
 		world->DestroyBody(shipModel->body);
 		delete shipModel;
 		shipModel = new Ship(world, SPACE_TILE*5.0f, SPACE_TILE*5.0f);
 		shipModel->setSprite(shipImage);
+		input->clickProcessed = true;
+		destination = 0;
 	}
+	float x = shipModel->body->GetPosition().x;
+	float y = shipModel->body->GetPosition().y;
+	MapNode *from = level->locateCharacter(x, y);
+	if (!input->clickProcessed){
+		MapNode *dest = level->locateCharacter(input->lastClick.x - screen_size_x/2.0 + x, 
+			input->lastClick.y - screen_size_y/2.0 + y);
+		level->shortestPath(from, dest);
+		destination = from->next;
+	}
+	if (destination != 0 && from == destination){
+			destination = from->next;
+	}
+	if (destination != 0){
+		Vec2 dir = Vec2(level->getTileCenterX(destination) - x, level->getTileCenterY(destination) - y);
+		dir.normalize();
+		shipModel->update(deltaTime, dir);
+	}
+
+
 
 
     // Move the ship (MODEL ONLY)
     //shipModel->setForward(thrust.y);
     //shipModel->setTurning(thrust.x);
-    shipModel->update(deltaTime, thrust);
+    //shipModel->update(deltaTime, thrust);
 	world->Step(deltaTime, 8, 3);
 	//world->ClearForces();
     
@@ -149,8 +173,28 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 	s << "Speed: " << shipModel->body->GetLinearVelocity().Length();
 	velHUD->setString(s.str());
 	stringstream sss;
-	sss << "Thrust: (" << input->getThrust().x << "," << input->getThrust().y << ")";
+	sss << "Thrust: (" << input->lastClick.x << "," << input->lastClick.y << ")";
 	thrustHUD->setString(sss.str());
+	path->clear();
+	if (destination != 0){
+		MapNode *last = level->locateCharacter(shipModel->body->GetPosition().x, shipModel->body->GetPosition().y);
+		MapNode *cur = destination;
+		do {
+			float x1 = level->getTileCenterX(last);
+			float y1 = level->getTileCenterY(last);
+			float x2 = level->getTileCenterX(cur);
+			float y2 = level->getTileCenterY(cur);
+			path->drawLine(Vec2(x1, y1), Vec2(x2, y2), ccColor4F(0,0,0,1.0f));
+			last = cur;
+			cur = cur->next;
+		} while (cur != 0);
+		
+	}
+
+	/*if (!input->clickProcessed) {
+		mouse->drawDot(input->lastClick, 2.0f, ccColor4F(0.0f, 0.0f, 0.0f, 0.0f));
+		input->clickProcessed = true;
+	}*/
 }
 
 /**
@@ -161,6 +205,7 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
  */
 void GameController::buildScene() {
     Size dimen  = Director::getInstance()->getVisibleSize();
+	pix_to_opengl_scale = dimen.width / screen_size_x;
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
     Vec2 center(origin.x+dimen.width/2.0f,origin.y+dimen.height/2.0f);
     Vec2 anchor(0.5f,0.5f);
@@ -184,6 +229,21 @@ void GameController::buildScene() {
 	enviornment->setPosition(center);
 	enviornment->setAnchorPoint(anchor);
 	enviornment->addChild(background);
+
+
+	meshVis = DrawNode::create();
+	meshVis->setContentSize(allSpace->getContentSize());
+	meshVis->setPosition(center);
+	meshVis->setAnchorPoint(anchor);
+	for (int i = 0; i < BLOCKS_X; i++) for (int j = 0; j < BLOCKS_Y; j++){
+		MapNode *n = &(level->mesh[i][j]);
+		Vec2 loc = Vec2(level->getTileCenterX(n), level->getTileCenterY(n));
+		meshVis->drawPoint(loc, 10.0f, cocos2d::ccColor4F(0, 0, 0, 1.0f));
+	}
+	path = DrawNode::create();
+	path->setContentSize(allSpace->getContentSize());
+	path->setPosition(center);
+	path->setAnchorPoint(anchor);
     
     // Tile the background with deep space
     Vec2 rivet;
@@ -199,7 +259,8 @@ void GameController::buildScene() {
             background->addChild(tile);
         }
     }
-    
+	enviornment->addChild(meshVis);
+	enviornment->addChild(path);
     // Put planets in the foreground.
     /*nearSpace = Node::create();
     nearSpace->setContentSize(allSpace->getContentSize());

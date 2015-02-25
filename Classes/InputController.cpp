@@ -34,8 +34,9 @@
  */
 InputController::InputController(cocos2d::EventDispatcher* dispatcher) {
     this->dispatcher = dispatcher;
-    inputThrust.set(0.0f,0.0f);
-    keybdThrust.set(0.0f,0.0f);
+	clickProcessed = true;
+    //inputThrust.set(0.0f,0.0f);
+    //keybdThrust.set(0.0f,0.0f);
     active = false;
     
     // Set up keyboard state
@@ -190,8 +191,8 @@ void InputController::touchEndedCB(Touch* t, Event* event) {
     finishTouch.y = RANGE_CLAMP(finishTouch.y, -INPUT_MAXIMUM_FORCE, INPUT_MAXIMUM_FORCE);
     
     // Go ahead and apply to thrust now.
-    inputThrust.x = finishTouch.x/X_ADJUST_FACTOR;
-    inputThrust.y = finishTouch.y/Y_ADJUST_FACTOR;
+    //inputThrust.x = finishTouch.x/X_ADJUST_FACTOR;
+    //inputThrust.y = finishTouch.y/Y_ADJUST_FACTOR;
 }
 
 /**
@@ -202,8 +203,8 @@ void InputController::touchEndedCB(Touch* t, Event* event) {
  */
 void InputController::accleromCB(Acceleration *acc, Event *event) {
     // Apply to thrust directly.
-    inputThrust.x =  acc->x*ACCELEROM_FACTOR;
-    inputThrust.y = -acc->y*ACCELEROM_FACTOR;
+   // inputThrust.x =  acc->x*ACCELEROM_FACTOR;
+   // inputThrust.y = -acc->y*ACCELEROM_FACTOR;
 }
 
 /**
@@ -282,17 +283,20 @@ void InputController::accleromCB(Acceleration *acc, Event *event) {
 
 void InputController::mousePressedCB(Event* event) {
 	EventMouse* mouseEvent = dynamic_cast<EventMouse*>(event);
-	Vec2 mouseTouch = mouseEvent->getLocation();
-	mouseTouch.x = RANGE_CLAMP(mouseTouch.x, -INPUT_MAXIMUM_FORCE, INPUT_MAXIMUM_FORCE);
-	mouseTouch.y = RANGE_CLAMP(mouseTouch.y, -INPUT_MAXIMUM_FORCE, INPUT_MAXIMUM_FORCE);
+	Vec2 mouseTouch = mouseEvent->getLocationInView();
+	//mouseTouch.x = RANGE_CLAMP(mouseTouch.x, -INPUT_MAXIMUM_FORCE, INPUT_MAXIMUM_FORCE);
+	//mouseTouch.y = RANGE_CLAMP(mouseTouch.y, -INPUT_MAXIMUM_FORCE, INPUT_MAXIMUM_FORCE);
+
+	lastClick.set(mouseTouch.x, -mouseTouch.y);
+	clickProcessed = false;
 
 	// Go ahead and apply to thrust now.
-	inputThrust.x = mouseTouch.x / X_ADJUST_FACTOR;
-	inputThrust.y = mouseTouch.y / Y_ADJUST_FACTOR;
+	//inputThrust.x = mouseTouch.x / X_ADJUST_FACTOR;
+	//inputThrust.y = mouseTouch.y / Y_ADJUST_FACTOR;
 
 }
 
 void InputController::mouseReleasedCB(Event* event) {
-	inputThrust.x = 0.0f / X_ADJUST_FACTOR;
-	inputThrust.y = 0.0f / Y_ADJUST_FACTOR;
+	//inputThrust.x = 0.0f / X_ADJUST_FACTOR;
+	//inputThrust.y = 0.0f / Y_ADJUST_FACTOR;
 }

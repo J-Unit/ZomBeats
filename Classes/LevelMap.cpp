@@ -29,6 +29,14 @@ MapNode *LevelMap::locateCharacter(float charX, float charY){
 	return &mesh[int(charX / tileWidth)][int(charY / tileHeight)];
 }
 
+float LevelMap::getTileCenterX(MapNode *tile){
+	return (tile->x + 0.5)*tileWidth;
+}
+
+float LevelMap::getTileCenterY(MapNode *tile){
+	return (tile->y + 0.5)*tileHeight;
+}
+
 // A* implementation
 void LevelMap::shortestPath(MapNode *from, MapNode *to){
 	CTypedPtrHeap<MapNode> pq;

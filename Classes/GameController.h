@@ -8,7 +8,6 @@
 #define __TD_GAME_CONTROLLER_H__
 
 #include <stdio.h>
-#include "cocos2d.h"
 #include "Box2D.h"
 #include "LevelMap.h"
 
@@ -42,6 +41,11 @@ protected:
 	void GameController::BeginContact(b2Contact* contact);
 	void GameController::EndContact(b2Contact* contact);
 
+
+	int screen_size_x;
+	int screen_size_y;
+	double pix_to_opengl_scale;
+
     // VIEW
     /** Filmstrip representing the animated ship */
     FilmStrip* shipImage;
@@ -55,6 +59,9 @@ protected:
     Node*   background;
     /** Foreground in animation parallax. Stores the planets. */
     //Node*   nearSpace;
+
+	DrawNode* meshVis;
+	DrawNode* path;
 
 	Node*   enviornment;
 
@@ -94,7 +101,7 @@ public:
      * to the caller; we return a Scene that has the GameController as an immediate
      * child. That is because a Scene anchors to the drawing window for display.
      */
-    static cocos2d::Scene* createScene();
+    static cocos2d::Scene* createScene(int w, int h);
 
     /** 
      *  This macro implements the "static create()" method.
