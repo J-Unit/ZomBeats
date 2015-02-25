@@ -115,14 +115,6 @@ void GameController::update(float deltaTime) {
 	input->update();
 	bool clicked = input->didClick();
 
-	//if the user clicked (i.e. has thrust) and he is on the beat then flag it true
-	if (clicked && currentSong->isOnBeat(elapsedTime)){
-		onBeat = true;
-	}
-	else{
-		onBeat = false;
-	}
-
 	if (shipModel->isDestroyed){
 		world->DestroyBody(shipModel->body);
 		delete shipModel;
@@ -135,6 +127,9 @@ void GameController::update(float deltaTime) {
 	float y = shipModel->body->GetPosition().y;
 	MapNode *from = level->locateCharacter(x, y);
 	if (!input->clickProcessed){
+		//if on beat then flag it
+		onBeat = currentSong->isOnBeat(elapsedTime);
+			
 		MapNode *dest = level->locateCharacter((input->lastClick.x - screen_size_x/2.0) + x, 
 			-(input->lastClick.y - screen_size_y/2.0) + y);
 		level->shortestPath(from, dest);
