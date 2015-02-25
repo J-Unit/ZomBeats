@@ -13,6 +13,7 @@
 // http://discuss.cocos2d-x.org/t/accelerometer-data-lagging/16105/2
 
 #include "InputController.h"
+#include "SongDecomposition.h"
 
 // Macros to eliminate magic numbers
 #define INPUT_MAXIMUM_FORCE     1000.0f  // Historical choice from Marmalade
@@ -37,6 +38,9 @@ InputController::InputController(cocos2d::EventDispatcher* dispatcher) {
 	clickProcessed = true;
     //inputThrust.set(0.0f,0.0f);
     //keybdThrust.set(0.0f,0.0f);
+    inputThrust.set(0.0f,0.0f);
+	inputPos.set(0.0f, 0.0f);
+    keybdThrust.set(0.0f,0.0f);
     active = false;
     
     // Set up keyboard state
@@ -50,6 +54,8 @@ InputController::InputController(cocos2d::EventDispatcher* dispatcher) {
     keyRight = false;
     keyUp    = false;
     keyDown  = false;
+
+	clicked = false;
     
     
     // Create the touch listener. This is an autorelease object.
@@ -293,10 +299,21 @@ void InputController::mousePressedCB(Event* event) {
 	// Go ahead and apply to thrust now.
 	//inputThrust.x = mouseTouch.x / X_ADJUST_FACTOR;
 	//inputThrust.y = mouseTouch.y / Y_ADJUST_FACTOR;
+	clicked = true;
+	inputPos = mouseEvent->getLocation();
+	inputPos.x = RANGE_CLAMP(inputPos.x, -INPUT_MAXIMUM_FORCE, INPUT_MAXIMUM_FORCE);
+	inputPos.y = RANGE_CLAMP(inputPos.y, -INPUT_MAXIMUM_FORCE, INPUT_MAXIMUM_FORCE);
+
+	// Go ahead and apply to thrust now.
+	inputThrust.x = inputPos.x / X_ADJUST_FACTOR;
+	inputThrust.y = inputPos.y / Y_ADJUST_FACTOR;
 
 }
 
 void InputController::mouseReleasedCB(Event* event) {
 	//inputThrust.x = 0.0f / X_ADJUST_FACTOR;
 	//inputThrust.y = 0.0f / Y_ADJUST_FACTOR;
+	clicked = false;
+	inputThrust.x = 0.0f / X_ADJUST_FACTOR;
+	inputThrust.y = 0.0f / Y_ADJUST_FACTOR;
 }

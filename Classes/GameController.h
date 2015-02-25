@@ -19,6 +19,7 @@ using namespace std;
 class InputController;
 class FilmStrip;
 class Ship;
+class SongDecomposition;
 
 /**
  * Class represents the root node for the game engine.
@@ -53,6 +54,7 @@ protected:
     Label*  coordHUD;
 	Label*	velHUD;
 	Label*	thrustHUD;
+	Label*  beatHUD;
     /** Node to hold all of our graphics. Necesary for resolution indepedence. */
     Node*   allSpace;
     /** Background in animation parallax. Stores the field of stars */
@@ -69,6 +71,8 @@ protected:
     // A page-out could dispose of the view as long as it just has this.
     /** The current coordinates of the ship */
     Ship*   shipModel;
+
+	SongDecomposition*  currentSong;
    
 	// Box2D world for physics, collisions etc.
 	b2World* world;
@@ -76,6 +80,11 @@ protected:
 	//Movement stuff
 	LevelMap* level;
 	MapNode* destination;
+	//Elapsed time of game
+	float elapsedTime;
+
+	//Whether the user is on beat or not
+	bool onBeat;
 
     /** 
      * Writes the current ship position to the HUD.

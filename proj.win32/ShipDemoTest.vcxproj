@@ -147,6 +147,7 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
     <ClCompile Include="..\Classes\LevelMap.cpp" />
     <ClCompile Include="..\Classes\ResourceLoader.cpp" />
     <ClCompile Include="..\Classes\Ship.cpp" />
+    <ClCompile Include="..\Classes\SongDecomposition.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -159,6 +160,7 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
     <ClInclude Include="..\Classes\PriorityQueue.h" />
     <ClInclude Include="..\Classes\ResourceLoader.h" />
     <ClInclude Include="..\Classes\Ship.h" />
+    <ClInclude Include="..\Classes\SongDecomposition.h" />
     <ClInclude Include="main.h" />
   </ItemGroup>
   <ItemGroup>

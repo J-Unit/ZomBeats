@@ -5,11 +5,15 @@
 //  Created by Walker White on 1/18/15.
 //
 #include "GameController.h"
+#include "SongDecomposition.h"
 #include "ResourceLoader.h"
 #include "InputController.h"
 #include "FilmStrip.h"
 #include "Ship.h"
+#include "SimpleAudioEngine.h"
 #include <math.h>
+#include <iostream>
+#include <string>
 
 // Macros to eliminate magic numbers
 #define SPACE_TILE   256
@@ -77,12 +81,18 @@ bool GameController::init() {
     buildScene();
     shipModel = new Ship(world,SPACE_TILE*5.0f,SPACE_TILE*5.0f);
     shipModel->setSprite(shipImage);
+
 	world->SetContactListener(this);
 
     // Start listening to input
     input = new InputController(_eventDispatcher);
     input->startInput();
     
+	elapsedTime = 0.0;
+	onBeat = false;
+
+	currentSong = new SongDecomposition(128.0, "../Resources/songs/SimpleBeat2.wav", elapsedTime);
+	CocosDenshion::SimpleAudioEngine::sharedEngine()->playBackgroundMusic("../Resources/songs/SimpleBeat2.wav"/*currentSong->trackName.c_str()*/, true);
     // Tell the director we are ready for animation.
     this->scheduleUpdate();
     return true;
@@ -99,6 +109,20 @@ void GameController::update(float deltaTime) {
     // Read the thrust from the user input
     //input->update();
 	Vec2 thrust = input->lastClick;
+	elapsedTime += deltaTime; //a float in seconds
+	//cout << "Elapsed time: "<< elapsedTime <<endl;
+	// Read the thrust from the user input
+	input->update();
+	bool clicked = input->didClick();
+
+	//if the user clicked (i.e. has thrust) and he is on the beat then flag it true
+	if (clicked && currentSong->isOnBeat(elapsedTime)){
+		onBeat = true;
+	}
+	else{
+		onBeat = false;
+	}
+
 	if (shipModel->isDestroyed){
 		world->DestroyBody(shipModel->body);
 		delete shipModel;
@@ -135,6 +159,7 @@ void GameController::update(float deltaTime) {
     //shipModel->update(deltaTime, thrust);
 	world->Step(deltaTime, 8, 3);
 	//world->ClearForces();
+	
     
     // "Drawing" code.  Move everything BUT the ship
     // Update the HUD
@@ -196,6 +221,14 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 		mouse->drawDot(input->lastClick, 2.0f, ccColor4F(0.0f, 0.0f, 0.0f, 0.0f));
 		input->clickProcessed = true;
 	}*/
+	stringstream st;
+	if (onBeat){
+		st << "HIT";
+	}
+	else{
+		st << "MISS";
+	}
+	beatHUD->setString(st.str());
 }
 
 /**
@@ -312,6 +345,11 @@ void GameController::buildScene() {
 	thrustHUD->setTTFConfig(*ResourceLoader::getInstance()->getFont("MarkerFelt"));
 	thrustHUD->setPosition(Vec2(HUD_OFFSET.x * 40, HUD_OFFSET.y));
 	thrustHUD->setAnchorPoint(Vec2::ZERO);
+
+	beatHUD = Label::create();
+	beatHUD->setTTFConfig(*ResourceLoader::getInstance()->getFont("MarkerFelt"));
+	beatHUD->setPosition(Vec2(HUD_OFFSET.x, HUD_OFFSET.y*40));
+	beatHUD->setAnchorPoint(Vec2::ZERO);
     
     // Remove the welcome screen and display the game.
     allSpace->addChild(enviornment,0);
@@ -321,5 +359,6 @@ void GameController::buildScene() {
     this->addChild(coordHUD);  // On top of scene graph.
 	this->addChild(velHUD);
 	this->addChild(thrustHUD);
+	this->addChild(beatHUD);
 }
 

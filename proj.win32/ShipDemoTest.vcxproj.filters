@@ -36,6 +36,9 @@
     <ClCompile Include="..\Classes\LevelMap.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\SongDecomposition.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -66,6 +69,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\PriorityQueue.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\SongDecomposition.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
