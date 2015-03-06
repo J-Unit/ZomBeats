@@ -1,5 +1,8 @@
 #ifndef PriorityQueue_H
 #define PriorityQueue_H
+#ifndef NULL
+#define NULL (0)
+#endif
 
 //#include <iostream.h>
 template < class T >
