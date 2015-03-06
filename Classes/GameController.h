@@ -9,7 +9,7 @@
 
 #include <stdio.h>
 #include "Box2D.h"
-#include "LevelMap.h"
+#include "cocos2d.h"
 
 using namespace cocos2d;
 using namespace std;
@@ -20,6 +20,8 @@ class InputController;
 class FilmStrip;
 class Ship;
 class SongDecomposition;
+class GameState;
+class MapNode;
 
 /**
  * Class represents the root node for the game engine.
@@ -71,15 +73,12 @@ protected:
     // MODEL
     // A page-out could dispose of the view as long as it just has this.
     /** The current coordinates of the ship */
-    Ship*   shipModel;
 
 	SongDecomposition*  currentSong;
    
-	// Box2D world for physics, collisions etc.
-	b2World* world;
 
-	//Movement stuff
-	LevelMap* level;
+	GameState *state;
+	// Box2D world for physics, collisions etc.
 	MapNode* destination;
 	//Elapsed time of game
 	float elapsedTime;

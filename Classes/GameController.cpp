@@ -9,7 +9,8 @@
 #include "ResourceLoader.h"
 #include "InputController.h"
 #include "FilmStrip.h"
-#include "Ship.h"
+#include "GameState.h"
+#include "LevelMap.h"
 #include "SimpleAudioEngine.h"
 #include <math.h>
 #include <iostream>
@@ -61,7 +62,7 @@ void GameController::BeginContact(b2Contact* contact){
 }
 
 void GameController::EndContact(b2Contact* contact){
-	shipModel->isDestroyed = true;
+	state->ship->isDestroyed = true;
 	//body->SetTransform(b2Vec2(0.0f, 0.0f), 0.0f);
 }
 
@@ -73,16 +74,16 @@ bool GameController::init() {
     // Load the resources. This is NOT an asynchronous loader.
     // We would design an asynchronous loader slightly differently.
     ResourceLoader::loadContent();
-
-	world = new b2World(b2Vec2(0.0f, 0.0f));
-	level = new LevelMap(WORLD_SIZE, WORLD_SIZE);
+	state = new GameState();
+	state->world = new b2World(b2Vec2(0.0f, 0.0f));
+	state->level = new LevelMap(WORLD_SIZE, WORLD_SIZE);
 	destination = 0;
     // Build the scene graph and create the ship model.
     buildScene();
-    shipModel = new Ship(world,SPACE_TILE*5.0f,SPACE_TILE*5.0f);
-    shipModel->setSprite(shipImage);
+    state->ship = new Ship(state->world,SPACE_TILE*5.0f,SPACE_TILE*5.0f);
+    state->ship->setSprite(shipImage);
 
-	world->SetContactListener(this);
+	state->world->SetContactListener(this);
 
     // Start listening to input
     input = new InputController(_eventDispatcher);
@@ -116,28 +117,28 @@ void GameController::update(float deltaTime) {
 	input->update();
 	bool clicked = input->didClick();
 
-	if (shipModel->isDestroyed){
-		world->DestroyBody(shipModel->body);
-		delete shipModel;
-		shipModel = new Ship(world, SPACE_TILE*5.0f, SPACE_TILE*5.0f);
-		shipModel->setSprite(shipImage);
+	if (state->ship->isDestroyed){
+		state->world->DestroyBody(state->ship->body);
+		delete state->ship;
+		state->ship = new Ship(state->world, SPACE_TILE*5.0f, SPACE_TILE*5.0f);
+		state->ship->setSprite(shipImage);
 		input->clickProcessed = true;
 		destination = 0;
 	}
-	float x = shipModel->body->GetPosition().x;
-	float y = shipModel->body->GetPosition().y;
-	MapNode *from = level->locateCharacter(x, y);
+	float x = state->ship->body->GetPosition().x;
+	float y = state->ship->body->GetPosition().y;
+	MapNode *from = state->level->locateCharacter(x, y);
 	if (!input->clickProcessed){
 		//if on beat then flag it
 		onBeat = currentSong->isOnBeat(elapsedTime);
 		if (!onBeat) {
-			shipModel->body->SetLinearVelocity(b2Vec2_zero);
+			state->ship->body->SetLinearVelocity(b2Vec2_zero);
 			destination = 0;
 		}
 		else{
-			MapNode *dest = level->locateCharacter((input->lastClick.x - screen_size_x/2.0) + x, 
+			MapNode *dest = state->level->locateCharacter((input->lastClick.x - screen_size_x/2.0) + x, 
 				-(input->lastClick.y - screen_size_y/2.0) + y);
-			level->shortestPath(from, dest);
+			state->level->shortestPath(from, dest);
 			destination = from->next;
 		}
 		input->clickProcessed = true;
@@ -146,9 +147,9 @@ void GameController::update(float deltaTime) {
 			destination = from->next;
 	}
 	if (destination != 0){
-		Vec2 dir = Vec2(level->getTileCenterX(destination) - x, level->getTileCenterY(destination) - y);
+		Vec2 dir = Vec2(state->level->getTileCenterX(destination) - x, state->level->getTileCenterY(destination) - y);
 		dir.normalize();
-		shipModel->update(deltaTime, dir);
+		state->ship->update(deltaTime, dir);
 	}
 
 
@@ -158,15 +159,15 @@ void GameController::update(float deltaTime) {
     //shipModel->setForward(thrust.y);
     //shipModel->setTurning(thrust.x);
     //shipModel->update(deltaTime, thrust);
-	world->Step(deltaTime, 8, 3);
+	state->world->Step(deltaTime, 8, 3);
 	//world->ClearForces();
 	
     
     // "Drawing" code.  Move everything BUT the ship
     // Update the HUD
-    displayPosition(coordHUD, shipModel->body->GetPosition());
+    displayPosition(coordHUD, state->ship->body->GetPosition());
 
-	b2Vec2 pos = shipModel->body->GetPosition();
+	b2Vec2 pos = state->ship->body->GetPosition();
 	Vec2 offset = Vec2(pos.x, pos.y);// -enviornment->getPosition();
     Vec2 center(0.5f,0.5f);
     
@@ -182,7 +183,7 @@ void GameController::update(float deltaTime) {
 	// Reanchor the node at the center of the screen and rotate about center.
     //nearSpace->setAnchorPoint(offset+center);
     //nearSpace->setRotation(-shipModel->body->GetAngle());
-	shipImage->setRotation(shipModel->body->GetAngle());
+	shipImage->setRotation(state->ship->body->GetAngle());
 
 }
 
@@ -197,20 +198,20 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
     ss << "Coords: (" << (int)coords.x/10 << "," << (int)coords.y/10 << ")";
     coordHUD->setString(ss.str());
 	stringstream s;
-	s << "Speed: " << shipModel->body->GetLinearVelocity().Length();
+	s << "Speed: " << state->ship->body->GetLinearVelocity().Length();
 	velHUD->setString(s.str());
 	stringstream sss;
 	sss << "Click: (" << input->lastClick.x << "," << input->lastClick.y << ")";
 	thrustHUD->setString(sss.str());
 	path->clear();
 	if (destination != 0){
-		MapNode *last = level->locateCharacter(shipModel->body->GetPosition().x, shipModel->body->GetPosition().y);
+		MapNode *last = state->level->locateCharacter(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y);
 		MapNode *cur = destination;
 		do {
-			float x1 = level->getTileCenterX(last);
-			float y1 = level->getTileCenterY(last);
-			float x2 = level->getTileCenterX(cur);
-			float y2 = level->getTileCenterY(cur);
+			float x1 = state->level->getTileCenterX(last);
+			float y1 = state->level->getTileCenterY(last);
+			float x2 = state->level->getTileCenterX(cur);
+			float y2 = state->level->getTileCenterY(cur);
 			path->drawLine(Vec2(x1, y1), Vec2(x2, y2), ccColor4F(0,0,0,1.0f));
 			last = cur;
 			cur = cur->next;
@@ -278,8 +279,8 @@ void GameController::buildScene() {
 	meshVis->setPosition(center);
 	meshVis->setAnchorPoint(anchor);
 	for (int i = 0; i < BLOCKS_X; i++) for (int j = 0; j < BLOCKS_Y; j++){
-		MapNode *n = &(level->mesh[i][j]);
-		Vec2 loc = Vec2(level->getTileCenterX(n), level->getTileCenterY(n));
+		MapNode *n = &(state->level->mesh[i][j]);
+		Vec2 loc = Vec2(state->level->getTileCenterX(n), state->level->getTileCenterY(n));
 		meshVis->drawPoint(loc, 7.0f, cocos2d::ccColor4F(0, 0, 0, 0.7f));
 	}
 	path = DrawNode::create();
@@ -320,8 +321,8 @@ void GameController::buildScene() {
 	b2.position.Set(PLANET2_POS.x, PLANET2_POS.y);
 	b2Body* b1b;
 	b2Body* b2b;
-	b1b = world->CreateBody(&b1);
-	b2b = world->CreateBody(&b2);
+	b1b = state->world->CreateBody(&b1);
+	b2b = state->world->CreateBody(&b2);
 	b2CircleShape c1, c2;
 	c1.m_radius = 60;
 	c2.m_radius = 60;
