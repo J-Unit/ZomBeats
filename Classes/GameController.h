@@ -25,7 +25,7 @@ class InputController;
 class Ship;
 class SongDecomposition;
 class GameState;
-class MapNode;
+struct MapNode;
 class View;
 
 /**
