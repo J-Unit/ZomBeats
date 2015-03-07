@@ -150,6 +150,7 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
     <ClCompile Include="..\Classes\ResourceLoader.cpp" />
     <ClCompile Include="..\Classes\Ship.cpp" />
     <ClCompile Include="..\Classes\SongDecomposition.cpp" />
+    <ClCompile Include="..\Classes\View.cpp" />
     <ClCompile Include="..\Classes\Wall.cpp" />
     <ClCompile Include="..\Classes\Weapon.h" />
     <ClCompile Include="..\Classes\Zombie.cpp" />
@@ -168,6 +169,7 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
     <ClInclude Include="..\Classes\ResourceLoader.h" />
     <ClInclude Include="..\Classes\Ship.h" />
     <ClInclude Include="..\Classes\SongDecomposition.h" />
+    <ClInclude Include="..\Classes\View.h" />
     <ClInclude Include="..\Classes\Wall.h" />
     <ClInclude Include="..\Classes\Zombie.h" />
     <ClInclude Include="main.h" />

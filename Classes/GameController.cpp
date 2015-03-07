@@ -7,6 +7,7 @@
 #include "GameController.h"
 #include "SongDecomposition.h"
 #include "ResourceLoader.h"
+#include "View.h"
 #include "InputController.h"
 #include "FilmStrip.h"
 #include "GameState.h"
@@ -15,39 +16,6 @@
 #include <math.h>
 #include <iostream>
 #include <string>
-
-// Macros to eliminate magic numbers
-#define SPACE_TILE   256
-#define TILE_AMOUNT	 10
-#define PLANET_SCALE 0.5f
-#define PARALLAX_AMT 0.0f
-#define PLANET1_POS  Vec2(950, 1100)
-#define PLANET2_POS  Vec2(1600, 1500)
-#define HUD_OFFSET   Vec2(10.0f,10.f)
-#define WORLD_SIZE  SPACE_TILE * TILE_AMOUNT
-
-/**
- * Creates a new game with an instance of this controller class.
- *
- * This static controller exists because we do not return the GameController
- * to the caller; we return a Scene that has the GameController as an immediate
- * child. That is because a Scene anchors to the drawing window for display.
- */
-Scene* GameController::createScene(int w, int h) {
-    // 'scene' is an autorelease object
-    auto scene = Scene::create();
-    
-    // 'layer' (this object) is an autorelease object
-    auto layer = GameController::create();
-	layer->screen_size_x = w;
-	layer->screen_size_y = h;
-    
-    // add layer as a child to scene
-    scene->addChild(layer);
-    
-    // return the scene
-    return scene;
-}
 
 /**
  * Initialize the game state.
@@ -67,21 +35,37 @@ void GameController::EndContact(b2Contact* contact){
 }
 
 bool GameController::init() {
-    if (!Layer::init()) {
-        return false;
-    }
-    
-    // Load the resources. This is NOT an asynchronous loader.
-    // We would design an asynchronous loader slightly differently.
-    ResourceLoader::loadContent();
+	if (!Layer::init()) {
+		return false;
+	}
+	Director* director = Director::getInstance();
+	cocos2d::Size winsize = director->getWinSizeInPixels();
+	view = new View(winsize.width, winsize.height);
+	view->scene->addChild(this);
+
 	state = new GameState();
 	state->world = new b2World(b2Vec2(0.0f, 0.0f));
 	state->level = new LevelMap(WORLD_SIZE, WORLD_SIZE);
 	destination = 0;
+
+	b2BodyDef b1, b2;
+	b1.position.Set(PLANET1_POS.x, PLANET1_POS.y);
+	b2.position.Set(PLANET2_POS.x, PLANET2_POS.y);
+	b2Body* b1b;
+	b2Body* b2b;
+	b1b = state->world->CreateBody(&b1);
+	b2b = state->world->CreateBody(&b2);
+	b2CircleShape c1, c2;
+	c1.m_radius = 60;
+	c2.m_radius = 60;
+	b1b->CreateFixture(&c1, 0.0f);
+	b2b->CreateFixture(&c2, 0.0f);
+	//b2b-
+
     // Build the scene graph and create the ship model.
-    buildScene();
+    view->buildScene(state->level, this);
     state->ship = new Ship(state->world,SPACE_TILE*5.0f,SPACE_TILE*5.0f);
-    state->ship->setSprite(shipImage);
+    state->ship->setSprite(view->shipImage);
 
 	state->world->SetContactListener(this);
 
@@ -121,7 +105,7 @@ void GameController::update(float deltaTime) {
 		state->world->DestroyBody(state->ship->body);
 		delete state->ship;
 		state->ship = new Ship(state->world, SPACE_TILE*5.0f, SPACE_TILE*5.0f);
-		state->ship->setSprite(shipImage);
+		state->ship->setSprite(view->shipImage);
 		input->clickProcessed = true;
 		destination = 0;
 	}
@@ -136,8 +120,8 @@ void GameController::update(float deltaTime) {
 			destination = 0;
 		}
 		else{
-			MapNode *dest = state->level->locateCharacter((input->lastClick.x - screen_size_x/2.0) + x, 
-				-(input->lastClick.y - screen_size_y/2.0) + y);
+			MapNode *dest = state->level->locateCharacter((input->lastClick.x - view->screen_size_x/2.0) + x, 
+				-(input->lastClick.y - view->screen_size_y/2.0) + y);
 			state->level->shortestPath(from, dest);
 			destination = from->next;
 		}
@@ -165,25 +149,25 @@ void GameController::update(float deltaTime) {
     
     // "Drawing" code.  Move everything BUT the ship
     // Update the HUD
-    displayPosition(coordHUD, state->ship->body->GetPosition());
+    displayPosition(view->coordHUD, state->ship->body->GetPosition());
 
 	b2Vec2 pos = state->ship->body->GetPosition();
 	Vec2 offset = Vec2(pos.x, pos.y);// -enviornment->getPosition();
     Vec2 center(0.5f,0.5f);
     
     // Anchor points are in texture coordinates (0 to 1). Scale it.
-    offset.x = offset.x/allSpace->getContentSize().width;
-    offset.y = offset.y/allSpace->getContentSize().height;
+    offset.x = offset.x/view->allSpace->getContentSize().width;
+	offset.y = offset.y / view->allSpace->getContentSize().height;
 
     // Reanchor the node at the center of the screen and rotate about center.
     //farSpace->setAnchorPoint(offset*PARALLAX_AMT+center);
     //farSpace->setRotation(-shipModel->body->GetAngle());
 	//shipImage->setAnchorPoint(-offset);
-	enviornment->setAnchorPoint(offset);
+	view->enviornment->setAnchorPoint(offset);
 	// Reanchor the node at the center of the screen and rotate about center.
     //nearSpace->setAnchorPoint(offset+center);
     //nearSpace->setRotation(-shipModel->body->GetAngle());
-	shipImage->setRotation(state->ship->body->GetAngle());
+	view->shipImage->setRotation(state->ship->body->GetAngle());
 
 }
 
@@ -196,14 +180,14 @@ void GameController::update(float deltaTime) {
 void GameController::displayPosition(Label* label, const b2Vec2& coords) {
     stringstream ss;
     ss << "Coords: (" << (int)coords.x/10 << "," << (int)coords.y/10 << ")";
-    coordHUD->setString(ss.str());
+	view->coordHUD->setString(ss.str());
 	stringstream s;
 	s << "Speed: " << state->ship->body->GetLinearVelocity().Length();
-	velHUD->setString(s.str());
+	view->velHUD->setString(s.str());
 	stringstream sss;
 	sss << "Click: (" << input->lastClick.x << "," << input->lastClick.y << ")";
-	thrustHUD->setString(sss.str());
-	path->clear();
+	view->thrustHUD->setString(sss.str());
+	view->path->clear();
 	if (destination != 0){
 		MapNode *last = state->level->locateCharacter(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y);
 		MapNode *cur = destination;
@@ -212,7 +196,7 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 			float y1 = state->level->getTileCenterY(last);
 			float x2 = state->level->getTileCenterX(cur);
 			float y2 = state->level->getTileCenterY(cur);
-			path->drawLine(Vec2(x1, y1), Vec2(x2, y2), ccColor4F(0,0,0,1.0f));
+			view->path->drawLine(Vec2(x1, y1), Vec2(x2, y2), ccColor4F(0, 0, 0, 1.0f));
 			last = cur;
 			cur = cur->next;
 		} while (cur != 0);
@@ -220,10 +204,10 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 	}
 
 	if (currentSong->isOnBeat(elapsedTime)){
-		mainBeatHUD->setString("BEAT!");
+		view->mainBeatHUD->setString("BEAT!");
 	}
 	else{
-		mainBeatHUD->setString("");
+		view->mainBeatHUD->setString("");
 	}
 
 	/*if (!input->clickProcessed) {
@@ -237,145 +221,7 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 	else{
 		st << "MISS";
 	}
-	beatHUD->setString(st.str());
-}
-
-/**
- * Builds the scene graph for the game.
- *
- * We factored this out of init() to allow us to page-in and page-out
- * the scene graph at a later time.
- */
-void GameController::buildScene() {
-    Size dimen  = Director::getInstance()->getVisibleSize();
-	pix_to_opengl_scale = dimen.width / screen_size_x;
-    Vec2 origin = Director::getInstance()->getVisibleOrigin();
-    Vec2 center(origin.x+dimen.width/2.0f,origin.y+dimen.height/2.0f);
-    Vec2 anchor(0.5f,0.5f);
-    
-    // Create the master node.  This, unlike the layer, is resolution independent.
-    // If we do not do this, the children will not all line up correctly on different devices.
-    allSpace = Node::create();
-    allSpace->setContentSize(Size(SPACE_TILE*TILE_AMOUNT,SPACE_TILE*TILE_AMOUNT));
-    allSpace->setPosition(center);
-    allSpace->setAnchorPoint(anchor);
-    
-    // Everything else is relative to all space, not the screen!
-    center.set(allSpace->getContentSize().width/2.0f,allSpace->getContentSize().height/2.0f);
-    background = Node::create();
-	background->setContentSize(allSpace->getContentSize());
-	background->setPosition(center);
-    background->setAnchorPoint(anchor);
-
-	enviornment = Node::create();
-	enviornment->setContentSize(allSpace->getContentSize());
-	enviornment->setPosition(center);
-	enviornment->setAnchorPoint(anchor);
-	enviornment->addChild(background);
-
-
-	meshVis = DrawNode::create();
-	meshVis->setContentSize(allSpace->getContentSize());
-	meshVis->setPosition(center);
-	meshVis->setAnchorPoint(anchor);
-	for (int i = 0; i < BLOCKS_X; i++) for (int j = 0; j < BLOCKS_Y; j++){
-		MapNode *n = &(state->level->mesh[i][j]);
-		Vec2 loc = Vec2(state->level->getTileCenterX(n), state->level->getTileCenterY(n));
-		meshVis->drawPoint(loc, 7.0f, cocos2d::ccColor4F(0, 0, 0, 0.7f));
-	}
-	path = DrawNode::create();
-	path->setContentSize(allSpace->getContentSize());
-	path->setPosition(center);
-	path->setAnchorPoint(anchor);
-    
-    // Tile the background with deep space
-    Vec2 rivet;
-    Texture2D* bkgd = ResourceLoader::getInstance()->getTexture("space");
-    for(int ii = -TILE_AMOUNT/2; ii <= TILE_AMOUNT/2; ii++) {
-        for(int jj = -TILE_AMOUNT/2; jj <= TILE_AMOUNT/2; jj++) {
-            // Create a new autorelease sprite for each tile
-            auto tile = Sprite::createWithTexture(bkgd);
-            rivet.x = background->getContentSize().width/2.0f+ii*SPACE_TILE;
-            rivet.y = background->getContentSize().height/2.0f+jj*SPACE_TILE;
-            tile->setPosition(rivet);
-            tile->setAnchorPoint(anchor);
-            background->addChild(tile);
-        }
-    }
-	enviornment->addChild(meshVis);
-	enviornment->addChild(path);
-    // Put planets in the foreground.
-    /*nearSpace = Node::create();
-    nearSpace->setContentSize(allSpace->getContentSize());
-    nearSpace->setPosition(center);
-    nearSpace->setAnchorPoint(anchor);*/
-    
-    Sprite* planet = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("planet1"));
-    planet->setScale(PLANET_SCALE,PLANET_SCALE);
-    planet->setPosition(PLANET1_POS);
-    planet->setAnchorPoint(anchor);
-	enviornment->addChild(planet);
-   // nearSpace->addChild(planet);
-	b2BodyDef b1, b2;
-	b1.position.Set(PLANET1_POS.x, PLANET1_POS.y);
-	b2.position.Set(PLANET2_POS.x, PLANET2_POS.y);
-	b2Body* b1b;
-	b2Body* b2b;
-	b1b = state->world->CreateBody(&b1);
-	b2b = state->world->CreateBody(&b2);
-	b2CircleShape c1, c2;
-	c1.m_radius = 60;
-	c2.m_radius = 60;
-	b1b->CreateFixture(&c1, 0.0f);
-	b2b->CreateFixture(&c2, 0.0f);
-	//b2b-
-
-    
-    planet = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("planet2"));
-    planet->setScale(PLANET_SCALE,PLANET_SCALE);
-    planet->setPosition(PLANET2_POS);
-    planet->setAnchorPoint(anchor);
-    enviornment->addChild(planet);
-    
-    //shipImage = FilmStrip::create(ResourceLoader::getInstance()->getTexture("ship"),4,5,18);
-	shipImage = FilmStrip::create(ResourceLoader::getInstance()->getTexture("ship"), 1, 1, 1);
-
-    coordHUD = Label::create();
-    coordHUD->setTTFConfig(*ResourceLoader::getInstance()->getFont("MarkerFelt"));
-    coordHUD->setPosition(HUD_OFFSET);
-    coordHUD->setAnchorPoint(Vec2::ZERO);
-
-	velHUD = Label::create();
-	velHUD->setTTFConfig(*ResourceLoader::getInstance()->getFont("MarkerFelt"));
-	velHUD->setPosition(Vec2(HUD_OFFSET.x*20, HUD_OFFSET.y));
-	velHUD->setAnchorPoint(Vec2::ZERO);
-
-	thrustHUD = Label::create();
-	thrustHUD->setTTFConfig(*ResourceLoader::getInstance()->getFont("MarkerFelt"));
-	thrustHUD->setPosition(Vec2(HUD_OFFSET.x * 40, HUD_OFFSET.y));
-	thrustHUD->setAnchorPoint(Vec2::ZERO);
-
-	beatHUD = Label::create();
-	beatHUD->setTTFConfig(*ResourceLoader::getInstance()->getFont("MarkerFelt"));
-	beatHUD->setPosition(Vec2(HUD_OFFSET.x, HUD_OFFSET.y*40));
-	beatHUD->setScale(2.0f);
-	beatHUD->setAnchorPoint(Vec2::ZERO);
-
-	mainBeatHUD = Label::create();
-	mainBeatHUD->setTTFConfig(*ResourceLoader::getInstance()->getFont("MarkerFelt"));
-	mainBeatHUD->setPosition(Vec2(HUD_OFFSET.x, HUD_OFFSET.y * 50));
-	mainBeatHUD->setScale(1.6f);
-	mainBeatHUD->setAnchorPoint(Vec2::ZERO);
-    
-    // Remove the welcome screen and display the game.
-    allSpace->addChild(enviornment,0);
-    //allSpace->addChild(nearSpace,0.5);
-    allSpace->addChild(shipImage,1);
-    this->addChild(allSpace);
-    this->addChild(coordHUD);  // On top of scene graph.
-	this->addChild(velHUD);
-	this->addChild(thrustHUD);
-	this->addChild(beatHUD);
-	this->addChild(mainBeatHUD);
+	view->beatHUD->setString(st.str());
+	//TODO: Add new HUD for BPM
 }
 

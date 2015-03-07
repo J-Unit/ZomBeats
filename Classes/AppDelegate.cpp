@@ -7,6 +7,7 @@
 #include "AppDelegate.h"
 #include "GameController.h"
 #include "ResourceLoader.h"
+#include "View.h"
 
 
 USING_NS_CC;
@@ -51,10 +52,9 @@ bool AppDelegate::applicationDidFinishLaunching() {
     auto director = Director::getInstance();
     auto glview = director->getOpenGLView();
     if(!glview) {
-        glview = GLViewImpl::create("ShipDemo");
+        glview = GLViewImpl::create("ZomBeats");
         director->setOpenGLView(glview);
     }
-	cocos2d::Size winsize = director->getWinSizeInPixels();
 	//LevelMap m;
 	//m.shortestPath(NULL, NULL);
 
@@ -63,11 +63,10 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     // Set FPS. The default value is 1.0/60 if you don't call this
     director->setAnimationInterval(1.0 / 60);
-    // Create a scene. This is an autorelease object
-    auto scene = GameController::createScene(winsize.width, winsize.height);
+	GameController* gc = GameController::create();
 
     // Run the game until the app quits
-    director->runWithScene(scene);
+    director->runWithScene(gc->view->scene);
 
     return true;
 }

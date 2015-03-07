@@ -17,11 +17,11 @@ using namespace std;
 // Forward declarations of classes for field variables.
 // It is better to do this in C++ instead of including headers inside headers
 class InputController;
-class FilmStrip;
 class Ship;
 class SongDecomposition;
 class GameState;
 class MapNode;
+class View;
 
 /**
  * Class represents the root node for the game engine.
@@ -36,7 +36,7 @@ class MapNode;
  * as much as possible.
  */
 class GameController : public Layer, public b2ContactListener{
-protected:
+public:
     // CONTROLLERS
     /** Controller for abstracting out input away from layer */
     InputController* input;
@@ -44,31 +44,11 @@ protected:
 	void GameController::BeginContact(b2Contact* contact);
 	void GameController::EndContact(b2Contact* contact);
 
-
-	int screen_size_x;
-	int screen_size_y;
-	double pix_to_opengl_scale;
-
+	/**
     // VIEW
-    /** Filmstrip representing the animated ship */
-    FilmStrip* shipImage;
-    /** Label for on-screen coordinate HUD */
-    Label*  coordHUD;
-	Label*	velHUD;
-	Label*	thrustHUD;
-	Label*  beatHUD;
-	Label*  mainBeatHUD;
-    /** Node to hold all of our graphics. Necesary for resolution indepedence. */
-    Node*   allSpace;
-    /** Background in animation parallax. Stores the field of stars */
-    Node*   background;
-    /** Foreground in animation parallax. Stores the planets. */
-    //Node*   nearSpace;
-
-	DrawNode* meshVis;
-	DrawNode* path;
-
-	Node*   enviornment;
+    /** Filmstrip representing the animated ship 
+    */
+	View* view;
 
     // MODEL
     // A page-out could dispose of the view as long as it just has this.
@@ -94,41 +74,15 @@ protected:
      */
     void displayPosition(Label* label, const b2Vec2& coords);
     
-    /**
-     * Builds the scene graph for the game.
-     * 
-     * We factored this out of init() to allow us to page-in and page-out
-     * the scene graph at a later time.
-     */
-    void buildScene();
-    
-public:
-    /**
-     * Creates a new game with an instance of this controller class.
-     *
-     * This static controller exists because we do not return the GameController
-     * to the caller; we return a Scene that has the GameController as an immediate
-     * child. That is because a Scene anchors to the drawing window for display.
-     */
-    static cocos2d::Scene* createScene(int w, int h);
+	/**
+	* Initialize the game state.
+	*
+	* This is an overridden method inherited from the super(super) class Node.
+	* The Director calls this soon after start up.
+	*/
+	bool init() override;
 
-    /** 
-     *  This macro implements the "static create()" method.
-     *
-     *  This class is a subclass of a Scene Graph nodes.  All of the Scene Graph
-     *  nodes support reference counting.  That means you should never implement
-     *  a constructor or a destructor; force the user to go through static methods
-     *  that apply the reference counting rules.
-     */
-    CREATE_FUNC(GameController);
-
-    /**
-     * Initialize the game state.
-     *
-     * This is an overridden method inherited from the super(super) class Node.
-     * The Director calls this soon after start up.
-     */
-    bool init() override;
+	CREATE_FUNC(GameController);
     
     /**
      * Update the game state.
