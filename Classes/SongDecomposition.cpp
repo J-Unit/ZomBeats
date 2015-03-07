@@ -2,9 +2,10 @@
 #include <math.h>
 
 bool SongDecomposition::isOnBeat(float clickTime){
-
+	float time_to_first_beat = 0;//.22;//.1564
 	float mpb = 60 / bpm;
-	float clicked = fmod(clickTime,mpb);
+	float offset_clicktime = clickTime + time_to_first_beat;
+	float clicked = fmod(offset_clicktime,mpb);
 	if (clicked <= ERROR_WINDOW || clicked >= mpb - ERROR_WINDOW){
 		return true;
 	}

@@ -20,6 +20,8 @@
 #include "audio/include/AudioEngine.h"
 
 using namespace experimental;
+float lastbeat = 0;
+int audioid = 0;
 /**
  * Initialize the game state.
  *
@@ -97,8 +99,7 @@ bool GameController::init() {
 	int _musicVol = 5;
 	static int _backgroundAudioProfile = AudioEngine::INVALID_AUDIO_ID;
 
-	int retval = AudioEngine::play2d("../Resources/songs/SimpleBeat2.mp3", true, 1);
-	cout << "THIS IS RETVAL: " << retval << "\n";
+	audioid = AudioEngine::play2d("../Resources/songs/SimpleBeat2.mp3", true, 1);
 	
 
 	//AudioEngine::pause(_backgroundAudioProfile);
@@ -138,7 +139,13 @@ void GameController::update(float deltaTime) {
 	MapNode *from = state->level->locateCharacter(x, y);
 	if (!input->clickProcessed){
 		//if on beat then flag it
-		onBeat = currentSong->isOnBeat(elapsedTime);
+		onBeat = currentSong->isOnBeat(AudioEngine::getCurrentTime(audioid));
+		//cout << "PBF: " << elapsedTime << "\n";
+		stringstream st;
+		//char* tempstr = "kgkgk";
+		//std::sprintf(tempstr, "%f", elapsedTime);
+
+		//view->beatHUD->setString("Actual time: " + std::to_string(elapsedTime) + " song time: " + std::to_string(AudioEngine::getCurrentTime(audioid)));
 		if (!onBeat) {
 			state->ship->body->SetLinearVelocity(b2Vec2_zero);
 			destination = 0;
@@ -151,6 +158,7 @@ void GameController::update(float deltaTime) {
 		}
 		input->clickProcessed = true;
 	}
+
 	if (destination != 0 && from == destination){
 			destination = from->next;
 	}
@@ -227,7 +235,7 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 		
 	}
 
-	if (currentSong->isOnBeat(elapsedTime)){
+	if (currentSong->isOnBeat(AudioEngine::getCurrentTime(audioid))){
 		view->mainBeatHUD->setString("BEAT!");
 	}
 	else{
