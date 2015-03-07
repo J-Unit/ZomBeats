@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "cocos2d.h"
+#include <vector>
 
 #define SPACE_TILE   256
 #define TILE_AMOUNT	 10
@@ -52,6 +53,11 @@ public:
 
 	/** Filmstrip representing the animated ship */
 	FilmStrip* shipImage;
+	/** A wall tile */
+	Sprite* wallTile;
+	Sprite* wallTile2;
+	vector<Sprite*> walls;
+
 
 	/**
 	* Builds the scene graph for the game.
