@@ -17,7 +17,9 @@
 #include <vector>
 #include <iostream>
 #include <string>
+#include "audio/include/AudioEngine.h"
 
+using namespace experimental;
 /**
  * Initialize the game state.
  *
@@ -91,8 +93,16 @@ bool GameController::init() {
 	onBeat = false;
 
 	currentSong = new SongDecomposition(128.0, "../Resources/songs/SimpleBeat2.wav", elapsedTime);
-	CocosDenshion::SimpleAudioEngine::sharedEngine()->playBackgroundMusic("../Resources/songs/SimpleBeat2.wav"/*currentSong->trackName.c_str()*/, true);
-    // Tell the director we are ready for animation.
+	//CocosDenshion::SimpleAudioEngine::sharedEngine()->playBackgroundMusic("../Resources/songs/SimpleBeat2.wav"/*currentSong->trackName.c_str()*/, true);
+	int _musicVol = 5;
+	static int _backgroundAudioProfile = AudioEngine::INVALID_AUDIO_ID;
+
+	int retval = AudioEngine::play2d("../Resources/songs/SimpleBeat2.mp3", true, 1);
+	cout << "THIS IS RETVAL: " << retval << "\n";
+	
+
+	//AudioEngine::pause(_backgroundAudioProfile);
+	// Tell the director we are ready for animation.
     this->scheduleUpdate();
     return true;
 }
