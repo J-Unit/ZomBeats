@@ -65,6 +65,9 @@ public:
     Ship(b2World *world);
 	boolean isDestroyed;
 	b2Body* body;
+	b2BodyDef bodyDef;
+	b2PolygonShape dynamicBox;
+	b2FixtureDef fixture;
     /**
      * Creates a new ship at the specified position (in world space).
      *

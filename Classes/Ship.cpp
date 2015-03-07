@@ -40,20 +40,16 @@ Ship::Ship(b2World *world, float x, float y) {
    // turning = 0.0f;
    // forward = 0.0f;
 	isDestroyed = false;
-	b2BodyDef bodyDef;
 	bodyDef.type = b2_dynamicBody;
 	bodyDef.position.Set(x, y);
 	body = world->CreateBody(&bodyDef);
-	b2PolygonShape dynamicBox;
 	dynamicBox.SetAsBox(10.0f, 10.0f);
-	b2FixtureDef fixtureDef;
-	fixtureDef.shape = &dynamicBox;
-	fixtureDef.density = 1.0f;
-	fixtureDef.friction = 0.5f;
-	body->CreateFixture(&fixtureDef);
+	fixture.shape = &dynamicBox;
+	fixture.density = 1.0f;
+	//fixture.friction = 0.5f;
+	body->CreateFixture(&fixture);
 	body->SetLinearDamping(3.0f);
 	//body->SetAngularDamping(0.5f);
-
     sprite  = NULL;
 }
 
