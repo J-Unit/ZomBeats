@@ -6,6 +6,7 @@
 #include <string>
 #include <math.h>
 #include <iostream>
+#include "Wall.h"
 
 View::View(int w, int h){
 	screen_size_x = w;
@@ -116,6 +117,14 @@ void View::buildScene(LevelMap *level, Layer* l) {
 
 	//shipImage = FilmStrip::create(ResourceLoader::getInstance()->getTexture("ship"),4,5,18);
 	shipImage = FilmStrip::create(ResourceLoader::getInstance()->getTexture("ship"), 1, 1, 1);
+
+	for (int i = 0; i < 30; i++) {
+		Sprite* n_wallTile = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("wall"));
+		walls.push_back(n_wallTile);
+		enviornment->addChild(n_wallTile);
+	}
+
+
 
 	coordHUD = Label::create();
 	coordHUD->setTTFConfig(*ResourceLoader::getInstance()->getFont("MarkerFelt"));

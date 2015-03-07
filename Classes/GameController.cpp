@@ -14,6 +14,7 @@
 #include "LevelMap.h"
 #include "SimpleAudioEngine.h"
 #include <math.h>
+#include <vector>
 #include <iostream>
 #include <string>
 
@@ -30,7 +31,7 @@ void GameController::BeginContact(b2Contact* contact){
 }
 
 void GameController::EndContact(b2Contact* contact){
-	state->ship->isDestroyed = true;
+	state->ship->isDestroyed = false; //I turned this off so it won't restart the game, hacky fix oh yeah
 	//body->SetTransform(b2Vec2(0.0f, 0.0f), 0.0f);
 }
 
@@ -66,6 +67,19 @@ bool GameController::init() {
     view->buildScene(state->level, this);
     state->ship = new Ship(state->world,SPACE_TILE*5.0f,SPACE_TILE*5.0f);
     state->ship->setSprite(view->shipImage);
+
+	// set up the walls here
+	// a vertical wall here
+	for (int i = 0; i < 20; i++) {
+		Wall* new_wall = new Wall(state->world, SPACE_TILE*5.5f, SPACE_TILE*(5.5f+i*0.25f));
+		new_wall->setSprite(view->walls[i]);
+	}
+
+	// a horizontal wall here
+	for (int i = 20; i < 30; i++) {
+		Wall* new_wall = new Wall(state->world, SPACE_TILE*(5.5f+(i-19)*0.25f), SPACE_TILE*5.5f);
+		new_wall->setSprite(view->walls[i]);
+	}
 
 	state->world->SetContactListener(this);
 

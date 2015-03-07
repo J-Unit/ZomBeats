@@ -48,6 +48,13 @@ ResourceLoader::ResourceLoader() {
         text->retain();
         textures["planet2"] = text;
     }
+
+	//add the wall textures here
+	text = Director::getInstance()->getTextureCache()->addImage("../Resources/textures/wall.png");
+	if (text) {
+		text->retain();
+		textures["wall"] = text;
+	}
 }
 
 /**
