@@ -30,29 +30,20 @@ int audioid = 0;
  */
 
 void GameController::BeginContact(b2Contact* contact){
-
+	/*ModelType *b1, *b2;
+	b1 = (ModelType *)contact->GetFixtureA()->GetBody()->GetUserData();
+	b2 = (ModelType *)contact->GetFixtureB()->GetBody()->GetUserData();
+	if(b1->type == WallType || b2->type== WallType) return;
+	state->ship->isDestroyed = true; //I turned this off so it won't restart the game, hacky fix oh yeah
 	//body->SetTransform(b2Vec2(0.0f, 0.0f), 0.0f);
+	//body->SetTransform(b2Vec2(0.0f, 0.0f), 0.0f);*/
 }
 
 void GameController::EndContact(b2Contact* contact){
-	state->ship->isDestroyed = false; //I turned this off so it won't restart the game, hacky fix oh yeah
-	//body->SetTransform(b2Vec2(0.0f, 0.0f), 0.0f);
+
 }
 
-bool GameController::init() {
-	if (!Layer::init()) {
-		return false;
-	}
-	Director* director = Director::getInstance();
-	cocos2d::Size winsize = director->getWinSizeInPixels();
-	view = new View(winsize.width, winsize.height);
-	view->scene->addChild(this);
-
-	state = new GameState();
-	state->world = new b2World(b2Vec2(0.0f, 0.0f));
-	state->level = new LevelMap(WORLD_SIZE, WORLD_SIZE);
-	destination = 0;
-
+void GameController::createZombies(){
 	b2BodyDef b1, b2;
 	b1.position.Set(PLANET1_POS.x, PLANET1_POS.y);
 	b2.position.Set(PLANET2_POS.x, PLANET2_POS.y);
@@ -65,29 +56,50 @@ bool GameController::init() {
 	c2.m_radius = 60;
 	b1b->CreateFixture(&c1, 0.0f);
 	b2b->CreateFixture(&c2, 0.0f);
-	//b2b-
-
-    // Build the scene graph and create the ship model.
-    view->buildScene(state->level, this);
-    state->ship = new Ship(state->world,SPACE_TILE*5.0f,SPACE_TILE*5.0f);
-    state->ship->setSprite(view->shipImage);
-
+}
+void GameController::createWalls(){
+	Wall *new_wall;
 	// set up the walls here
 	//we can move the below code to level editor later so it looks clean
 	//-------------------------------------------------------------------------------------
 	// a vertical wall here
 	for (int i = 0; i < 20; i++) {
-		Wall* new_wall = new Wall(state->world, SPACE_TILE*5.5f, SPACE_TILE*(5.5f+i*0.25f));
-		new_wall->setSprite(view->walls[i]);
+		new_wall = new Wall(state->world, SPACE_TILE*5.5f, SPACE_TILE*(5.5f + i*0.25f));
+		view->enviornment->addChild(new_wall->sprite);
+		//new_wall->setSprite(view->walls[i]);
 	}
 
 	// a horizontal wall here
 	for (int i = 20; i < 30; i++) {
-		Wall* new_wall = new Wall(state->world, SPACE_TILE*(5.5f+(i-19)*0.25f), SPACE_TILE*5.5f);
-		new_wall->setSprite(view->walls[i]);
+		new_wall = new Wall(state->world, SPACE_TILE*(5.5f + (i - 19)*0.25f), SPACE_TILE*5.5f);
+		view->enviornment->addChild(new_wall->sprite);
+		//new_wall->setSprite(view->walls[i]);
 	}
-	//we can move the above code to level editor later so it looks clean
-	//-------------------------------------------------------------------------------------
+}
+
+
+
+bool GameController::init() {
+	if (!Layer::init()) {
+		return false;
+	}
+
+	state = new GameState();
+	state->world = new b2World(b2Vec2(0.0f, 0.0f));
+	state->level = new LevelMap(WORLD_SIZE, WORLD_SIZE);
+	destination = 0;
+	Director* director = Director::getInstance();
+	cocos2d::Size winsize = director->getWinSizeInPixels();
+	view = new View(winsize.width, winsize.height);
+	view->scene->addChild(this);
+
+    // Build the scene graph and create the ship model.
+    view->buildScene(state->level, this);
+    state->ship = new Ship(state->world,SPACE_TILE*5.0f,SPACE_TILE*5.0f);
+	view->allSpace->addChild(state->ship->getSprite());
+
+	createZombies();
+	createWalls();
 
 	state->world->SetContactListener(this);
 
@@ -137,7 +149,6 @@ void GameController::update(float deltaTime) {
 		state->world->DestroyBody(state->ship->body);
 		delete state->ship;
 		state->ship = new Ship(state->world, SPACE_TILE*5.0f, SPACE_TILE*5.0f);
-		state->ship->setSprite(view->shipImage);
 		input->clickProcessed = true;
 		destination = 0;
 	}
@@ -217,7 +228,7 @@ void GameController::update(float deltaTime) {
 	// Reanchor the node at the center of the screen and rotate about center.
     //nearSpace->setAnchorPoint(offset+center);
     //nearSpace->setRotation(-shipModel->body->GetAngle());
-	view->shipImage->setRotation(state->ship->body->GetAngle());
+	state->ship->getSprite()->setRotation(state->ship->body->GetAngle());
 
 }
 

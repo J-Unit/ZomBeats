@@ -19,6 +19,9 @@ public:
 	Wall(b2World *world, float x, float y);
 	b2Body* body;
 	Sprite* sprite;
+	b2BodyDef bodyDef;
+	b2FixtureDef fixture;
+	b2PolygonShape box;
 	float pos_x;
 	float pos_y;
 	void    setSprite(Sprite* value);

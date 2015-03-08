@@ -122,14 +122,14 @@ void View::buildScene(LevelMap *level, Layer* l) {
 	enviornment->addChild(planet);
 
 	//shipImage = FilmStrip::create(ResourceLoader::getInstance()->getTexture("ship"),4,5,18);
-	shipImage = FilmStrip::create(ResourceLoader::getInstance()->getTexture("ship"), 1, 1, 1);
+	/*shipImage = FilmStrip::create(ResourceLoader::getInstance()->getTexture("ship"), 1, 1, 1);
 
 	//create 30 wall bricks 
 	for (int i = 0; i < 30; i++) {
-		Sprite* n_wallTile = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("wall"));
+		Sprite* n_wallTile = );
 		walls.push_back(n_wallTile);
 		enviornment->addChild(n_wallTile);
-	}
+	}*/
 
 
 
@@ -168,7 +168,7 @@ void View::buildScene(LevelMap *level, Layer* l) {
 	// Remove the welcome screen and display the game.
 	allSpace->addChild(enviornment, 0);
 	//allSpace->addChild(nearSpace,0.5);
-	allSpace->addChild(shipImage, 1);
+	//allSpace->addChild(shipImage, 1);
 	l->addChild(allSpace);
 	l->addChild(coordHUD);  // On top of scene graph.
 	l->addChild(velHUD);

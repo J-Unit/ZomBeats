@@ -1,4 +1,5 @@
 #include "Wall.h"
+#include "ResourceLoader.h"
 
 
 Wall::Wall(b2World *world, float x, float y)
@@ -9,26 +10,24 @@ Wall::Wall(b2World *world, float x, float y)
 	bodyDef.type = b2_staticBody;
 	bodyDef.position.Set(x, y);
 	body = world->CreateBody(&bodyDef);
-	b2PolygonShape dynamicBox;
-	dynamicBox.SetAsBox(25.0f, 25.0f);
-	b2FixtureDef fixtureDef;
-	fixtureDef.shape = &dynamicBox;
-	body->CreateFixture(&fixtureDef);
+//	type = ModelType(WallType, this);
+	//body->SetUserData(&type);
+	box.SetAsBox(25.0f, 25.0f);
+	fixture.shape = &box;
+	body->CreateFixture(&fixture);
+	setSprite(Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("wall")));
+
 }
 
 void Wall::setSprite(Sprite* value)
 {
-	if (sprite != NULL) {
-		//sprite->release();
-	}
+	b2Vec2 pos = body->GetPosition();
 	sprite = value;
 	if (sprite != NULL) {
-		sprite->retain(); 
-		sprite->setPosition(pos_x, pos_y);
+		sprite->retain(); // Do not delete it until we are done.
+		sprite->setPosition(pos.x, pos.y);
 		sprite->setAnchorPoint(Vec2(0.5f, 0.5f));
 	}
-
-
 }
 
 Wall::~Wall()

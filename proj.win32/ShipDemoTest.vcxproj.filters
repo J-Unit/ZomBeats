@@ -107,6 +107,12 @@
     <ClInclude Include="..\Classes\View.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\Classes\Types.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\BoxObject.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="game.rc">

@@ -7,6 +7,7 @@
 #include "Ship.h"
 #include "FilmStrip.h"
 #include "math.h"
+#include "ResourceLoader.h"
 
 // Macros to eliminate magic numbers
 // Some of these are carried over from the 3152 lab and unused.
@@ -42,7 +43,10 @@ Ship::Ship(b2World *world, float x, float y) {
 	isDestroyed = false;
 	bodyDef.type = b2_dynamicBody;
 	bodyDef.position.Set(x, y);
+	bodyDef.fixedRotation = true;
 	body = world->CreateBody(&bodyDef);
+	//type = ModelType(ShipType, this);
+	//body->SetUserData(&type);
 	dynamicBox.SetAsBox(10.0f, 10.0f);
 	fixture.shape = &dynamicBox;
 	fixture.density = 1.0f;
@@ -51,6 +55,7 @@ Ship::Ship(b2World *world, float x, float y) {
 	body->SetLinearDamping(3.0f);
 	//body->SetAngularDamping(0.5f);
     sprite  = NULL;
+	setSprite(FilmStrip::create(ResourceLoader::getInstance()->getTexture("ship"), 1, 1, 1));
 }
 
 /**

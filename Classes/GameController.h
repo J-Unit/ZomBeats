@@ -101,6 +101,10 @@ public:
      */
     void update(float dt) override;
 
+private:
+	void createZombies();
+	void createWalls();
+
 };
 
 #endif /* defined(__TD_GAME_CONTROLLER_H__) */
