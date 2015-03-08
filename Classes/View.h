@@ -33,6 +33,7 @@ public:
 	Label*	thrustHUD;
 	Label*  beatHUD;
 	Label*  mainBeatHUD;
+	Label*  detectionRadiusHUD;
 	/** Node to hold all of our graphics. Necesary for resolution indepedence. */
 	Node*   allSpace;
 	/** Background in animation parallax. Stores the field of stars */
@@ -42,6 +43,7 @@ public:
 
 	DrawNode* meshVis;
 	DrawNode* path;
+	DrawNode* detectionRadiusCircle;
 
 	Node*   enviornment;
 

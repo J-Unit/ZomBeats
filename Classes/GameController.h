@@ -11,6 +11,11 @@
 #include "Box2D.h"
 #include "cocos2d.h"
 
+//define couple parameters here for grooviness meter
+#define INITIAL_DETECTION_RADIUS    100.0f
+#define DETECTION_RADIUS_INCREASE   10.0f
+#define DETECTION_RADIUS_DECREASE   6.0f
+
 using namespace cocos2d;
 using namespace std;
 
@@ -65,6 +70,9 @@ public:
 
 	//Whether the user is on beat or not
 	bool onBeat;
+
+	//the current detection radius
+	float detectionRadius;
 
     /** 
      * Writes the current ship position to the HUD.

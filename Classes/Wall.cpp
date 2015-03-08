@@ -6,7 +6,7 @@ Wall::Wall(b2World *world, float x, float y)
 	pos_x = x;
 	pos_y = y;
 	b2BodyDef bodyDef;
-	//bodyDef.type = b2_dynamicBody;
+	bodyDef.type = b2_staticBody;
 	bodyDef.position.Set(x, y);
 	body = world->CreateBody(&bodyDef);
 	b2PolygonShape dynamicBox;
@@ -23,7 +23,7 @@ void Wall::setSprite(Sprite* value)
 	}
 	sprite = value;
 	if (sprite != NULL) {
-		sprite->retain(); // Do not delete it until we are done.
+		sprite->retain(); 
 		sprite->setPosition(pos_x, pos_y);
 		sprite->setAnchorPoint(Vec2(0.5f, 0.5f));
 	}

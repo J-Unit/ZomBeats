@@ -79,6 +79,11 @@ void View::buildScene(LevelMap *level, Layer* l) {
 	path->setPosition(center);
 	path->setAnchorPoint(anchor);
 
+	detectionRadiusCircle = DrawNode::create();
+	detectionRadiusCircle->setContentSize(allSpace->getContentSize());
+	detectionRadiusCircle->setPosition(center);
+	detectionRadiusCircle->setAnchorPoint(anchor);
+
 	// Tile the background with deep space
 	Vec2 rivet;
 	Texture2D* bkgd = ResourceLoader::getInstance()->getTexture("space");
@@ -95,6 +100,7 @@ void View::buildScene(LevelMap *level, Layer* l) {
 	}
 	enviornment->addChild(meshVis);
 	enviornment->addChild(path);
+	enviornment->addChild(detectionRadiusCircle);
 	// Put planets in the foreground.
 	/*nearSpace = Node::create();
 	nearSpace->setContentSize(allSpace->getContentSize());
@@ -118,6 +124,7 @@ void View::buildScene(LevelMap *level, Layer* l) {
 	//shipImage = FilmStrip::create(ResourceLoader::getInstance()->getTexture("ship"),4,5,18);
 	shipImage = FilmStrip::create(ResourceLoader::getInstance()->getTexture("ship"), 1, 1, 1);
 
+	//create 30 wall bricks 
 	for (int i = 0; i < 30; i++) {
 		Sprite* n_wallTile = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("wall"));
 		walls.push_back(n_wallTile);
@@ -141,6 +148,11 @@ void View::buildScene(LevelMap *level, Layer* l) {
 	thrustHUD->setPosition(Vec2(HUD_OFFSET.x * 40, HUD_OFFSET.y));
 	thrustHUD->setAnchorPoint(Vec2::ZERO);
 
+    detectionRadiusHUD = Label::create();
+	detectionRadiusHUD->setTTFConfig(*ResourceLoader::getInstance()->getFont("MarkerFelt"));
+	detectionRadiusHUD->setPosition(Vec2(HUD_OFFSET.x * 60, HUD_OFFSET.y));
+	detectionRadiusHUD->setAnchorPoint(Vec2::ZERO);
+
 	beatHUD = Label::create();
 	beatHUD->setTTFConfig(*ResourceLoader::getInstance()->getFont("MarkerFelt"));
 	beatHUD->setPosition(Vec2(HUD_OFFSET.x, HUD_OFFSET.y * 40));
@@ -163,6 +175,7 @@ void View::buildScene(LevelMap *level, Layer* l) {
 	l->addChild(thrustHUD);
 	l->addChild(beatHUD);
 	l->addChild(mainBeatHUD);
+	l->addChild(detectionRadiusHUD);
 }
 
 

@@ -73,6 +73,8 @@ bool GameController::init() {
     state->ship->setSprite(view->shipImage);
 
 	// set up the walls here
+	//we can move the below code to level editor later so it looks clean
+	//-------------------------------------------------------------------------------------
 	// a vertical wall here
 	for (int i = 0; i < 20; i++) {
 		Wall* new_wall = new Wall(state->world, SPACE_TILE*5.5f, SPACE_TILE*(5.5f+i*0.25f));
@@ -84,6 +86,8 @@ bool GameController::init() {
 		Wall* new_wall = new Wall(state->world, SPACE_TILE*(5.5f+(i-19)*0.25f), SPACE_TILE*5.5f);
 		new_wall->setSprite(view->walls[i]);
 	}
+	//we can move the above code to level editor later so it looks clean
+	//-------------------------------------------------------------------------------------
 
 	state->world->SetContactListener(this);
 
@@ -93,6 +97,9 @@ bool GameController::init() {
     
 	elapsedTime = 0.0;
 	onBeat = false;
+
+	//initial detection radius
+	detectionRadius = INITIAL_DETECTION_RADIUS;
 
 	currentSong = new SongDecomposition(128.0, "../Resources/songs/SimpleBeat2.wav", elapsedTime);
 	//CocosDenshion::SimpleAudioEngine::sharedEngine()->playBackgroundMusic("../Resources/songs/SimpleBeat2.wav"/*currentSong->trackName.c_str()*/, true);
@@ -149,12 +156,23 @@ void GameController::update(float deltaTime) {
 		if (!onBeat) {
 			state->ship->body->SetLinearVelocity(b2Vec2_zero);
 			destination = 0;
+
+			//if it is not on beat, increase the detection radius slightly
+			if (detectionRadius < 350.0f) {
+				detectionRadius += DETECTION_RADIUS_INCREASE;
+			}
 		}
 		else{
 			MapNode *dest = state->level->locateCharacter((input->lastClick.x - view->screen_size_x/2.0) + x, 
 				-(input->lastClick.y - view->screen_size_y/2.0) + y);
 			state->level->shortestPath(from, dest);
 			destination = from->next;
+
+			//if it is on beat, decrease the detection radius slightly
+			if (detectionRadius > 50.0f) {
+				detectionRadius -= DETECTION_RADIUS_DECREASE;
+			}
+
 		}
 		input->clickProcessed = true;
 	}
@@ -220,6 +238,16 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 	sss << "Click: (" << input->lastClick.x << "," << input->lastClick.y << ")";
 	view->thrustHUD->setString(sss.str());
 	view->path->clear();
+	//clear the old detection circle
+	view->detectionRadiusCircle->clear();
+
+	stringstream d;
+	d << "Detection Radius: " << detectionRadius;
+	view->detectionRadiusHUD->setString(d.str());
+
+	//visualize the detection radius
+	view->detectionRadiusCircle->drawCircle(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y), detectionRadius, 0.0f, 1000, false, ccColor4F(0, 0, 2.0f, 1.0f));
+
 	if (destination != 0){
 		MapNode *last = state->level->locateCharacter(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y);
 		MapNode *cur = destination;
@@ -232,7 +260,6 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 			last = cur;
 			cur = cur->next;
 		} while (cur != 0);
-		
 	}
 
 	if (currentSong->isOnBeat(AudioEngine::getCurrentTime(audioid))){
