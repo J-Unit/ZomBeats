@@ -158,15 +158,9 @@ bool GameController::init() {
 	detectionRadius = INITIAL_DETECTION_RADIUS;
 	currAwareness = 0.0f;
 
-	currentSong = new SongDecomposition(128.0, "../Resources/songs/SimpleBeat2.wav", elapsedTime);
-	//CocosDenshion::SimpleAudioEngine::sharedEngine()->playBackgroundMusic("../Resources/songs/SimpleBeat2.wav"/*currentSong->trackName.c_str()*/, true);
-	int _musicVol = 5;
-	static int _backgroundAudioProfile = AudioEngine::INVALID_AUDIO_ID;
+	currentSong = new SongDecomposition(120.0, "../Resources/songs/ChillDeepHouse.mp3", -.051);
+	audioid = AudioEngine::play2d("../Resources/songs/ChillDeepHouse.mp3", true, 1);
 
-	audioid = AudioEngine::play2d("../Resources/songs/SimpleBeat2.mp3", true, 1);
-	
-
-	//AudioEngine::pause(_backgroundAudioProfile);
 	// Tell the director we are ready for animation.
     this->scheduleUpdate();
     return true;
