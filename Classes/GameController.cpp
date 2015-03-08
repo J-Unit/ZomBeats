@@ -13,6 +13,8 @@
 #include "GameState.h"
 #include "LevelMap.h"
 #include "SimpleAudioEngine.h"
+#include "Wall.h"
+#include "Zombie.h"
 #include <math.h>
 #include <vector>
 #include <iostream>
@@ -30,13 +32,13 @@ int audioid = 0;
  */
 
 void GameController::BeginContact(b2Contact* contact){
-	/*ModelType *b1, *b2;
-	b1 = (ModelType *)contact->GetFixtureA()->GetBody()->GetUserData();
-	b2 = (ModelType *)contact->GetFixtureB()->GetBody()->GetUserData();
+	Type *b1, *b2;
+	b1 = (Type *)contact->GetFixtureA()->GetBody()->GetUserData();
+	b2 = (Type *)contact->GetFixtureB()->GetBody()->GetUserData();
 	if(b1->type == WallType || b2->type== WallType) return;
 	state->ship->isDestroyed = true; //I turned this off so it won't restart the game, hacky fix oh yeah
 	//body->SetTransform(b2Vec2(0.0f, 0.0f), 0.0f);
-	//body->SetTransform(b2Vec2(0.0f, 0.0f), 0.0f);*/
+	//body->SetTransform(b2Vec2(0.0f, 0.0f), 0.0f);
 }
 
 void GameController::EndContact(b2Contact* contact){
@@ -44,7 +46,12 @@ void GameController::EndContact(b2Contact* contact){
 }
 
 void GameController::createZombies(){
-	b2BodyDef b1, b2;
+	Zombie *z1 = new Zombie(PLANET1_POS.x, PLANET1_POS.y, state->world);
+	Zombie *z2 = new Zombie(PLANET2_POS.x, PLANET2_POS.y, state->world);
+	view->enviornment->addChild(z1->sprite);
+	view->enviornment->addChild(z2->sprite);
+
+	/*b2BodyDef b1, b2;
 	b1.position.Set(PLANET1_POS.x, PLANET1_POS.y);
 	b2.position.Set(PLANET2_POS.x, PLANET2_POS.y);
 	b2Body* b1b;
@@ -55,7 +62,7 @@ void GameController::createZombies(){
 	c1.m_radius = 60;
 	c2.m_radius = 60;
 	b1b->CreateFixture(&c1, 0.0f);
-	b2b->CreateFixture(&c2, 0.0f);
+	b2b->CreateFixture(&c2, 0.0f);*/
 }
 void GameController::createWalls(){
 	Wall *new_wall;

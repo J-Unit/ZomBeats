@@ -1,12 +1,21 @@
-#include "Box2D.h"
+#include <cocos2d.h>
+#include "BoxObject.h"
 
-class Zombie
+#define PLANET_SCALE 0.5f
+
+using namespace cocos2d;
+class Zombie : public BoxObject
 {
 public:
-	b2Body *body;
 	float awareness;
+	b2CircleShape circle;
 
-	Zombie();
+	Sprite *sprite;
+
+
+	void setSprite(Sprite *value);
+
+	Zombie(int x, int y, b2World* world);
 	~Zombie();
 };
 

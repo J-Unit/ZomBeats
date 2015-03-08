@@ -9,7 +9,7 @@
 
 #include <stdio.h>
 #include <cocos2d.h>
-#include "Box2D.h"
+#include "BoxObject.h"
 
 using namespace cocos2d;
 
@@ -32,7 +32,7 @@ class FilmStrip;
  * You should ALWAYS do this. If you do not do this, I will be most
  * displeased with you.
  */
-class Ship {
+class Ship : public BoxObject{
 private:
     /** 
      * Determines the next animation frame for the ship and applies it to the sprite.
@@ -64,10 +64,7 @@ public:
      */
     Ship(b2World *world);
 	boolean isDestroyed;
-	b2Body* body;
-	b2BodyDef bodyDef;
 	b2PolygonShape dynamicBox;
-	b2FixtureDef fixture;
     /**
      * Creates a new ship at the specified position (in world space).
      *

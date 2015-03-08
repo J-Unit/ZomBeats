@@ -107,7 +107,7 @@ void View::buildScene(LevelMap *level, Layer* l) {
 	nearSpace->setPosition(center);
 	nearSpace->setAnchorPoint(anchor);*/
 
-	Sprite* planet = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("planet1"));
+	/*Sprite* planet = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("planet1"));
 	planet->setScale(PLANET_SCALE, PLANET_SCALE);
 	planet->setPosition(PLANET1_POS);
 	planet->setAnchorPoint(anchor);
@@ -119,7 +119,7 @@ void View::buildScene(LevelMap *level, Layer* l) {
 	planet->setScale(PLANET_SCALE, PLANET_SCALE);
 	planet->setPosition(PLANET2_POS);
 	planet->setAnchorPoint(anchor);
-	enviornment->addChild(planet);
+	enviornment->addChild(planet);*/
 
 	//shipImage = FilmStrip::create(ResourceLoader::getInstance()->getTexture("ship"),4,5,18);
 	/*shipImage = FilmStrip::create(ResourceLoader::getInstance()->getTexture("ship"), 1, 1, 1);

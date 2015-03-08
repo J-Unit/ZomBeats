@@ -3,11 +3,11 @@
 
 #include <stdio.h>
 #include <cocos2d.h>
-#include "Box2D.h"
+#include "BoxObject.h"
 
 using namespace cocos2d;
 #pragma once
-class Wall
+class Wall : public BoxObject
 {
 public:
 	/**
@@ -17,10 +17,7 @@ public:
 	* @param y The world space y-coordinate
 	*/
 	Wall(b2World *world, float x, float y);
-	b2Body* body;
 	Sprite* sprite;
-	b2BodyDef bodyDef;
-	b2FixtureDef fixture;
 	b2PolygonShape box;
 	float pos_x;
 	float pos_y;

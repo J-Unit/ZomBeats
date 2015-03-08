@@ -1,7 +1,5 @@
 #include "PriorityQueue.h"
 #include "Ship.h"
-#include "Wall.h"
-#include "Box2D.h"
 #include <vector>
 
 class Zombie;

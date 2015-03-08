@@ -6,7 +6,6 @@
 #define TILE_AMOUNT	 10
 #define BLOCKS_X 50
 #define BLOCKS_Y 50
-#define PLANET_SCALE 0.5f
 #define PARALLAX_AMT 0.0f
 #define PLANET1_POS  Vec2(950, 1100)
 #define PLANET2_POS  Vec2(1600, 1500)

@@ -10,8 +10,8 @@ Wall::Wall(b2World *world, float x, float y)
 	bodyDef.type = b2_staticBody;
 	bodyDef.position.Set(x, y);
 	body = world->CreateBody(&bodyDef);
-//	type = ModelType(WallType, this);
-	//body->SetUserData(&type);
+	type = Type(this);
+	body->SetUserData(&type);
 	box.SetAsBox(25.0f, 25.0f);
 	fixture.shape = &box;
 	body->CreateFixture(&fixture);

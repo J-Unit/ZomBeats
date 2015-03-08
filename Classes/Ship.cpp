@@ -45,8 +45,8 @@ Ship::Ship(b2World *world, float x, float y) {
 	bodyDef.position.Set(x, y);
 	bodyDef.fixedRotation = true;
 	body = world->CreateBody(&bodyDef);
-	//type = ModelType(ShipType, this);
-	//body->SetUserData(&type);
+	type = Type(this);
+	body->SetUserData(&type);
 	dynamicBox.SetAsBox(10.0f, 10.0f);
 	fixture.shape = &dynamicBox;
 	fixture.density = 1.0f;

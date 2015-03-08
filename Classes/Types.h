@@ -1,21 +1,29 @@
-enum b2TypesEnum { ShipType, WallType, ZombieType };
-struct ModelType{
+class Ship;
+class Wall;
+class Zombie;
+
+enum Types { ShipType, WallType, ZombieType, NONE };
+struct Type{
 private:
 	void *ref;
 public:
-	b2TypesEnum type;
+	Types type;
 
-	ModelType(b2TypesEnum t, void* r){
-		type = t;
-		ref = r;
+	Type(){
+		type = NONE;
+		ref = 0;
 	}
-	/*Type(Ship *s){
+	Type(Ship *s){
 		type = ShipType;
 		ref = s;
 	}
 	Type(Wall *w){
 		type = WallType;
 		ref = w;
+	}
+	Type(Zombie *z){
+		type = ZombieType;
+		ref = z;
 	}
 
 	Wall *getWall(){
@@ -24,8 +32,11 @@ public:
 
 	Ship *getShip(){
 		return (Ship *)ref;
-	}*/
+	}
+
+	Zombie *getZombie(){
+		return (Zombie *)ref;
+	}
 
 
 };
-
