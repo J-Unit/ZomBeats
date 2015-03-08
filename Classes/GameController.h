@@ -74,6 +74,9 @@ public:
 	//the current detection radius
 	float detectionRadius;
 
+	//zombie awarness output, remove it later
+	float currAwareness;
+
     /** 
      * Writes the current ship position to the HUD.
      *

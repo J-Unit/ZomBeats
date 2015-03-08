@@ -48,6 +48,8 @@ void GameController::EndContact(b2Contact* contact){
 void GameController::createZombies(){
 	Zombie *z1 = new Zombie(PLANET1_POS.x, PLANET1_POS.y, state->world);
 	Zombie *z2 = new Zombie(PLANET2_POS.x, PLANET2_POS.y, state->world);
+	state->zombies.AddTail(z1);
+	state->zombies.AddTail(z2);
 	view->enviornment->addChild(z1->sprite);
 	view->enviornment->addChild(z2->sprite);
 
@@ -119,6 +121,7 @@ bool GameController::init() {
 
 	//initial detection radius
 	detectionRadius = INITIAL_DETECTION_RADIUS;
+	currAwareness = 0.0f;
 
 	currentSong = new SongDecomposition(128.0, "../Resources/songs/SimpleBeat2.wav", elapsedTime);
 	//CocosDenshion::SimpleAudioEngine::sharedEngine()->playBackgroundMusic("../Resources/songs/SimpleBeat2.wav"/*currentSong->trackName.c_str()*/, true);
@@ -193,6 +196,30 @@ void GameController::update(float deltaTime) {
 
 		}
 		input->clickProcessed = true;
+
+		//check if there is a zombie within the radius
+		CTypedPtrDblElement<Zombie> *cur = state->zombies.GetHeadPtr();
+		Zombie *curZ;
+		b2Vec2 tmp;
+		int count = 0;
+		while (!state->zombies.IsSentinel(cur)){
+			curZ = cur->Data();
+			tmp = state->ship->body->GetPosition() - curZ->body->GetPosition();
+			//if this zombie is within our detection radius and we messed up the beat
+			float dis;
+			dis = sqrt(tmp.x*tmp.x + tmp.y*tmp.y);
+			if (!onBeat && dis < detectionRadius) {
+				curZ->increaseAwarness();
+			}
+			if (count == 0) {
+				currAwareness = curZ->awareness;
+			}
+
+			count++;
+			cur = cur->Next();
+		}
+
+
 	}
 
 	if (destination != 0 && from == destination){
@@ -262,6 +289,10 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 	stringstream d;
 	d << "Detection Radius: " << detectionRadius;
 	view->detectionRadiusHUD->setString(d.str());
+	
+	stringstream awr;
+	awr << "Zombie 1 Awarness: " << currAwareness;
+	view->zombieOneAwarenessHUD->setString(awr.str());
 
 	//visualize the detection radius
 	view->detectionRadiusCircle->drawCircle(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y), detectionRadius, 0.0f, 1000, false, ccColor4F(0, 0, 2.0f, 1.0f));

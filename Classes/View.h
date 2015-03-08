@@ -33,6 +33,7 @@ public:
 	Label*  beatHUD;
 	Label*  mainBeatHUD;
 	Label*  detectionRadiusHUD;
+	Label*  zombieOneAwarenessHUD; //remove this later
 	/** Node to hold all of our graphics. Necesary for resolution indepedence. */
 	Node*   allSpace;
 	/** Background in animation parallax. Stores the field of stars */
@@ -54,10 +55,6 @@ public:
 
 	/** Filmstrip representing the animated ship */
 	FilmStrip* shipImage;
-	/** A wall tile */
-	Sprite* wallTile;
-	Sprite* wallTile2;
-	vector<Sprite*> walls;
 
 
 	/**

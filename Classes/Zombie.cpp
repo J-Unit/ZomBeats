@@ -12,6 +12,8 @@ Zombie::Zombie(int x, int y, b2World *world)
 	type = Type(this);
 	body->SetUserData(&type);
 	setSprite(Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("planet1")));
+	//initialize the awareness
+	awareness = INITIAL_AWARENESS;
 }
 
 void Zombie::setSprite(Sprite* value)
@@ -24,6 +26,11 @@ void Zombie::setSprite(Sprite* value)
 		sprite->setPosition(pos.x, pos.y);
 		sprite->setAnchorPoint(Vec2(0.5f, 0.5f));
 	}
+}
+
+void Zombie::increaseAwarness()
+{
+	awareness += AWARENESS_INCREASE;
 }
 
 

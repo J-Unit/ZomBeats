@@ -153,6 +153,11 @@ void View::buildScene(LevelMap *level, Layer* l) {
 	detectionRadiusHUD->setPosition(Vec2(HUD_OFFSET.x * 60, HUD_OFFSET.y));
 	detectionRadiusHUD->setAnchorPoint(Vec2::ZERO);
 
+	zombieOneAwarenessHUD = Label::create();
+	zombieOneAwarenessHUD->setTTFConfig(*ResourceLoader::getInstance()->getFont("MarkerFelt"));
+	zombieOneAwarenessHUD->setPosition(Vec2(HUD_OFFSET.x * 60, HUD_OFFSET.y*5));
+	zombieOneAwarenessHUD->setAnchorPoint(Vec2::ZERO);
+
 	beatHUD = Label::create();
 	beatHUD->setTTFConfig(*ResourceLoader::getInstance()->getFont("MarkerFelt"));
 	beatHUD->setPosition(Vec2(HUD_OFFSET.x, HUD_OFFSET.y * 40));
@@ -176,6 +181,7 @@ void View::buildScene(LevelMap *level, Layer* l) {
 	l->addChild(beatHUD);
 	l->addChild(mainBeatHUD);
 	l->addChild(detectionRadiusHUD);
+	l->addChild(zombieOneAwarenessHUD); //remove this later
 }
 
 
