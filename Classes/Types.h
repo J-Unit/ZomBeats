@@ -1,8 +1,9 @@
 class Ship;
 class Wall;
 class Zombie;
+class Weapon;
 
-enum Types { ShipType, WallType, ZombieType, NONE };
+enum Types { ShipType, WallType, ZombieType, WeaponType, NONE };
 struct Type{
 private:
 	void *ref;
@@ -25,6 +26,10 @@ public:
 		type = ZombieType;
 		ref = z;
 	}
+	Type(Weapon *we){
+		type = WeaponType;
+		ref = we;
+	}
 
 	Wall *getWall(){
 		return (Wall *)ref;
@@ -36,6 +41,10 @@ public:
 
 	Zombie *getZombie(){
 		return (Zombie *)ref;
+	}
+
+	Weapon *getWeapon(){
+		return (Weapon *)ref;
 	}
 
 

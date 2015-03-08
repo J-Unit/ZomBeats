@@ -107,6 +107,7 @@ public:
 private:
 	void createZombies();
 	void createWalls();
+	void createWeapons();
 
 };
 

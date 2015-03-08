@@ -14,6 +14,7 @@
 #include "LevelMap.h"
 #include "SimpleAudioEngine.h"
 #include "Wall.h"
+#include "Sword.h"
 #include "Zombie.h"
 #include <math.h>
 #include <vector>
@@ -35,8 +36,33 @@ void GameController::BeginContact(b2Contact* contact){
 	Type *b1, *b2;
 	b1 = (Type *)contact->GetFixtureA()->GetBody()->GetUserData();
 	b2 = (Type *)contact->GetFixtureB()->GetBody()->GetUserData();
+
+	//wall contact
 	if(b1->type == WallType || b2->type== WallType) return;
-	state->ship->isDestroyed = true; //I turned this off so it won't restart the game, hacky fix oh yeah
+	
+	//weapon pickup
+	Weapon *w;
+	if ((b1->type == WeaponType && b2->type == ShipType) || (b1->type == ShipType && b2->type == WeaponType)){
+		w = (b1->type == WeaponType) ? b1->getWeapon() : b2->getWeapon();
+		w->isDesroyed = true;
+		state->ship->hasWeapon = true;
+		state->ship->currentWeapon = w;
+		return;
+	}
+
+	//fucking up zombies
+	Zombie *z;
+	if ((b1->type == ZombieType && b2->type == ShipType) || (b1->type == ShipType && b2->type == ZombieType)){
+		if (state->ship->hasWeapon){
+			z = (b1->type == ZombieType) ? b1->getZombie() : b2->getZombie();
+			z->isDestroyed = true;
+		}
+		else{
+			state->ship->isDestroyed = true;;
+		}
+	}
+
+	//state->ship->isDestroyed = true; //I turned this off so it won't restart the game, hacky fix oh yeah
 	//body->SetTransform(b2Vec2(0.0f, 0.0f), 0.0f);
 	//body->SetTransform(b2Vec2(0.0f, 0.0f), 0.0f);
 }
@@ -66,6 +92,7 @@ void GameController::createZombies(){
 	b1b->CreateFixture(&c1, 0.0f);
 	b2b->CreateFixture(&c2, 0.0f);*/
 }
+
 void GameController::createWalls(){
 	Wall *new_wall;
 	// set up the walls here
@@ -84,6 +111,13 @@ void GameController::createWalls(){
 		view->enviornment->addChild(new_wall->sprite);
 		//new_wall->setSprite(view->walls[i]);
 	}
+}
+
+void GameController::createWeapons(){
+	//Sword *s1 = new Sword(state->world, SPACE_TILE*5.9f, SPACE_TILE*(5.5f + 1*0.25f)); //this makes it corner inside of wall
+	Sword *s1 = new Sword(state->world, SPACE_TILE*9.0f, SPACE_TILE*(5.5f + 1 * 0.25f));
+	state->weapons.AddTail(s1);
+	view->enviornment->addChild(s1->sprite);
 }
 
 
@@ -109,6 +143,7 @@ bool GameController::init() {
 
 	createZombies();
 	createWalls();
+	createWeapons();
 
 	state->world->SetContactListener(this);
 
@@ -154,6 +189,40 @@ void GameController::update(float deltaTime) {
 	// Read the thrust from the user input
 	input->update();
 	bool clicked = input->didClick();
+
+	CTypedPtrDblElement<Weapon> *weapon = state->weapons.GetHeadPtr();
+	CTypedPtrDblElement<Weapon> *toDelete = NULL;
+	while (!state->weapons.IsSentinel(weapon))
+	{
+		Weapon *weap = weapon->Data();
+		if (weap->isDesroyed){
+			weap->isDesroyed = false;
+			toDelete = weapon;
+			state->world->DestroyBody(weap->body);
+			view->enviornment->removeChild(weap->sprite);
+		}
+		weapon = weapon->Next();
+	}
+	if (toDelete != NULL){
+		state->weapons.Remove(toDelete);
+	}
+
+	CTypedPtrDblElement<Zombie> *zombie = state->zombies.GetHeadPtr();
+	CTypedPtrDblElement<Zombie> *zombToDel = NULL;
+	while (!state->zombies.IsSentinel(zombie))
+	{
+		Zombie *zomb = zombie->Data();
+		if (zomb->isDestroyed){
+			zomb->isDestroyed = false;
+			toDelete = weapon;
+			state->world->DestroyBody(zomb->body);
+			view->enviornment->removeChild(zomb->sprite);
+		}
+		zombie = zombie->Next();
+	}
+	if (zombToDel != NULL){
+		state->zombies.Remove(zombToDel);
+	}
 
 	if (state->ship->isDestroyed){
 		state->world->DestroyBody(state->ship->body);

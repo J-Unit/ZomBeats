@@ -33,10 +33,11 @@ ResourceLoader::ResourceLoader() {
         textures["space"] = text;
     }
     //text = Director::getInstance()->getTextureCache()->addImage("../Resources/textures/ships.png");
-	text = Director::getInstance()->getTextureCache()->addImage("../Resources/textures/chuck.png");
+	//text = Director::getInstance()->getTextureCache()->addImage("../Resources/textures/chuck.png");
+	text = Director::getInstance()->getTextureCache()->addImage("../Resources/textures/spritebasic.png");
     if (text) {
         text->retain();
-        textures["ship"] = text;
+        textures["ricky"] = text;
     }
     text = Director::getInstance()->getTextureCache()->addImage("../Resources/textures/zombie.png");
     if (text) {
@@ -54,6 +55,13 @@ ResourceLoader::ResourceLoader() {
 	if (text) {
 		text->retain();
 		textures["wall"] = text;
+	}
+
+	//add the weapon textures here
+	text = Director::getInstance()->getTextureCache()->addImage("../Resources/textures/sword.png");
+	if (text) {
+		text->retain();
+		textures["sword"] = text;
 	}
 }
 

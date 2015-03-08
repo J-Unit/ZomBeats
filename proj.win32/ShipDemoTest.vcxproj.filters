@@ -51,10 +51,13 @@
     <ClCompile Include="..\Classes\Wall.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Weapon.h">
+    <ClCompile Include="..\Classes\View.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\View.cpp">
+    <ClCompile Include="..\Classes\Weapon.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Sword.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -111,6 +114,12 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\BoxObject.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Sword.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Weapon.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

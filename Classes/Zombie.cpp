@@ -5,6 +5,7 @@
 Zombie::Zombie(int x, int y, b2World *world)
 {
 	bodyDef.position.Set(x, y);
+	isDestroyed = false;
 	body = world->CreateBody(&bodyDef);
 	circle.m_radius = 60;
 	fixture.shape = &circle;

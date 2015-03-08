@@ -10,6 +10,7 @@ class Zombie : public BoxObject
 {
 public:
 	float awareness;
+	bool isDestroyed;
 	b2CircleShape circle;
 
 	Sprite *sprite;

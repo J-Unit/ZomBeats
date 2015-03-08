@@ -41,6 +41,8 @@ Ship::Ship(b2World *world, float x, float y) {
    // turning = 0.0f;
    // forward = 0.0f;
 	isDestroyed = false;
+	hasWeapon = false;
+	currentWeapon = NULL;
 	bodyDef.type = b2_dynamicBody;
 	bodyDef.position.Set(x, y);
 	bodyDef.fixedRotation = true;
@@ -55,7 +57,7 @@ Ship::Ship(b2World *world, float x, float y) {
 	body->SetLinearDamping(3.0f);
 	//body->SetAngularDamping(0.5f);
     sprite  = NULL;
-	setSprite(FilmStrip::create(ResourceLoader::getInstance()->getTexture("ship"), 1, 1, 1));
+	setSprite(FilmStrip::create(ResourceLoader::getInstance()->getTexture("ricky"), 1, 2, 2));
 }
 
 /**
@@ -82,6 +84,7 @@ void Ship::setSprite(FilmStrip* value) {
         sprite->release();
     }
     sprite = value;
+	sprite->setScale(0.8f);
     if (sprite != NULL) {
         sprite->retain(); // Do not delete it until we are done.
         sprite->setFrame(SHIP_IMG_FLAT);
@@ -109,9 +112,12 @@ void Ship::update(float deltaTime, Vec2 dir) {
     // Adjust the active forces.
    // forward = RANGE_CLAMP(forward, -SHIP_MAX_SPEED, SHIP_MAX_SPEED);
    // turning = RANGE_CLAMP(turning, -SHIP_MAX_TURN, SHIP_MAX_TURN);
-    if (sprite != NULL) {
-        //advanceFrame();
+    if (sprite != NULL && hasWeapon) {
+		sprite->setFrame(1);
     }
+	else if(sprite!=NULL && !hasWeapon) {
+		sprite->setFrame(0);
+	}
     
     // Process the ship thrust.
    /* if (forward != 0.0f) {

@@ -64,6 +64,8 @@ public:
      */
     Ship(b2World *world);
 	boolean isDestroyed;
+	boolean hasWeapon;
+	Weapon *currentWeapon;
 	b2PolygonShape dynamicBox;
     /**
      * Creates a new ship at the specified position (in world space).
