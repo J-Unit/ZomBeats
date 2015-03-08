@@ -21,6 +21,7 @@
 #include <iostream>
 #include <string>
 #include "audio/include/AudioEngine.h"
+#include "AIController.h"
 
 using namespace experimental;
 float lastbeat = 0;
@@ -61,10 +62,6 @@ void GameController::BeginContact(b2Contact* contact){
 			state->ship->isDestroyed = true;;
 		}
 	}
-
-	//state->ship->isDestroyed = true; //I turned this off so it won't restart the game, hacky fix oh yeah
-	//body->SetTransform(b2Vec2(0.0f, 0.0f), 0.0f);
-	//body->SetTransform(b2Vec2(0.0f, 0.0f), 0.0f);
 }
 
 void GameController::EndContact(b2Contact* contact){
@@ -78,6 +75,8 @@ void GameController::createZombies(){
 	state->zombies.AddTail(z2);
 	view->enviornment->addChild(z1->sprite);
 	view->enviornment->addChild(z2->sprite);
+	state->zombies.AddTail(z1);
+	state->zombies.AddTail(z2);
 
 	/*b2BodyDef b1, b2;
 	b1.position.Set(PLANET1_POS.x, PLANET1_POS.y);
@@ -140,6 +139,7 @@ bool GameController::init() {
     view->buildScene(state->level, this);
     state->ship = new Ship(state->world,SPACE_TILE*5.0f,SPACE_TILE*5.0f);
 	view->allSpace->addChild(state->ship->getSprite());
+	ai = new AIController();
 
 	createZombies();
 	createWalls();
@@ -225,6 +225,8 @@ void GameController::update(float deltaTime) {
 		input->clickProcessed = true;
 		destination = 0;
 	}
+
+
 	float x = state->ship->body->GetPosition().x;
 	float y = state->ship->body->GetPosition().y;
 	MapNode *from = state->level->locateCharacter(x, y);
@@ -293,6 +295,7 @@ void GameController::update(float deltaTime) {
 		dir.normalize();
 		state->ship->update(deltaTime, dir);
 	}
+	ai->update(state);
 
 
 
@@ -322,11 +325,17 @@ void GameController::update(float deltaTime) {
     //farSpace->setRotation(-shipModel->body->GetAngle());
 	//shipImage->setAnchorPoint(-offset);
 	view->enviornment->setAnchorPoint(offset);
+	
 	// Reanchor the node at the center of the screen and rotate about center.
     //nearSpace->setAnchorPoint(offset+center);
     //nearSpace->setRotation(-shipModel->body->GetAngle());
 	state->ship->getSprite()->setRotation(state->ship->body->GetAngle());
-
+	CTypedPtrDblElement<Zombie> *z = state->zombies.GetHeadPtr();
+	pos = z->Data()->body->GetPosition();
+	while (!state->zombies.IsSentinel(z)){
+		z->Data()->sprite->setPosition(pos.x, pos.y);
+		z = z->Next();
+	}
 }
 
 /**

@@ -1,8 +1,8 @@
 #ifndef BOXOBJECT_H
 #define BOXOBJECT_H
 
-#include "Box2D.h"
 #include "Types.h"
+#include "Box2D.h"
 
 class BoxObject{
 public:

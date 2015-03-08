@@ -4,7 +4,7 @@
 
 #define FLOCK_RADIUS 100.0f
 #define MIN_DIST 10.0f
-#define IMPULSE 1000.0f
+#define IMPULSE 2500.0f
 #define COHESION 1.0f
 #define ALIGNMENT 1.0f
 #define SEPERATION 1.0f
@@ -49,15 +49,18 @@ void AIController::update(GameState *state){
 			other = other->Next();
 		}
 		//COHESION
-		tmp.SetZero();
-		other = flock.GetHeadPtr();
-		while (!flock.IsSentinel(other)){
-			tmp += other->Data()->body->GetPosition();
-			other = other->Next();
+		if (flock.GetCount() > 0) {
+			tmp.SetZero();
+			other = flock.GetHeadPtr();
+			while (!flock.IsSentinel(other)){
+				tmp += other->Data()->body->GetPosition();
+				other = other->Next();
+			}
+			tmp.Set(tmp.x / flock.GetCount(), tmp.y / flock.GetCount());
+			tmp -= curZ->body->GetPosition();
+			tmp.Normalize();
+			dir += COHESION * tmp;
 		}
-		tmp.Set(tmp.x / flock.GetCount(), tmp.y / flock.GetCount());
-		tmp -= curZ->body->GetPosition();
-		dir += COHESION * tmp;
 		//ALIGNMENT
 		tmp.SetZero();
 		other = flock.GetHeadPtr();
@@ -68,20 +71,24 @@ void AIController::update(GameState *state){
 		tmp.Normalize();
 		dir += ALIGNMENT * tmp;
 		//SEPERATION
-		tmp.SetZero();
-		other = tooClose.GetHeadPtr();
-		while (!tooClose.IsSentinel(other)){
-			tmp += other->Data()->body->GetPosition();
-			other = other->Next();
+		if (tooClose.GetCount() > 0){
+			tmp.SetZero();
+			other = tooClose.GetHeadPtr();
+			while (!tooClose.IsSentinel(other)){
+				tmp += other->Data()->body->GetPosition();
+				other = other->Next();
+			}
+			tmp.Set(tmp.x / tooClose.GetCount(), tmp.y / tooClose.GetCount());
+			tmp = curZ->body->GetPosition() - tmp;
+			tmp.Normalize();
+			dir += SEPERATION * tmp;
 		}
-		tmp.Set(tmp.x / tooClose.GetCount(), tmp.y / tooClose.GetCount());
-		tmp = curZ->body->GetPosition() - tmp;
-		dir += SEPERATION * tmp;
 		//ZOMBIENESS
-		float x = (rand() - RAND_MAX / 2) / (RAND_MAX / 2);
-		float y = (rand() - RAND_MAX / 2) / (RAND_MAX / 2);
-		tmp = b2Vec2(x, y);
-		dir += ZOMBIENESS * tmp;
+		setVecGaussian(&tmp);
+		tmp.Set(tmp.x / 5, tmp.y / 5);
+		curZ->direction += tmp;
+		curZ->direction.Normalize();
+		dir += ZOMBIENESS * curZ->direction;
 		//ATTRACTION
 		tmp = state->ship->body->GetPosition() - curZ->body->GetPosition();
 		tmp.Normalize();

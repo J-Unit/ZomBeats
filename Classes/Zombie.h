@@ -14,6 +14,7 @@ public:
 	b2CircleShape circle;
 
 	Sprite *sprite;
+	b2Vec2 direction;
 
 
 	void setSprite(Sprite *value);

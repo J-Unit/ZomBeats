@@ -116,10 +116,14 @@
     <ClInclude Include="..\Classes\BoxObject.h">
       <Filter>src</Filter>
     </ClInclude>
+<<<<<<< HEAD
     <ClInclude Include="..\Classes\Sword.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\Weapon.h">
+=======
+    <ClInclude Include="..\Classes\util.h">
+>>>>>>> #3 simple AI working need to tune parameters still
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

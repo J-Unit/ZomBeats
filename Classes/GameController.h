@@ -27,6 +27,7 @@ class SongDecomposition;
 class GameState;
 struct MapNode;
 class View;
+class AIController;
 
 /**
  * Class represents the root node for the game engine.
@@ -61,7 +62,7 @@ public:
 
 	SongDecomposition*  currentSong;
    
-
+	AIController *ai;
 	GameState *state;
 	// Box2D world for physics, collisions etc.
 	MapNode* destination;

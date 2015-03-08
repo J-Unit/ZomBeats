@@ -1,3 +1,5 @@
+#include "util.h"
+
 #pragma once
 class GameState;
 

@@ -173,6 +173,7 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
     <ClInclude Include="..\Classes\SongDecomposition.h" />
     <ClInclude Include="..\Classes\Sword.h" />
     <ClInclude Include="..\Classes\Types.h" />
+    <ClInclude Include="..\Classes\util.h" />
     <ClInclude Include="..\Classes\View.h" />
     <ClInclude Include="..\Classes\Wall.h" />
     <ClInclude Include="..\Classes\Weapon.h" />
