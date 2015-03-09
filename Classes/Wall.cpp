@@ -12,7 +12,7 @@ Wall::Wall(b2World *world, float x, float y)
 	body = world->CreateBody(&bodyDef);
 	type = Type(this);
 	body->SetUserData(&type);
-	box.SetAsBox(10.0f, 10.0f);
+	box.SetAsBox(9.0f, 10.0f);
 	fixture.shape = &box;
 	body->CreateFixture(&fixture);
 	setSprite(Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("wall")));
