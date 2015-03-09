@@ -16,11 +16,13 @@ public:
 	* @param x The world space x-coordinate
 	* @param y The world space y-coordinate
 	*/
-	Wall(b2World *world, float x, float y);
+	//Wall(b2World *world, float x, float y);
+	Wall(){
+	}
+	void init(b2World *world, float x, float y);
+	float width, height;
 	Sprite* sprite;
 	b2PolygonShape box;
-	float pos_x;
-	float pos_y;
 	void    setSprite(Sprite* value);
 	~Wall();
 };

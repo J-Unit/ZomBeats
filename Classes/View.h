@@ -66,6 +66,8 @@ public:
 	*/
 	void buildScene(LevelMap *n, Layer* l);
 
+	void setMesh();
+
 	/**
 	* Creates a new game with an instance of this controller class.
 	*

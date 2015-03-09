@@ -1,11 +1,39 @@
 #include "LevelMap.h"
 #include <iostream>
 #include "PriorityQueue.h"
+#include "Wall.h"
+#include "util.h"
 
 const int LevelMap::OFF_X[8] = { -1, -1, -1, 0, 0, 1, 1, 1 };
 const int LevelMap::OFF_Y[8] = { -1, 0, 1, -1, 1, -1, 0, 1 };
 const float LevelMap::DIST[8] = { 1.41421356, 1, 1.41421356, 1, 1, 1.41421356, 1, 1.41421356 };
 
+
+void LevelMap::markWallTiles(){
+	for (int i = 0; i < BLOCKS_X; i++) for (int j = 0; j < BLOCKS_Y; j++){
+		for (int k = 0; k < nWalls; k++){
+			if (nodeWallOverlap(&mesh[i][j], &walls[k])){
+				mesh[i][j].walkable = false;
+			}
+		}
+	}
+}
+
+bool LevelMap::nodeWallOverlap(MapNode *node, Wall *wall){
+	b2Vec2 v;
+	float w, h;
+	float x, y;
+	float tw, th;
+	v = wall->body->GetPosition();
+	w = wall->width / 2;
+	h = wall->height / 2;
+	tw = tileWidth / 2;
+	th = tileHeight / 2;
+	x = getTileCenterX(node);
+	y = getTileCenterY(node);
+
+	return rectanglesOverlap(v.x - w, v.y - h, v.x + w, v.y + h, x - tw, y - tw, x + tw, y + tw);
+}
 
 // Reverses prev backpointers into forward next pointers so path can be followed
 void LevelMap::reversePath(MapNode* last)
@@ -40,7 +68,7 @@ float LevelMap::getTileCenterY(MapNode *tile){
 // A* implementation
 void LevelMap::shortestPath(MapNode *from, MapNode *to){
 	CTypedPtrHeap<MapNode> pq;
-	MapNode *node, *neighbor;
+	MapNode *node, *neighbor, *best = 0;
 	int x, y;
 	float c;
 	for (int i = 0; i < BLOCKS_X; i++) for (int j = 0; j < BLOCKS_Y; j++) {
@@ -48,6 +76,7 @@ void LevelMap::shortestPath(MapNode *from, MapNode *to){
 		mesh[i][j].next = 0;
 	}
 	from->pathCost = 0;
+	from->heuristicCost = heuristicDistance(from, to);
 	from->prev = 0;
 	pq.Insert(from);
 	while (!pq.IsEmpty()){
@@ -55,6 +84,9 @@ void LevelMap::shortestPath(MapNode *from, MapNode *to){
 		if (node == to){
 			reversePath(to);
 			return;
+		}
+		if (best == 0 || node->heuristicCost < best->heuristicCost){
+			best = node;
 		}
 		node->status = VISITED;
 		for (int i = 0; i < 8; i++){
@@ -84,6 +116,7 @@ void LevelMap::shortestPath(MapNode *from, MapNode *to){
 			}
 		}
 	}
+	reversePath(best);
 }
 
 LevelMap::~LevelMap()

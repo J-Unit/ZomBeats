@@ -75,8 +75,6 @@ void GameController::createZombies(){
 	state->zombies.AddTail(z2);
 	view->enviornment->addChild(z1->sprite);
 	view->enviornment->addChild(z2->sprite);
-	state->zombies.AddTail(z1);
-	state->zombies.AddTail(z2);
 
 	/*b2BodyDef b1, b2;
 	b1.position.Set(PLANET1_POS.x, PLANET1_POS.y);
@@ -93,23 +91,26 @@ void GameController::createZombies(){
 }
 
 void GameController::createWalls(){
-	Wall *new_wall;
+	state->level->walls = new Wall[30];
+	state->level->nWalls = 30;
+	int j = 0;
 	// set up the walls here
 	//we can move the below code to level editor later so it looks clean
-	//-------------------------------------------------------------------------------------
+	//-------------------------------f------------------------------------------------------
 	// a vertical wall here
-	for (int i = 0; i < 20; i++) {
-		new_wall = new Wall(state->world, SPACE_TILE*5.5f, SPACE_TILE*(5.5f + i*0.25f));
-		view->enviornment->addChild(new_wall->sprite);
+	for (int i = 0; i < 20; i++, j++) {
+		state->level->walls[j].init(state->world, SPACE_TILE*5.5f, SPACE_TILE*(5.5f + i*0.25f));
+		view->enviornment->addChild(state->level->walls[j].sprite);
 		//new_wall->setSprite(view->walls[i]);
 	}
 
 	// a horizontal wall here
-	for (int i = 20; i < 30; i++) {
-		new_wall = new Wall(state->world, SPACE_TILE*(5.5f + (i - 19)*0.25f), SPACE_TILE*5.5f);
-		view->enviornment->addChild(new_wall->sprite);
+	for (int i = 20; i < 30; i++, j++) {
+		state->level->walls[j].init(state->world, SPACE_TILE*(5.5f + (i - 19)*0.25f), SPACE_TILE*5.5f);
+		view->enviornment->addChild(state->level->walls[j].sprite);
 		//new_wall->setSprite(view->walls[i]);
 	}
+	state->level->markWallTiles();
 }
 
 void GameController::createWeapons(){
@@ -331,8 +332,8 @@ void GameController::update(float deltaTime) {
     //nearSpace->setRotation(-shipModel->body->GetAngle());
 	state->ship->getSprite()->setRotation(state->ship->body->GetAngle());
 	CTypedPtrDblElement<Zombie> *z = state->zombies.GetHeadPtr();
-	pos = z->Data()->body->GetPosition();
 	while (!state->zombies.IsSentinel(z)){
+		pos = z->Data()->body->GetPosition();
 		z->Data()->sprite->setPosition(pos.x, pos.y);
 		z = z->Next();
 	}
@@ -382,7 +383,7 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 			float y1 = state->level->getTileCenterY(last);
 			float x2 = state->level->getTileCenterX(cur);
 			float y2 = state->level->getTileCenterY(cur);
-			view->path->drawLine(Vec2(x1, y1), Vec2(x2, y2), ccColor4F(0, 0, 0, 1.0f));
+			view->path->drawLine(Vec2(x1, y1), Vec2(x2, y2), ccColor4F(1, 1, 1, 1.0f));
 			last = cur;
 			cur = cur->next;
 		} while (cur != 0);

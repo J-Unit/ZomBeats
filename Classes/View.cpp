@@ -69,11 +69,13 @@ void View::buildScene(LevelMap *level, Layer* l) {
 	meshVis->setContentSize(allSpace->getContentSize());
 	meshVis->setPosition(center);
 	meshVis->setAnchorPoint(anchor);
-	for (int i = 0; i < BLOCKS_X; i++) for (int j = 0; j < BLOCKS_Y; j++){
+	/*for (int i = 0; i < BLOCKS_X; i++) for (int j = 0; j < BLOCKS_Y; j++){
 		MapNode *n = &(level->mesh[i][j]);
-		Vec2 loc = Vec2(level->getTileCenterX(n), level->getTileCenterY(n));
-		meshVis->drawPoint(loc, 7.0f, cocos2d::ccColor4F(0, 0, 0, 0.7f));
-	}
+		if (n->walkable){
+			Vec2 loc = Vec2(level->getTileCenterX(n), level->getTileCenterY(n));
+			meshVis->drawPoint(loc, 7.0f, cocos2d::ccColor4F(0, 0, 0, 0.7f));
+		}
+	}*/
 	path = DrawNode::create();
 	path->setContentSize(allSpace->getContentSize());
 	path->setPosition(center);

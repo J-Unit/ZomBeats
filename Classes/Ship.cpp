@@ -15,7 +15,7 @@
 #define SHIP_MAX_TURN      1.0f
 #define SHIP_MAX_SPEED    10.0f
 #define SHIP_THRUST_FACTOR 0.4f
-#define IMPULSE 1700
+#define IMPULSE 7000
 
 #define DCOS_90(a)  (cos(M_PI*(a+90.0f)/180.0f))
 #define DSIN_90(a)  (sin(M_PI*(a+90.0f)/180.0f))
@@ -51,8 +51,8 @@ Ship::Ship(b2World *world, float x, float y) {
 	body->SetUserData(&type);
 	dynamicBox.SetAsBox(60.0f, 80.0f);
 	fixture.shape = &dynamicBox;
-	fixture.density = 0.0f;
-	//fixture.friction = 0.5f;
+	fixture.density = 0.1f;
+	fixture.friction = 0.5f;
 	body->CreateFixture(&fixture);
 	body->SetLinearDamping(3.0f);
 	//body->SetAngularDamping(0.5f);

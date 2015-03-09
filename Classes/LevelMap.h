@@ -2,10 +2,11 @@
 #include "Node.h"
 #include "cocos2d.h"
 
-#define BLOCKS_X 50
-#define BLOCKS_Y 50
+#define BLOCKS_X 60
+#define BLOCKS_Y 60
 
 //struct MapNode;
+class Wall;
 
 class LevelMap
 {
@@ -16,7 +17,12 @@ public:
 	float tileWidth;
 	float tileHeight;
 
+	int nWalls;
+	Wall *walls;
+
 	void shortestPath(MapNode *from, MapNode *to);
+	void markWallTiles();
+
 
 
 	LevelMap(int width, int height){
@@ -48,6 +54,7 @@ private:
 	static const float DIST[8];
 
 	void reversePath(MapNode *to);
+	bool nodeWallOverlap(MapNode *node, Wall *wall);
 
 	float heuristicDistance(MapNode *a, MapNode *b);
 

@@ -20,4 +20,8 @@ static void setVecGaussian(b2Vec2 *v){
 	v->Set(x, y);
 }
 
+static bool rectanglesOverlap(float b1x1, float b1y1, float b1x2, float b1y2, float b2x1, float b2y1, float b2x2, float b2y2){
+	return !((b1x1 > b2x2 || b2x1 > b1x2) || (b2y2 < b1y1 || b1y2 < b2y1));
+}
+
 #endif
