@@ -49,9 +49,9 @@ Ship::Ship(b2World *world, float x, float y) {
 	body = world->CreateBody(&bodyDef);
 	type = Type(this);
 	body->SetUserData(&type);
-	dynamicBox.SetAsBox(10.0f, 10.0f);
+	dynamicBox.SetAsBox(60.0f, 80.0f);
 	fixture.shape = &dynamicBox;
-	fixture.density = 1.0f;
+	fixture.density = 0.0f;
 	//fixture.friction = 0.5f;
 	body->CreateFixture(&fixture);
 	body->SetLinearDamping(3.0f);

@@ -357,6 +357,8 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 	view->path->clear();
 	//clear the old detection circle
 	view->detectionRadiusCircle->clear();
+	//clear the old hitbox
+	view->hitBox->clear();
 
 	stringstream d;
 	d << "Detection Radius: " << detectionRadius;
@@ -368,6 +370,9 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 
 	//visualize the detection radius
 	view->detectionRadiusCircle->drawCircle(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y), detectionRadius, 0.0f, 1000, false, ccColor4F(0, 0, 2.0f, 1.0f));
+
+	//visualize the hitbox for main character
+	view->hitBox->drawRect(Vec2(state->ship->body->GetPosition().x-30.0f, state->ship->body->GetPosition().y-40.0f), Vec2(state->ship->body->GetPosition().x+30.0f, state->ship->body->GetPosition().y+40.0f), ccColor4F(2.0f, 2.0f, 2.0f, 1.0f));
 
 	if (destination != 0){
 		MapNode *last = state->level->locateCharacter(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y);

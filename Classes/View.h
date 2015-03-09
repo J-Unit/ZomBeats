@@ -44,6 +44,7 @@ public:
 	DrawNode* meshVis;
 	DrawNode* path;
 	DrawNode* detectionRadiusCircle;
+	DrawNode* hitBox;
 
 	Node*   enviornment;
 
