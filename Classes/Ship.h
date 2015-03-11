@@ -9,6 +9,7 @@
 
 #include <stdio.h>
 #include <cocos2d.h>
+#include <cocos2d/external/Box2D/Box2D.h>
 #include "BoxObject.h"
 
 using namespace cocos2d;
@@ -63,8 +64,8 @@ public:
      * Creates a new ship at the origin
      */
     Ship(b2World *world);
-	boolean isDestroyed;
-	boolean hasWeapon;
+	bool isDestroyed;
+	bool hasWeapon;
 	Weapon *currentWeapon;
 	b2PolygonShape dynamicBox;
     /**

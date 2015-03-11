@@ -83,7 +83,7 @@ protected:
 	Vec2 inputPos;
     
 public:
-	boolean clickProcessed;
+	bool clickProcessed;
 	Vec2 lastClick;
 
     /**

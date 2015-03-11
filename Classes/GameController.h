@@ -8,8 +8,9 @@
 #define __TD_GAME_CONTROLLER_H__
 
 #include <stdio.h>
-#include "Box2D.h"
+//#include "Box2D.h"
 #include "cocos2d.h"
+#include <cocos2d/external/Box2D/Box2D.h>
 
 //define couple parameters here for grooviness meter
 #define INITIAL_DETECTION_RADIUS    100.0f
@@ -47,8 +48,10 @@ public:
     /** Controller for abstracting out input away from layer */
     InputController* input;
 
-	void GameController::BeginContact(b2Contact* contact);
-	void GameController::EndContact(b2Contact* contact);
+	//void GameController::BeginContact(b2Contact* contact);
+	//void GameController::EndContact(b2Contact* contact);
+	void BeginContact(b2Contact* contact);
+	void EndContact(b2Contact* contact);
 
 	/**
     // VIEW

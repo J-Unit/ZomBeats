@@ -1,5 +1,6 @@
 #include <cocos2d.h>
 #include "BoxObject.h"
+#include <cocos2d/external/Box2D/Box2D.h>
 
 #define PLANET_SCALE 0.5f
 #define AWARENESS_INCREASE 1.5f

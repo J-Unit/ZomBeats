@@ -1,6 +1,6 @@
 #include "Zombie.h"
 #include "ResourceLoader.h"
-#include "Box2d.h"
+#include <cocos2d/external/Box2D/Box2D.h>
 
 Zombie::Zombie(int x, int y, b2World *world)
 {

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <cocos2d.h>
+#include <cocos2d/external/Box2D/Box2D.h>
 #include "BoxObject.h"
 
 using namespace cocos2d;

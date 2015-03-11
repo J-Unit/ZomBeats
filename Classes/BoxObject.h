@@ -2,7 +2,9 @@
 #define BOXOBJECT_H
 
 #include "Types.h"
-#include "Box2D.h"
+#include <cocos2D/external/Box2D/Dynamics/b2Body.h>
+#include <cocos2D/external/Box2D/Dynamics/b2Fixture.h>
+//#include "Box2D.h"
 
 class BoxObject{
 public:

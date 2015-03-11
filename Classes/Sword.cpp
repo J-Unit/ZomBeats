@@ -1,5 +1,6 @@
 #include "Sword.h"
 #include "ResourceLoader.h"
+#include <cocos2d/external/Box2D/Box2D.h>
 
 
 Sword::Sword(b2World *world, float x, float y)
