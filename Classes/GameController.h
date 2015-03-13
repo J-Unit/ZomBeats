@@ -14,8 +14,10 @@
 
 //define couple parameters here for grooviness meter
 #define INITIAL_DETECTION_RADIUS    100.0f
-#define DETECTION_RADIUS_INCREASE   10.0f
+#define DETECTION_RADIUS_INCREASE   20.0f
 #define DETECTION_RADIUS_DECREASE   6.0f
+#define MIN_DETECTION_RADIUS 125.0f
+#define MAX_DETECTION_RADIUS 400.0f
 
 using namespace cocos2d;
 using namespace std;

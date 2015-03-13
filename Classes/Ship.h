@@ -18,6 +18,8 @@ using namespace cocos2d;
 #define SHIP_IMG_LEFT   0
 #define SHIP_IMG_FLAT   9
 #define SHIP_IMG_RIGHT 17
+#define MAX_BOOST_FRAMES 45
+
 
 // Forward declaration to minimize imports in header
 class FilmStrip;
@@ -67,7 +69,8 @@ public:
 	bool isDestroyed;
 	bool hasWeapon;
 	Weapon *currentWeapon;
-	b2PolygonShape dynamicBox;
+	b2PolygonShape dynamicBox; 
+	int boostFrames;
     /**
      * Creates a new ship at the specified position (in world space).
      *
@@ -167,7 +170,7 @@ public:
      *
      * @param deltaTime Time elapsed since last called.
      */
-    void    update(float deltaTime, Vec2 thrust);    
+    bool   update(float deltaTime, Vec2 thrust);    
 };
 
 #endif /* defined(__TD_SHIP_H__) */

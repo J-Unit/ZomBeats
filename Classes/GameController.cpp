@@ -182,8 +182,8 @@ void GameController::update(float deltaTime) {
 
 	//cout << "Elapsed time: "<< elapsedTime <<endl;
 	// Read the thrust from the user input
-	input->update();
-	bool clicked = input->didClick();
+	//input->update();
+	//bool clicked = input->didClick();
 
 	CTypedPtrDblElement<Weapon> *weapon = state->weapons.GetHeadPtr();
 	CTypedPtrDblElement<Weapon> *toDelete = NULL;
@@ -245,18 +245,19 @@ void GameController::update(float deltaTime) {
 			destination = 0;
 
 			//if it is not on beat, increase the detection radius slightly
-			if (detectionRadius < 350.0f) {
+			if (detectionRadius < MAX_DETECTION_RADIUS) {
 				detectionRadius += DETECTION_RADIUS_INCREASE;
 			}
 		}
 		else{
+			state->ship->boostFrames = MAX_BOOST_FRAMES;
 			MapNode *dest = state->level->locateCharacter((input->lastClick.x - view->screen_size_x/2.0) + x, 
 				-(input->lastClick.y - view->screen_size_y/2.0) + y);
 			state->level->shortestPath(from, dest);
 			destination = from->next;
 
 			//if it is on beat, decrease the detection radius slightly
-			if (detectionRadius > 50.0f) {
+			if (detectionRadius > MIN_DETECTION_RADIUS) {
 				detectionRadius -= DETECTION_RADIUS_DECREASE;
 			}
 
@@ -294,7 +295,9 @@ void GameController::update(float deltaTime) {
 	if (destination != 0){
 		Vec2 dir = Vec2(state->level->getTileCenterX(destination) - x, state->level->getTileCenterY(destination) - y);
 		dir.normalize();
-		state->ship->update(deltaTime, dir);
+		if (!state->ship->update(deltaTime, dir)){
+			destination = 0;
+		}
 	}
 	ai->update(state);
 

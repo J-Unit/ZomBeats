@@ -41,6 +41,7 @@ Ship::Ship(b2World *world, float x, float y) {
    // angle   = 0.0f;
    // turning = 0.0f;
    // forward = 0.0f;
+	boostFrames = 0;
 	isDestroyed = false;
 	hasWeapon = false;
 	currentWeapon = NULL;
@@ -102,8 +103,9 @@ void Ship::setSprite(FilmStrip* value) {
  *
  * @param deltaTime Time elapsed since last called.
  */
-void Ship::update(float deltaTime, Vec2 dir) {
-    
+bool Ship::update(float deltaTime, Vec2 dir) {
+	if (boostFrames <= 0) return false;
+	boostFrames--;
 	//float32 angle = body->GetAngle();
 	body->ApplyLinearImpulse(b2Vec2(dir.x * IMPULSE, dir.y * IMPULSE), body->GetPosition(), true);
 	//body->ApplyForceToCenter(b2Vec2(thrust.y * 1000 * DCOS_90(angle)  * SHIP_THRUST_FACTOR, thrust.y * 1000 * (-DSIN_90(angle)) * SHIP_THRUST_FACTOR), true);
@@ -135,6 +137,7 @@ void Ship::update(float deltaTime, Vec2 dir) {
     
     // Move the ship
     position += velocity;*/
+	return true;
 }
 
 /**
