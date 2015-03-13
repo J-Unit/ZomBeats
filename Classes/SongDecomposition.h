@@ -1,6 +1,6 @@
 #include <string>
 
-#define ERROR_WINDOW 0.1 //in seconds
+#define ERROR_WINDOW 0.15 //in seconds
 
 class SongDecomposition
 {

@@ -71,15 +71,6 @@ InputController::InputController(cocos2d::EventDispatcher* dispatcher) {
     // Create the accelerometer listener. This is an autorelease object.
     Device::setAccelerometerEnabled(true);  // Comment out to remove accelerometer.
     accelListener = EventListenerAcceleration::create(CC_CALLBACK_2(InputController::accleromCB, this));
-    
-    // Create the keyboard listener. This is an autorelease object.
-    //keybdListener = EventListenerKeyboard::create();
-    //keybdListener->onKeyPressed = [=](EventKeyboard::KeyCode keyCode, Event* event) {
-    //                                   this->keyPressedCB(keyCode,event);
-    //                                };
-    //keybdListener->onKeyReleased = [=](EventKeyboard::KeyCode keyCode, Event* event) {
-    //                                    this->keyReleasedCB(keyCode,event);
-    //                                };
 	mouseListener = EventListenerMouse::create();
 	mouseListener->onMouseDown = [=](Event* event){
 		this->mousePressedCB(event);
@@ -144,32 +135,6 @@ void InputController::stopInput() {
  */
 void InputController::update() {
     // Right now, we only use this to process the keyboard.
-	/*
-    if (active && keyCount > 0) {
-        // Forces increase the longer you hold a key.
-        forceLeft  += (keyLeft  ? KEYBOARD_FORCE_INCREMENT : 0.0f);
-        forceRight += (keyRight ? KEYBOARD_FORCE_INCREMENT : 0.0f);
-        forceDown  += (keyDown  ? KEYBOARD_FORCE_INCREMENT : 0.0f);
-        forceUp    += (keyUp    ? KEYBOARD_FORCE_INCREMENT : 0.0f);
-        
-        // Clamp everything so it does not fly off to infinity.
-        forceLeft  = (forceLeft  > INPUT_MAXIMUM_FORCE ? INPUT_MAXIMUM_FORCE : forceLeft);
-        forceRight = (forceRight > INPUT_MAXIMUM_FORCE ? INPUT_MAXIMUM_FORCE : forceRight);
-        forceDown  = (forceDown  > INPUT_MAXIMUM_FORCE ? INPUT_MAXIMUM_FORCE : forceDown);
-        forceUp    = (forceUp    > INPUT_MAXIMUM_FORCE ? INPUT_MAXIMUM_FORCE : forceUp);
-    
-        // Update the keyboard thrust.  Result is cumulative.
-        keybdThrust.x += forceRight;
-        keybdThrust.x -= forceLeft;
-        keybdThrust.y += forceUp;
-        keybdThrust.y -= forceDown;
-        keybdThrust.x = RANGE_CLAMP(keybdThrust.x, -INPUT_MAXIMUM_FORCE, INPUT_MAXIMUM_FORCE);
-        keybdThrust.y = RANGE_CLAMP(keybdThrust.y, -INPUT_MAXIMUM_FORCE, INPUT_MAXIMUM_FORCE);
-        
-        // Transfer to main thrust. This keeps us from "adding" to accelerometer or touch.
-        inputThrust.x = keybdThrust.x/X_ADJUST_FACTOR;
-        inputThrust.y = keybdThrust.y/Y_ADJUST_FACTOR;
-    }*/
 }
 
 /**
@@ -181,24 +146,31 @@ void InputController::update() {
  * @return True if the touch was processed; false otherwise.
  */
 bool InputController::touchBeganCB(Touch* t, Event* event) {
-    startTouch = t->getLocation();
-    return true;
+	startTouch = t->getLocation();
+	Vec2 touch = t->getLocationInView();
+	lastClick.set(touch.x, touch.y);
+	clickProcessed = false;
+	clicked = true;
+	startTouch.x = RANGE_CLAMP(startTouch.x, -INPUT_MAXIMUM_FORCE, INPUT_MAXIMUM_FORCE);
+	startTouch.y = RANGE_CLAMP(startTouch.y, -INPUT_MAXIMUM_FORCE, INPUT_MAXIMUM_FORCE);
+	inputThrust.x = startTouch.x / X_ADJUST_FACTOR;
+	inputThrust.y = startTouch.y / Y_ADJUST_FACTOR;
+	return true;
 }
 
+
+
 /**
- * Callback for the beginning of a touch event
- *
- * @param t     The touch information
- * @param event The associated event
- */
+* Callback for the beginning of a touch event
+*
+* @param t     The touch information
+* @param event The associated event
+*/
+
 void InputController::touchEndedCB(Touch* t, Event* event) {
-    Vec2 finishTouch = t->getLocation()-startTouch;
-    finishTouch.x = RANGE_CLAMP(finishTouch.x, -INPUT_MAXIMUM_FORCE, INPUT_MAXIMUM_FORCE);
-    finishTouch.y = RANGE_CLAMP(finishTouch.y, -INPUT_MAXIMUM_FORCE, INPUT_MAXIMUM_FORCE);
-    
-    // Go ahead and apply to thrust now.
-    //inputThrust.x = finishTouch.x/X_ADJUST_FACTOR;
-    //inputThrust.y = finishTouch.y/Y_ADJUST_FACTOR;
+	clicked = false;
+	inputThrust.x = 0.0f / X_ADJUST_FACTOR;
+	inputThrust.y = 0.0f / Y_ADJUST_FACTOR;
 }
 
 /**
@@ -212,79 +184,6 @@ void InputController::accleromCB(Acceleration *acc, Event *event) {
    // inputThrust.x =  acc->x*ACCELEROM_FACTOR;
    // inputThrust.y = -acc->y*ACCELEROM_FACTOR;
 }
-
-/**
- * Callback for a key press.
- *
- * @param keyCode   The key pressed
- * @param event     The associated event
- */
-
-/*void InputController::keyPressedCB(EventKeyboard::KeyCode keyCode, Event* event) {
-    switch(keyCode) {
-        case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
-            keyCount++;
-            keyLeft = true;
-            forceLeft = KEYBOARD_INITIAL_FORCE;
-            break;
-        case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
-            keyCount++;
-            keyRight = true;
-            forceRight = KEYBOARD_INITIAL_FORCE;
-            break;
-        case EventKeyboard::KeyCode::KEY_UP_ARROW:
-            keyCount++;
-            keyUp = true;
-            forceUp = KEYBOARD_INITIAL_FORCE;
-            break;
-        case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
-            keyCount++;
-            keyDown = true;
-            forceDown = KEYBOARD_INITIAL_FORCE;
-            break;
-        default:
-            break;
-    }
-}*/
-
-/**
- * Callback for a key release.
- *
- * @param keyCode   The key released
- * @param event     The associated event
- */
-/*void InputController::keyReleasedCB(EventKeyboard::KeyCode keyCode, Event* event) {
-    switch(keyCode) {
-        case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
-            keyCount--;
-            keyLeft = false;
-			keybdThrust.x = 0.0f;
-            forceLeft = 0.0f;
-            break;
-        case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
-            keyCount--;
-            keyRight = false;
-			keybdThrust.x = 0.0f;
-            forceRight = 0.0f;
-            break;
-        case EventKeyboard::KeyCode::KEY_UP_ARROW:
-            keyCount--;
-            keyUp = false;
-			keybdThrust.y = 0.0f;
-            forceUp = 0.0f;
-            break;
-        case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
-            keyCount--;
-            keyDown = false;
-			keybdThrust.y = 0.0f;
-            forceDown = 0.0f;
-            break;
-        default:
-            break;
-    }
-	inputThrust.x = keybdThrust.x / X_ADJUST_FACTOR;
-	inputThrust.y = keybdThrust.y / Y_ADJUST_FACTOR;
-}*/
 
 
 void InputController::mousePressedCB(Event* event) {
