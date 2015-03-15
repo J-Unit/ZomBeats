@@ -16,8 +16,9 @@ ResourceLoader* ResourceLoader::gLoader = NULL;
  * Because this is not asynchronous, this loads all assets on creation.
  */
 ResourceLoader::ResourceLoader() {
+	FileUtils::getInstance()->addSearchPath("../../Resources/");
     // Load the font.
-    TTFConfig* font = new TTFConfig("../Resources/fonts/Marker Felt.ttf",24,GlyphCollection::DYNAMIC);
+    TTFConfig* font = new TTFConfig("fonts/Marker Felt.ttf",24,GlyphCollection::DYNAMIC);
     if (!FontAtlasCache::getFontAtlasTTF(*font)) {
         // Failed to load font.
         delete font;
@@ -27,38 +28,38 @@ ResourceLoader::ResourceLoader() {
 
     // Load the textures (Autorelease objects)
     Texture2D* text;
-    text = Director::getInstance()->getTextureCache()->addImage("../Resources/textures/wood.png");
+    text = Director::getInstance()->getTextureCache()->addImage("textures/wood.png");
     if (text) {
         text->retain();
         textures["space"] = text;
     }
-    //text = Director::getInstance()->getTextureCache()->addImage("../Resources/textures/ships.png");
-	//text = Director::getInstance()->getTextureCache()->addImage("../Resources/textures/chuck.png");
-	text = Director::getInstance()->getTextureCache()->addImage("../Resources/textures/spritebasic.png");
+    //text = Director::getInstance()->getTextureCache()->addImage("textures/ships.png");
+	//text = Director::getInstance()->getTextureCache()->addImage("textures/chuck.png");
+	text = Director::getInstance()->getTextureCache()->addImage("textures/spritebasic.png");
     if (text) {
         text->retain();
         textures["ricky"] = text;
     }
-    text = Director::getInstance()->getTextureCache()->addImage("../Resources/textures/zombie.png");
+    text = Director::getInstance()->getTextureCache()->addImage("textures/zombie.png");
     if (text) {
         text->retain();
         textures["planet1"] = text;
     }
-    text = Director::getInstance()->getTextureCache()->addImage("../Resources/textures/zombie.png");
+    text = Director::getInstance()->getTextureCache()->addImage("textures/zombie.png");
     if (text) {
         text->retain();
         textures["planet2"] = text;
     }
 
 	//add the wall textures here
-	text = Director::getInstance()->getTextureCache()->addImage("../Resources/textures/wall.png");
+	text = Director::getInstance()->getTextureCache()->addImage("textures/wall.png");
 	if (text) {
 		text->retain();
 		textures["wall"] = text;
 	}
 
 	//add the weapon textures here
-	text = Director::getInstance()->getTextureCache()->addImage("../Resources/textures/sword.png");
+	text = Director::getInstance()->getTextureCache()->addImage("textures/sword.png");
 	if (text) {
 		text->retain();
 		textures["sword"] = text;

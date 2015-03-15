@@ -159,8 +159,8 @@ bool GameController::init() {
 	detectionRadius = INITIAL_DETECTION_RADIUS;
 	currAwareness = 0.0f;
 
-	currentSong = new SongDecomposition(120.0, "../Resources/songs/ChillDeepHouse.mp3", -.051);
-	audioid = AudioEngine::play2d("../Resources/songs/ChillDeepHouse.mp3", true, 1);
+	currentSong = new SongDecomposition(120.0, "songs/ChillDeepHouse.mp3", -.051);
+	audioid = AudioEngine::play2d("songs/ChillDeepHouse.mp3", true, 1);
 
 	// Tell the director we are ready for animation.
     this->scheduleUpdate();

@@ -110,8 +110,8 @@ void Animate3D::startWithTarget(Node *target)
     _boneCurves.clear();
     auto skin = sprite->getSkeleton();
     bool hasCurve = false;
-    for (unsigned int  i = 0; i < skin->getBoneCount(); i++) {
-        auto bone = skin->getBoneByIndex(i);
+    for (int  i = 0; i < skin->getBoneCount(); i++) {
+        auto bone = skin->getBoneByIndex(static_cast<unsigned int>(i));
         auto curve = _animation->getBoneCurveByName(bone->getName());
         if (curve)
         {
@@ -131,17 +131,26 @@ void Animate3D::startWithTarget(Node *target)
         auto action = (*runningAction).second;
         if (action != this)
         {
-            s_fadeOutAnimates[sprite] = action;
-            action->_state = Animate3D::Animate3DState::FadeOut;
-            action->_accTransTime = 0.0f;
-            action->_weight = 1.0f;
-            action->_lastTime = 0.f;
-            
-            s_fadeInAnimates[sprite] = this;
-            _accTransTime = 0.0f;
-            _state = Animate3D::Animate3DState::FadeIn;
-            _weight = 0.f;
-            _lastTime = 0.f;
+            if (_transTime < 0.001f)
+            {
+                s_runningAnimates[sprite] = this;
+                _state = Animate3D::Animate3DState::Running;
+                _weight = 1.0f;
+            }
+            else
+            {
+                s_fadeOutAnimates[sprite] = action;
+                action->_state = Animate3D::Animate3DState::FadeOut;
+                action->_accTransTime = 0.0f;
+                action->_weight = 1.0f;
+                action->_lastTime = 0.f;
+                
+                s_fadeInAnimates[sprite] = this;
+                _accTransTime = 0.0f;
+                _state = Animate3D::Animate3DState::FadeIn;
+                _weight = 0.f;
+                _lastTime = 0.f;
+            }
         }
     }
     else

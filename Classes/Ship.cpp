@@ -8,7 +8,7 @@
 #include "FilmStrip.h"
 #include "math.h"
 #include "ResourceLoader.h"
-#include <cocos2D/external/Box2D/Box2D.h>
+#include "Box2D/Box2D.h"
 
 // Macros to eliminate magic numbers
 // Some of these are carried over from the 3152 lab and unused.

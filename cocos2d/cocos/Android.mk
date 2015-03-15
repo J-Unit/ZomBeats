@@ -1,5 +1,4 @@
 LOCAL_PATH := $(call my-dir)
-
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := cocos2dx_internal_static
@@ -257,6 +256,7 @@ LOCAL_STATIC_LIBRARIES += audioengine_static
 
 include $(BUILD_STATIC_LIBRARY)
 #==============================================================
+$(call import-add-path, $(LOCAL_PATH)/platform/android)
 $(call import-module,freetype2/prebuilt/android)
 $(call import-module,platform/android)
 $(call import-module,png/prebuilt/android)

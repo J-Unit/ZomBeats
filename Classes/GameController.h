@@ -10,7 +10,7 @@
 #include <stdio.h>
 //#include "Box2D.h"
 #include "cocos2d.h"
-#include <cocos2d/external/Box2D/Box2D.h>
+#include "Box2D/Box2D.h"
 
 //define couple parameters here for grooviness meter
 #define INITIAL_DETECTION_RADIUS    100.0f

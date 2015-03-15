@@ -1,7 +1,7 @@
 #ifndef UTIL_H
 #define UTIL_H
 
-#include <cocos2D/external/Box2D/Box2D.h>
+#include "Box2D/Box2D.h"
 #include <random>
 
 

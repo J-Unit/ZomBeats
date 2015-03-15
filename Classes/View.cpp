@@ -1,6 +1,6 @@
 #include "View.h"
 #include "LevelMap.h"
-#include <cocos2d/external/Box2D/Box2D.h>
+#include "Box2D/Box2D.h"
 #include "ResourceLoader.h"
 #include "FilmStrip.h"
 #include <string>
