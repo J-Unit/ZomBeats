@@ -90,7 +90,6 @@ void View::buildScene(LevelMap *level, Layer* l) {
 	hitBox->setContentSize(allSpace->getContentSize());
 	hitBox->setPosition(center);
 	hitBox->setAnchorPoint(anchor);
-
 	// Tile the background with deep space
 	Vec2 rivet;
 	Texture2D* bkgd = ResourceLoader::getInstance()->getTexture("space");
@@ -101,7 +100,7 @@ void View::buildScene(LevelMap *level, Layer* l) {
 			rivet.x = background->getContentSize().width / 2.0f + ii*SPACE_TILE;
 			rivet.y = background->getContentSize().height / 2.0f + jj*SPACE_TILE;
 			tile->setPosition(rivet);
-			tile->setAnchorPoint(anchor);
+			tile->setAnchorPoint(Vec2::ONE);
 			background->addChild(tile);
 		}
 	}

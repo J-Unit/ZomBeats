@@ -99,14 +99,14 @@ void GameController::createWalls(){
 	//-------------------------------f------------------------------------------------------
 	// a vertical wall here
 	for (int i = 0; i < 20; i++, j++) {
-		state->level->walls[j].init(state->world, SPACE_TILE*5.5f, SPACE_TILE*(5.5f + i*0.25f));
+		state->level->walls[j].init(state->world, SPACE_TILE*5.5f, SPACE_TILE*(5.125f + i*0.25f));
 		view->enviornment->addChild(state->level->walls[j].sprite);
 		//new_wall->setSprite(view->walls[i]);
 	}
 
 	// a horizontal wall here
 	for (int i = 20; i < 30; i++, j++) {
-		state->level->walls[j].init(state->world, SPACE_TILE*(5.5f + (i - 19)*0.25f), SPACE_TILE*5.5f);
+		state->level->walls[j].init(state->world, SPACE_TILE*(5.5f + (i - 19)*0.25f), SPACE_TILE*5.125f);
 		view->enviornment->addChild(state->level->walls[j].sprite);
 		//new_wall->setSprite(view->walls[i]);
 	}

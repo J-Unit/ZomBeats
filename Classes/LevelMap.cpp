@@ -3,11 +3,13 @@
 #include "PriorityQueue.h"
 #include "Wall.h"
 #include "util.h"
+#include <algorithm>
 
 const int LevelMap::OFF_X[8] = { -1, -1, -1, 0, 0, 1, 1, 1 };
 const int LevelMap::OFF_Y[8] = { -1, 0, 1, -1, 1, -1, 0, 1 };
 const float LevelMap::DIST[8] = { 1.41421356, 1, 1.41421356, 1, 1, 1.41421356, 1, 1.41421356 };
 
+using namespace std;
 
 void LevelMap::markWallTiles(){
 	for (int i = 0; i < BLOCKS_X; i++) for (int j = 0; j < BLOCKS_Y; j++){
@@ -54,7 +56,7 @@ float LevelMap::heuristicDistance(MapNode *a, MapNode *b){
 
 //locate which MapNode a character is at given its X,Y position
 MapNode *LevelMap::locateCharacter(float charX, float charY){
-	return &mesh[int(charX / tileWidth)][int(charY / tileHeight)];
+	return &mesh[max(min(int(charX / tileWidth), BLOCKS_X - 1), 0)][max(min(int(charY / tileHeight), BLOCKS_Y - 1), 0)];
 }
 
 float LevelMap::getTileCenterX(MapNode *tile){
