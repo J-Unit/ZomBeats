@@ -1,9 +1,7 @@
 #include <vector>
 #include "Node.h"
+#include "View.h"
 #include "cocos2d.h"
-
-#define BLOCKS_X 60
-#define BLOCKS_Y 60
 
 //struct MapNode;
 class Wall;
@@ -11,6 +9,10 @@ class Wall;
 class LevelMap
 {
 public:
+	int nodesX;
+	int nodesY;
+	int bkgTilesX;
+	int bkgTilesY;
 	
 	int levelWidth;
 	int levelHeight;
@@ -25,16 +27,21 @@ public:
 
 
 
-	LevelMap(int width, int height){
+	LevelMap(int tx, int ty, int nx, int ny){
 		//initialize level and tile dimensions
-		levelWidth = width;
-		levelHeight = height;
-		tileWidth = levelWidth / (float)BLOCKS_X;
-		tileHeight = levelHeight / (float)BLOCKS_Y;
-
+		levelWidth = tx * SPACE_TILE;
+		levelHeight = ty * SPACE_TILE;
+		bkgTilesX = tx;
+		bkgTilesY = ty;
+		nodesX = nx;
+		nodesY = ny;
+		tileWidth = levelWidth / (float)nodesX;
+		tileHeight = levelHeight / (float)nodesY;
 		//initialize the mesh node array
-		for (int r = 0; r < BLOCKS_X; r++){
-			for (int c = 0; c < BLOCKS_Y; c++){
+		mesh = new MapNode*[nodesX];
+		for (int r = 0; r < nodesX; r++){
+			mesh[r] = new MapNode[nodesY];
+			for (int c = 0; c < nodesY; c++){
 				mesh[r][c].setXY(r, c);
 			}
 		}
@@ -44,8 +51,8 @@ public:
 	float getTileCenterX(MapNode *tile);
 	float getTileCenterY(MapNode *tile);
 
-	MapNode mesh[BLOCKS_X][BLOCKS_Y];
-	
+	//MapNode mesh[BLOCKS_X][BLOCKS_Y];
+	MapNode **mesh;
 	~LevelMap();
 
 private:

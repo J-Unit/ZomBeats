@@ -16,7 +16,6 @@ ResourceLoader* ResourceLoader::gLoader = NULL;
  * Because this is not asynchronous, this loads all assets on creation.
  */
 ResourceLoader::ResourceLoader() {
-	FileUtils::getInstance()->addSearchPath("../../Resources/");
     // Load the font.
     TTFConfig* font = new TTFConfig("fonts/Marker Felt.ttf",24,GlyphCollection::DYNAMIC);
     if (!FontAtlasCache::getFontAtlasTTF(*font)) {

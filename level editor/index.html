@@ -1,0 +1,222 @@
+<html>
+<body>
+Tiles X: <input id="inX" type="number" value="10" min="1" max="100" style="width:50"/>
+Tiles Y: <input id="inY" type="number" value="10" min="1" max="100" style="width:50"/>
+<button id="update">Update</button>
+Item: <select id = "ItemAdd">
+	<option value="wall">Wall</option>
+	<option value="zombie">Zombie</option>
+	<option value="start location">Start Location</option>
+	<option value="weapon">Weapon</option>
+</select>
+Import: <input type="file" id="import"/>
+<button id="export">Export</button>: <span id="download"></span>
+<br/>
+<br/>
+<div id="display"></div>
+
+
+<script>
+TILE_SIZE = 256;
+NODES_PER_TILE = 4;
+WALL_SIZE = 64;
+ZOMBIE_SIZE = 128;
+HERO_HEIGHT = 128;
+HERO_WIDTH = 85;
+SWORD_WIDTH = 60;
+SWORD_HEIGHT = 35;
+objId = 0;
+level = new function(){
+	this.bkgX = 1 * 10;
+	this.bkgY = 1 * 10;
+	this.nodesX = this.bkgX * NODES_PER_TILE;
+	this.nodesY = this.bkgY * NODES_PER_TILE;
+	this.nodeWidth = this.bkgX * TILE_SIZE / this.nodesX;
+	this.nodeHeight = this.bkgY * TILE_SIZE / this.nodesY;
+	//this.nWalls = 0;
+	//this.nZombies = 0;
+	//this.nWeapons = 0;
+	this.walls = {};
+	this.zombies = {};
+	this.weapons = {};
+	this.startX = 0;
+	this.startY = 0;
+};
+function generateBackground(){
+	document.getElementById('display').innerHTML = "";
+	document.getElementById('display').style.width = level.bkgX * TILE_SIZE;
+	document.getElementById('display').style.height = level.bkgY * TILE_SIZE;
+	for (i=0;i<level.bkgX;i++){
+		for (j=0;j<level.bkgY;j++){
+			img = document.createElement("img");
+			img.className = "bkg";
+			img.src = "wood.png";
+			img.style.left = i*TILE_SIZE;
+			img.style.top = j*TILE_SIZE;
+			document.getElementById('display').appendChild(img);
+		}
+	}
+}
+loadedLevel = "";
+function importLevel(){
+	f = document.getElementById('import').files[0];
+	r = new FileReader();
+	r.readAsText(f, 'UTF-8');
+	r.onload = function(e){
+		level = JSON.parse(e.target.result);
+		document.getElementById('display').innerHTML = "";
+		generateBackground();
+		objId = 0;
+		for(i = 0; i<level.walls.length; i++) addImage(level.walls[i].x, level.walls[i].y, "wall");
+		for(i = 0; i<level.zombies.length; i++) addImage(level.zombies[i].x, level.zombies[i].y, "zombie");
+		for(i = 0; i<level.weapons.length; i++) addImage(level.weapons[i].x, level.weapons[i].y, "weapon");
+		addImage(level.startX, level.startY, "start location");
+	};
+}
+document.getElementById('import').onchange = importLevel;
+/*window.requestFileSystem  = window.requestFileSystem || window.webkitRequestFileSystem;
+
+window.requestFileSystem(window.PERSISTENT, 1024*1024, function(fs){
+	fs.root.getFile('level.zbl', {create: true, exclusive: true}, function(fileEntry) {
+		fileEntry.createWriter(function(fileWriter) {
+
+      fileWriter.seek(fileWriter.length); // Start write position at EOF.
+
+      // Create a new Blob and write it to log.txt.
+      var blob = new Blob(['Hello World'], {type: 'text/plain'});
+      fileWriter.write(blob);
+  	});
+  });
+});*/
+function exportLevel() {
+	l = document.getElementById("link");
+    if(l) document.getElementById("download").removeChild(l);
+    link = document.createElement("a");
+    link.innerHTML = "level.zbl";
+    link.id = "link";
+    link.download = "level.zbl";
+    link.onclick = function(){
+    	document.getElementById("download").removeChild(link);
+    }
+    exp = level;
+    exp.walls = Object.keys(level.walls).map(function(k){return level.walls[k];});
+    exp.zombies = Object.keys(level.zombies).map(function(k){return level.zombies[k];});
+    exp.weapons = Object.keys(level.weapons).map(function(k){return level.weapons[k];});
+    link.href = 'data:text/csv;charset=utf-8,' + escape(JSON.stringify(exp));
+    document.getElementById("download").appendChild(link);
+}
+document.getElementById('export').onclick = exportLevel;
+function createObject(event){
+	if(event.target.className == "obj"){
+		delete level.walls[event.target.id];
+		delete level.zombies[event.target.id];
+		delete level.weapons[event.target.id];
+		document.getElementById("display").removeChild(event.target);
+		return;
+	}
+	it = document.getElementById("ItemAdd");
+	size_x = size_y = 0;
+	switch(it.options[it.selectedIndex].value){
+		case "wall": size_x = size_y = WALL_SIZE / 2; break;
+		case "zombie": size_x = size_y = ZOMBIE_SIZE / 2; break;
+		case "start location": size_x = HERO_WIDTH / 2; size_y = HERO_HEIGHT/2; break;
+		case "weapon": size_x = SWORD_WIDTH / 2; size_y = SWORD_HEIGHT / 2; break;
+	}
+	pos_x = event.pageX - document.getElementById("display").offsetLeft;
+	pos_y = event.pageY - document.getElementById("display").offsetTop;
+	nx = Math.floor(pos_x/level.nodeWidth);//*level.nodeWidth;
+	ny = Math.floor(pos_y/level.nodeHeight);//*level.nodeHeight;
+	ix = nx * level.nodeWidth;
+	iy = ny * level.nodeHeight;
+	img = document.createElement("img");
+	img.className = "obj";
+	img.style.left = ix;// + size_x;
+	img.style.top = iy; //+ size_y;
+	obj = {x: nx, y: ny};
+	switch(it.options[it.selectedIndex].value){
+		case "wall":
+			level.walls[objId] = obj;
+			img.src = "wall.png";
+		break;
+		case "zombie":
+			level.zombies[objId] = obj;
+			img.src = "zombie.png";
+		break;
+		case "start location":
+			start = document.getElementsByClassName("start")[0]
+			if(start) document.getElementById("display").removeChild(start);
+			img.className += " start";
+			img.src = "hero.png";
+			level.startX = nx;
+			level.startY = ny;
+		break;
+		case "weapon":
+			img.src = "sword.png";
+			level.weapons[objId] = obj;
+	}
+	img.id = objId++;
+	document.getElementById("display").appendChild(img);
+}
+
+function addImage(nx, ny, type){
+	ix = nx * level.nodeWidth;
+	iy = ny * level.nodeHeight;
+	img = document.createElement("img");
+	img.className = "obj";
+	img.style.left = ix;
+	img.style.top = iy;
+	switch(type){
+		case "wall":
+			img.src = "wall.png";
+		break;
+		case "zombie":
+			img.src = "zombie.png";
+		break;
+		case "start location":
+			img.className += " start";
+			img.src = "hero.png";
+		break;
+		case "weapon":
+			img.src = "sword.png";
+	}
+	img.id = objId++;
+	document.getElementById("display").appendChild(img);
+}
+
+
+generateBackground();
+document.getElementById("update").onclick = function(){
+	level.bkgX = 1* document.getElementById("inX").value;
+	level.bkgY = 1* document.getElementById("inY").value;
+	level.nodesX = level.bkgX * NODES_PER_TILE;
+	level.nodesY = level.bkgY * NODES_PER_TILE;
+	level.nodeWidth = level.bkgX * TILE_SIZE / level.nodesX;
+	level.nodeHeight = level.bkgY * TILE_SIZE / level.nodesY;
+	document.getElementById("display").style.width = level.bkgX * TILE_SIZE;
+	document.getElementById("display").style.height = level.bkgY * TILE_SIZE;
+	generateBackground();
+};
+document.getElementById("display").onclick = createObject;
+
+
+</script>
+
+</body>
+<style>
+
+div{
+	width: TILE_SIZE0px;
+	height: TILE_SIZE0px;
+	position: relative;
+}
+img{
+	position: absolute;
+}
+
+img.obj{
+	offset: -50%;
+	z-index: 100;
+}
+
+</style>
+</html>

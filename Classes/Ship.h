@@ -77,7 +77,7 @@ public:
      * @param x The world space x-coordinate
      * @param y The world space y-coordinate
      */
-    Ship(b2World *world, float x, float y);
+    Ship(b2World *world, float x, float y, float mx, float my);
     
     /**
      * Disposes the ship, releasing all resources.
@@ -160,7 +160,7 @@ public:
      *
      * @param value The ship film strip.
      */
-    void    setSprite(FilmStrip* value);
+    void    setSprite(FilmStrip* value, float mx, float my);
     
     /**
      * Updates the state of the model

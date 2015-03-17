@@ -11,6 +11,7 @@
 //#include "Box2D.h"
 #include "cocos2d.h"
 #include "Box2D/Box2D.h"
+#include "LevelSerializer.h"
 
 //define couple parameters here for grooviness meter
 #define INITIAL_DETECTION_RADIUS    100.0f
@@ -110,10 +111,14 @@ public:
      */
     void update(float dt) override;
 
+	void loadLevel(int i);
+
 private:
 	void createZombies();
 	void createWalls();
 	void createWeapons();
+
+	LevelSerializer ls;
 
 };
 

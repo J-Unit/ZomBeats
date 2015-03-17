@@ -63,6 +63,9 @@
     <ClCompile Include="..\Classes\Zombie.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\LevelSerializer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -129,6 +132,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\ResourceLoader.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\LevelSerializer.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

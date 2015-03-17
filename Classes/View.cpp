@@ -11,9 +11,9 @@
 View::View(int w, int h){
 	screen_size_x = w;
 	screen_size_y = h;
+	ResourceLoader::loadContent();
 	// Load the resources. This is NOT an asynchronous loader.
 	// We would design an asynchronous loader slightly differently.
-	ResourceLoader::loadContent();
 	scene = createScene();
 }
 /**
@@ -47,7 +47,7 @@ void View::buildScene(LevelMap *level, Layer* l) {
 	// Create the master node.  This, unlike the layer, is resolution independent.
 	// If we do not do this, the children will not all line up correctly on different devices.
 	allSpace = Node::create();
-	allSpace->setContentSize(Size(SPACE_TILE*TILE_AMOUNT, SPACE_TILE*TILE_AMOUNT));
+	allSpace->setContentSize(Size(SPACE_TILE*level->bkgTilesX, SPACE_TILE*level->bkgTilesY));
 	allSpace->setPosition(center);
 	allSpace->setAnchorPoint(anchor);
 
@@ -93,8 +93,8 @@ void View::buildScene(LevelMap *level, Layer* l) {
 	// Tile the background with deep space
 	Vec2 rivet;
 	Texture2D* bkgd = ResourceLoader::getInstance()->getTexture("space");
-	for (int ii = -TILE_AMOUNT / 2; ii <= TILE_AMOUNT / 2; ii++) {
-		for (int jj = -TILE_AMOUNT / 2; jj <= TILE_AMOUNT / 2; jj++) {
+	for (int ii = -level->bkgTilesX / 2 + 1; ii <= level->bkgTilesX / 2; ii++) {
+		for (int jj = -level->bkgTilesY / 2 + 1; jj <= level->bkgTilesY / 2; jj++) {
 			// Create a new autorelease sprite for each tile
 			auto tile = Sprite::createWithTexture(bkgd);
 			rivet.x = background->getContentSize().width / 2.0f + ii*SPACE_TILE;
@@ -108,6 +108,7 @@ void View::buildScene(LevelMap *level, Layer* l) {
 	enviornment->addChild(path);
 	enviornment->addChild(detectionRadiusCircle);
 	enviornment->addChild(hitBox);
+
 	// Put planets in the foreground.
 	/*nearSpace = Node::create();
 	nearSpace->setContentSize(allSpace->getContentSize());

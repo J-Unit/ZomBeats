@@ -2,7 +2,7 @@
 #include "ResourceLoader.h"
 #include "Box2D/Box2D.h"
 
-Zombie::Zombie(int x, int y, b2World *world)
+Zombie::Zombie(float x, float y, b2World *world)
 {
 	bodyDef.type = b2_dynamicBody;
 	bodyDef.position.Set(x, y);
@@ -25,6 +25,7 @@ Zombie::Zombie(int x, int y, b2World *world)
 void Zombie::setSprite(Sprite* value)
 {
 	sprite = value;
+	value->setPhysicsBody(0);
 	sprite->setScale(PLANET_SCALE, PLANET_SCALE);
 	b2Vec2 pos = body->GetPosition();
 	if (sprite != NULL) {

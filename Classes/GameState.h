@@ -14,8 +14,10 @@ public:
 	CTypedPtrDblList<Weapon> weapons;
 	LevelMap *level;
 	b2World *world;
+	int bkgTilesX;
+	int bkgTilesY;
 
-	GameState();
+	GameState(int tx, int ty, int nx, int ny);
 	~GameState();
 };
 

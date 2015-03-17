@@ -2,15 +2,14 @@
 #include "cocos2d.h"
 #include <vector>
 
+#ifndef VIEW_H
+#define VIEW_H
+
 #define SPACE_TILE   256
-#define TILE_AMOUNT	 10
-#define BLOCKS_X 50
-#define BLOCKS_Y 50
 #define PARALLAX_AMT 0.0f
 #define PLANET1_POS  Vec2(950, 1100)
 #define PLANET2_POS  Vec2(1600, 1500)
 #define HUD_OFFSET   Vec2(10.0f,10.f)
-#define WORLD_SIZE  SPACE_TILE * TILE_AMOUNT
 
 using namespace cocos2d;
 using namespace std;
@@ -80,3 +79,4 @@ public:
 	~View();
 };
 
+#endif

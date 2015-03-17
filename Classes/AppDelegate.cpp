@@ -48,6 +48,7 @@ void AppDelegate::initGLContextAttrs() {
  * @return true if initialization succesful; otherwise false
  */
 bool AppDelegate::applicationDidFinishLaunching() {
+	FileUtils::getInstance()->addSearchPath("../../Resources/");
     // Initialize director
     auto director = Director::getInstance();
     auto glview = director->getOpenGLView();

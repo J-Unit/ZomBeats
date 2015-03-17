@@ -24,17 +24,12 @@
 #define RANGE_CLAMP(x,y,z)  (x < y ? y : (x > z ? z : x))
 
 /**
- * Creates a new ship at the origin
- */
-Ship::Ship(b2World *world) : Ship::Ship(world, 0.0f, 0.0f) { }
-
-/**
  * Creates a new ship at the specified position (in world space).
  *
  * @param x The world space x-coordinate
  * @param y The world space y-coordinate
  */
-Ship::Ship(b2World *world, float x, float y) {
+Ship::Ship(b2World *world, float x, float y, float mx, float my) {
    // position.set(x,y);
    // velocity.set(0.0f,0.0f);
     
@@ -59,7 +54,7 @@ Ship::Ship(b2World *world, float x, float y) {
 	body->SetLinearDamping(3.0f);
 	//body->SetAngularDamping(0.5f);
     sprite  = NULL;
-	setSprite(FilmStrip::create(ResourceLoader::getInstance()->getTexture("ricky"), 1, 2, 2));
+	setSprite(FilmStrip::create(ResourceLoader::getInstance()->getTexture("ricky"), 1, 2, 2), mx, my);
 }
 
 /**
@@ -80,17 +75,18 @@ Ship::~Ship() {
  *
  * @param value The ship film strip.
  */
-void Ship::setSprite(FilmStrip* value) {
+void Ship::setSprite(FilmStrip* value, float mx, float my) {
     // Release the current sprite if we have a reference
     if (sprite != NULL) {
         sprite->release();
     }
     sprite = value;
+	value->setPhysicsBody(0);
 	sprite->setScale(0.8f);
     if (sprite != NULL) {
         sprite->retain(); // Do not delete it until we are done.
         sprite->setFrame(SHIP_IMG_FLAT);
-        sprite->setPosition(Vec2(body->GetPosition().x, body->GetPosition().y));
+        sprite->setPosition(Vec2(mx, my));
         sprite->setAnchorPoint(Vec2(0.5f,0.5f));
     }
 }

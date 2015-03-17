@@ -126,35 +126,41 @@ bool GameController::init() {
 	if (!Layer::init()) {
 		return false;
 	}
-
-	state = new GameState();
-	state->world = new b2World(b2Vec2(0.0f, 0.0f));
-	state->level = new LevelMap(WORLD_SIZE, WORLD_SIZE);
-	destination = 0;
 	Director* director = Director::getInstance();
 	cocos2d::Size winsize = director->getWinSizeInPixels();
 	view = new View(winsize.width, winsize.height);
 	view->scene->addChild(this);
-
-    // Build the scene graph and create the ship model.
-    view->buildScene(state->level, this);
-    state->ship = new Ship(state->world,SPACE_TILE*5.0f,SPACE_TILE*5.0f);
-	view->allSpace->addChild(state->ship->getSprite());
+	loadLevel(1);
 	ai = new AIController();
-
-	createZombies();
-	createWalls();
-	createWeapons();
-
-	state->world->SetContactListener(this);
-
+	//createZombies();
+	//createWalls();
+	//createWeapons();
     // Start listening to input
     input = new InputController(_eventDispatcher);
     input->startInput();
-    
-	elapsedTime = 0.0;
-	onBeat = false;
 
+	// Tell the director we are ready for animation.
+	this->scheduleUpdate();
+    return true;
+}
+
+void GameController::loadLevel(int i){
+	destination = 0;
+	onBeat = false;
+	elapsedTime = 0.0;
+	stringstream ss;
+	ss << "levels/level" << i << ".zbl";
+	state = ls.parseLevel(ss.str());
+	state->world->SetContactListener(this);
+
+	// Build the scene graph and create the ship model.
+	ls.addObjects(state);
+	this->removeAllChildren();
+	view->buildScene(state->level, this);
+	view->allSpace->addChild(state->ship->getSprite());
+	for(int i=0;i<state->level->nWalls;i++) view->enviornment->addChild(state->level->walls[i].sprite);
+	for (CTypedPtrDblElement<Zombie> *cz = state->zombies.GetHeadPtr(); !state->zombies.IsSentinel(cz); cz = cz->Next()) view->enviornment->addChild(cz->Data()->sprite);
+	for (CTypedPtrDblElement<Weapon> *cw = state->weapons.GetHeadPtr(); !state->weapons.IsSentinel(cw); cw = cw->Next()) view->enviornment->addChild(cw->Data()->sprite);
 	//initial detection radius
 	detectionRadius = INITIAL_DETECTION_RADIUS;
 	currAwareness = 0.0f;
@@ -162,9 +168,7 @@ bool GameController::init() {
 	currentSong = new SongDecomposition(120.0, "songs/ChillDeepHouse.mp3", -.051);
 	audioid = AudioEngine::play2d("songs/ChillDeepHouse.mp3", true, 1);
 
-	// Tell the director we are ready for animation.
-    this->scheduleUpdate();
-    return true;
+
 }
 
 /**
@@ -220,9 +224,10 @@ void GameController::update(float deltaTime) {
 	}
 
 	if (state->ship->isDestroyed){
-		state->world->DestroyBody(state->ship->body);
-		delete state->ship;
-		state->ship = new Ship(state->world, SPACE_TILE*5.0f, SPACE_TILE*5.0f);
+		loadLevel(1);
+		//state->world->DestroyBody(state->ship->body);
+		//delete state->ship;
+		//state->ship = new Ship(state->world, SPACE_TILE*5.0f, SPACE_TILE*5.0f);
 		input->clickProcessed = true;
 		destination = 0;
 	}

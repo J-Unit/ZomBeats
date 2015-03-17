@@ -12,7 +12,7 @@ const float LevelMap::DIST[8] = { 1.41421356, 1, 1.41421356, 1, 1, 1.41421356, 1
 using namespace std;
 
 void LevelMap::markWallTiles(){
-	for (int i = 0; i < BLOCKS_X; i++) for (int j = 0; j < BLOCKS_Y; j++){
+	for (int i = 0; i < nodesX; i++) for (int j = 0; j < nodesY; j++){
 		for (int k = 0; k < nWalls; k++){
 			if (nodeWallOverlap(&mesh[i][j], &walls[k])){
 				mesh[i][j].walkable = false;
@@ -56,7 +56,7 @@ float LevelMap::heuristicDistance(MapNode *a, MapNode *b){
 
 //locate which MapNode a character is at given its X,Y position
 MapNode *LevelMap::locateCharacter(float charX, float charY){
-	return &mesh[max(min(int(charX / tileWidth), BLOCKS_X - 1), 0)][max(min(int(charY / tileHeight), BLOCKS_Y - 1), 0)];
+	return &mesh[max(min(int(charX / tileWidth), nodesX - 1), 0)][max(min(int(charY / tileHeight), nodesY - 1), 0)];
 }
 
 float LevelMap::getTileCenterX(MapNode *tile){
@@ -73,7 +73,7 @@ void LevelMap::shortestPath(MapNode *from, MapNode *to){
 	MapNode *node, *neighbor, *best = 0;
 	int x, y;
 	float c;
-	for (int i = 0; i < BLOCKS_X; i++) for (int j = 0; j < BLOCKS_Y; j++) {
+	for (int i = 0; i < nodesX; i++) for (int j = 0; j < nodesY; j++) {
 		mesh[i][j].status = INITIAL;
 		mesh[i][j].next = 0;
 	}
@@ -94,7 +94,7 @@ void LevelMap::shortestPath(MapNode *from, MapNode *to){
 		for (int i = 0; i < 8; i++){
 			x = node->x + OFF_X[i];
 			y = node->y + OFF_Y[i];
-			if (x >= 0 && x < BLOCKS_X && y >= 0 && y < BLOCKS_Y){
+			if (x >= 0 && x < nodesX && y >= 0 && y < nodesY){
 				neighbor = &mesh[x][y];
 				if (neighbor->walkable){
 					c = node->pathCost + DIST[i];

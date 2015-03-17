@@ -2,7 +2,7 @@
 #include "BoxObject.h"
 #include "Box2D/Box2D.h"
 
-#define PLANET_SCALE 0.5f
+#define PLANET_SCALE 1.0f
 #define AWARENESS_INCREASE 1.5f
 #define INITIAL_AWARENESS 0.0f 
 
@@ -21,7 +21,7 @@ public:
 	void setSprite(Sprite *value);
 	void increaseAwarness();
 
-	Zombie(int x, int y, b2World* world);
+	Zombie(float x, float y, b2World* world);
 	~Zombie();
 };
 
