@@ -44,6 +44,17 @@ level = new function(){
 };
 function generateBackground(){
 	document.getElementById('display').innerHTML = "";
+	level.bkgX = 1* document.getElementById("inX").value;
+	level.bkgY = 1* document.getElementById("inY").value;
+	level.walls = {};
+	level.zombies = {};
+	level.weapons = {};
+	level.startX = 0;
+	level.startY = 0;
+	level.nodesX = level.bkgX * NODES_PER_TILE;
+	level.nodesY = level.bkgY * NODES_PER_TILE;
+	level.nodeWidth = level.bkgX * TILE_SIZE / level.nodesX;
+	level.nodeHeight = level.bkgY * TILE_SIZE / level.nodesY;
 	document.getElementById('display').style.width = level.bkgX * TILE_SIZE;
 	document.getElementById('display').style.height = level.bkgY * TILE_SIZE;
 	for (i=0;i<level.bkgX;i++){
