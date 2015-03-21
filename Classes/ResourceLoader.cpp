@@ -30,7 +30,7 @@ ResourceLoader::ResourceLoader() {
     text = Director::getInstance()->getTextureCache()->addImage("textures/wood.png");
     if (text) {
         text->retain();
-        textures["space"] = text;
+        textures["woodTile"] = text;
     }
     //text = Director::getInstance()->getTextureCache()->addImage("textures/ships.png");
 	//text = Director::getInstance()->getTextureCache()->addImage("textures/chuck.png");
@@ -63,6 +63,14 @@ ResourceLoader::ResourceLoader() {
 		text->retain();
 		textures["sword"] = text;
 	}
+
+	//add the fog of war
+	text = Director::getInstance()->getTextureCache()->addImage("textures/fog_new.png");
+	if (text) {
+		text->retain();
+		textures["fog"] = text;
+	}
+
 }
 
 /**

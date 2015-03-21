@@ -19,6 +19,9 @@
 #define DETECTION_RADIUS_DECREASE   6.0f
 #define MIN_DETECTION_RADIUS 125.0f
 #define MAX_DETECTION_RADIUS 400.0f
+//fog scale
+#define FOG_SCALE 3.0f
+#define OUTER_FOG_SCALE 2.8f
 
 using namespace cocos2d;
 using namespace std;
@@ -61,6 +64,10 @@ public:
     /** Filmstrip representing the animated ship 
     */
 	View* view;
+
+	//fog sprite
+	Sprite* fogSp;
+	Sprite* fogSpOuter;
 
     // MODEL
     // A page-out could dispose of the view as long as it just has this.
@@ -117,6 +124,8 @@ private:
 	void createZombies();
 	void createWalls();
 	void createWeapons();
+	void createFog();
+	void updateFog();
 
 	LevelSerializer ls;
 

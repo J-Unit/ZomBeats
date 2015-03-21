@@ -120,6 +120,30 @@ void GameController::createWeapons(){
 	view->enviornment->addChild(s1->sprite);
 }
 
+void GameController::createFog() {
+	//add the fog of war here
+	fogSp = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("fog"));
+	//fogSpOuter = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("fog_outer"));
+	fogSp->setScale(FOG_SCALE, FOG_SCALE);
+	//fogSpOuter->setScale(OUTER_FOG_SCALE, OUTER_FOG_SCALE);
+	fogSp->setPosition(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y);
+	//fogSpOuter->setPosition(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y);
+	view->enviornment->addChild(fogSp);
+	//view->enviornment->addChild(fogSpOuter);
+}
+
+void GameController::updateFog() {
+	if (fogSp != NULL && fogSpOuter != NULL) {
+		if (INITIAL_DETECTION_RADIUS / detectionRadius > 0.65f) {
+			fogSp->setScale(FOG_SCALE*(INITIAL_DETECTION_RADIUS / detectionRadius), FOG_SCALE*(INITIAL_DETECTION_RADIUS / detectionRadius));
+
+		}
+
+		fogSp->setPosition(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y);
+		//fogSpOuter->setPosition(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y);
+	}
+}
+
 
 
 bool GameController::init() {
@@ -130,7 +154,13 @@ bool GameController::init() {
 	cocos2d::Size winsize = director->getWinSizeInPixels();
 	view = new View(winsize.width, winsize.height);
 	view->scene->addChild(this);
+
 	loadLevel(1);
+
+	//add the fog of war here
+	createFog();
+
+
 	ai = new AIController();
 	//createZombies();
 	//createWalls();
@@ -232,7 +262,7 @@ void GameController::update(float deltaTime) {
 		destination = 0;
 	}
 
-
+	updateFog();
 	float x = state->ship->body->GetPosition().x;
 	float y = state->ship->body->GetPosition().y;
 	MapNode *from = state->level->locateCharacter(x, y);
