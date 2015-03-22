@@ -201,6 +201,16 @@ void GameController::loadLevel(int i){
 
 }
 
+//restart the game upon death or reset
+void GameController::restartGame() {
+	AudioEngine::stopAll();
+	this->removeAllChildren();
+	loadLevel(1);
+	createFog();
+	input->clickProcessed = true;
+	destination = 0;
+}
+
 /**
  * Update the game state.
  *
@@ -254,12 +264,7 @@ void GameController::update(float deltaTime) {
 	}
 
 	if (state->ship->isDestroyed){
-		loadLevel(1);
-		//state->world->DestroyBody(state->ship->body);
-		//delete state->ship;
-		//state->ship = new Ship(state->world, SPACE_TILE*5.0f, SPACE_TILE*5.0f);
-		input->clickProcessed = true;
-		destination = 0;
+		restartGame();
 	}
 
 	updateFog();

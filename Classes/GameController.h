@@ -120,6 +120,9 @@ public:
 
 	void loadLevel(int i);
 
+	void restartGame();
+
+
 private:
 	void createZombies();
 	void createWalls();
