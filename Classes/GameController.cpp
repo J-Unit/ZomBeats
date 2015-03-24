@@ -240,7 +240,7 @@ void GameController::loadLevel(int i){
 void GameController::restartGame() {
 	AudioEngine::stopAll();
 	this->removeAllChildren();
-	loadLevel(2);
+	loadLevel(1);
 	createFog();
 	input->clickProcessed = true;
 	destination = 0;
