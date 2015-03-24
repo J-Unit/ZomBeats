@@ -139,11 +139,13 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
   <ItemGroup>
     <ClCompile Include="..\Classes\AIController.cpp" />
     <ClCompile Include="..\Classes\AppDelegate.cpp" />
+    <ClCompile Include="..\Classes\EnvironmentWeapon.cpp" />
     <ClCompile Include="..\Classes\FilmStrip.cpp" />
     <ClCompile Include="..\Classes\GameController.cpp" />
     <ClCompile Include="..\Classes\GameState.cpp" />
     <ClCompile Include="..\Classes\HelloWorldScene.cpp" />
     <ClCompile Include="..\Classes\InputController.cpp" />
+    <ClCompile Include="..\Classes\Lawnmower.cpp" />
     <ClCompile Include="..\Classes\LevelMap.cpp" />
     <ClCompile Include="..\Classes\LevelSerializer.cpp" />
     <ClCompile Include="..\Classes\ResourceLoader.cpp" />
@@ -160,11 +162,13 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
     <ClInclude Include="..\Classes\AIController.h" />
     <ClInclude Include="..\Classes\AppDelegate.h" />
     <ClInclude Include="..\Classes\BoxObject.h" />
+    <ClInclude Include="..\Classes\EnvironmentWeapon.h" />
     <ClInclude Include="..\Classes\FilmStrip.h" />
     <ClInclude Include="..\Classes\GameController.h" />
     <ClInclude Include="..\Classes\GameState.h" />
     <ClInclude Include="..\Classes\HelloWorldScene.h" />
     <ClInclude Include="..\Classes\InputController.h" />
+    <ClInclude Include="..\Classes\Lawnmower.h" />
     <ClInclude Include="..\Classes\LevelMap.h" />
     <ClInclude Include="..\Classes\LevelSerializer.h" />
     <ClInclude Include="..\Classes\Node.h" />

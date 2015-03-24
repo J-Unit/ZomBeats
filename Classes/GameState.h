@@ -5,6 +5,7 @@
 class Zombie;
 class LevelMap;
 class Weapon;
+class EnvironmentWeapon;
 
 class GameState
 {
@@ -12,6 +13,7 @@ public:
 	Ship *ship;
 	CTypedPtrDblList<Zombie> zombies;
 	CTypedPtrDblList<Weapon> weapons;
+	CTypedPtrDblList<EnvironmentWeapon> environment_weapons;
 	LevelMap *level;
 	b2World *world;
 	int bkgTilesX;

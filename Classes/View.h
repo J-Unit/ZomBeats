@@ -43,6 +43,7 @@ public:
 	DrawNode* meshVis;
 	DrawNode* path;
 	DrawNode* detectionRadiusCircle;
+	DrawNode* directionUseEnvironmentWeapon;
 	DrawNode* hitBox;
 	DrawNode* ai; 
 

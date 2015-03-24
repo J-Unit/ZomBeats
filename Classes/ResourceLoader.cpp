@@ -74,7 +74,12 @@ ResourceLoader::ResourceLoader() {
 		textures["pause"] = text;
 	}
 
-
+	//add the weapon textures here
+	text = Director::getInstance()->getTextureCache()->addImage("textures/mower.png");
+	if (text) {
+		text->retain();
+		textures["mower"] = text;
+	}
 }
 
 /**

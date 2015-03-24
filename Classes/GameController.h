@@ -23,6 +23,10 @@
 #define FOG_SCALE 3.0f
 #define OUTER_FOG_SCALE 2.8f
 
+//delays
+#define ENVIRONMENTAL_WEAPON_DELAY 1.0f
+#define ENVIRONMENTAL_WEAPON_DELAY_MAX 5.0f
+
 using namespace cocos2d;
 using namespace std;
 
@@ -35,6 +39,8 @@ class GameState;
 struct MapNode;
 class View;
 class AIController;
+class EnvironmentWeapon;
+class Lawnmower;
 
 /**
  * Class represents the root node for the game engine.
@@ -92,6 +98,17 @@ public:
 
 	//zombie awarness output, remove it later
 	float currAwareness;
+
+	//current finger position for drawing activation arrow
+	Vec2 currentFingerPos;
+
+	//timer used to signal if safe to choose environmental object direction
+	float environmentalTimer;
+
+	bool processDirection;
+
+	EnvironmentWeapon *currentEnvironment;
+	Lawnmower *currentMower;
 
     /** 
      * Writes the current ship position to the HUD.

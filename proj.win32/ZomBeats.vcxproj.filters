@@ -66,6 +66,12 @@
     <ClCompile Include="..\Classes\LevelSerializer.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\EnvironmentWeapon.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Lawnmower.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -135,6 +141,12 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\LevelSerializer.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\EnvironmentWeapon.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Lawnmower.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

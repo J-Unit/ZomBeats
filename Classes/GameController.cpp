@@ -15,6 +15,7 @@
 #include "SimpleAudioEngine.h"
 #include "Wall.h"
 #include "Sword.h"
+#include "Lawnmower.h"
 #include "Zombie.h"
 #include <math.h>
 #include <vector>
@@ -37,6 +38,15 @@ void GameController::BeginContact(b2Contact* contact){
 	Type *b1, *b2;
 	b1 = (Type *)contact->GetFixtureA()->GetBody()->GetUserData();
 	b2 = (Type *)contact->GetFixtureB()->GetBody()->GetUserData();
+	
+
+	//trigger environment weapon activation
+	EnvironmentWeapon *ewep;
+	if ((b1->type == EnvironmentWeaponType && b2->type == WallType) || (b1->type == WallType && b2->type == EnvironmentWeaponType)){
+		ewep = (b1->type == EnvironmentWeaponType) ? b1->getEnvironmentWeapon() : b2->getEnvironmentWeapon();
+		ewep->hitWall = true;
+		return;
+	}
 
 	//wall contact
 	if (b1->type == WallType || b2->type == WallType) return;
@@ -48,6 +58,24 @@ void GameController::BeginContact(b2Contact* contact){
 		w->isDesroyed = true;
 		state->ship->hasWeapon = true;
 		state->ship->currentWeapon = w;
+		return;
+	}
+
+	//trigger environment weapon activation
+	if ((b1->type == EnvironmentWeaponType && b2->type == ShipType) || (b1->type == ShipType && b2->type == EnvironmentWeaponType)){
+		currentEnvironment = (b1->type == EnvironmentWeaponType) ? b1->getEnvironmentWeapon() : b2->getEnvironmentWeapon();
+		//ew->isUsed = true; //right now, no activation sequence
+		
+		state->ship->isActivatingEnvironment = true; //right now, no activation sequence
+		//state->ship->isActivatingEnvironment = false; 
+		return;
+	}
+
+	Zombie *zb;
+	//trigger environment weapon activation
+	if ((b1->type == EnvironmentWeaponType && b2->type == ZombieType) || (b1->type == ZombieType && b2->type == EnvironmentWeaponType)){
+		zb = (b1->type == ZombieType) ? b1->getZombie() : b2->getZombie();
+		zb->isDestroyed = true;
 		return;
 	}
 
@@ -155,12 +183,16 @@ bool GameController::init() {
 	view = new View(winsize.width, winsize.height);
 	view->scene->addChild(this);
 
-	loadLevel(2);
+	loadLevel(1);
 
 	//add the fog of war here
 	createFog();
 
 	ai = new AIController();
+	environmentalTimer = 0.0f;
+	processDirection = false;
+	currentEnvironment = NULL;
+	currentMower = NULL;
 	//createZombies();
 	//createWalls();
 	//createWeapons();
@@ -184,6 +216,7 @@ void GameController::loadLevel(int i){
 	state->world->SetContactListener(this);
 
 	// Build the scene graph and create the ship model.
+
 	ls.addObjects(state);
 	this->removeAllChildren();
 	view->buildScene(state->level, this);
@@ -191,10 +224,12 @@ void GameController::loadLevel(int i){
 	for (int i = 0; i<state->level->nWalls; i++) view->enviornment->addChild(state->level->walls[i].sprite);
 	for (CTypedPtrDblElement<Zombie> *cz = state->zombies.GetHeadPtr(); !state->zombies.IsSentinel(cz); cz = cz->Next()) view->enviornment->addChild(cz->Data()->sprite);
 	for (CTypedPtrDblElement<Weapon> *cw = state->weapons.GetHeadPtr(); !state->weapons.IsSentinel(cw); cw = cw->Next()) view->enviornment->addChild(cw->Data()->sprite);
+	for (CTypedPtrDblElement<EnvironmentWeapon> *ew = state->environment_weapons.GetHeadPtr(); !state->environment_weapons.IsSentinel(ew); ew = ew->Next()) view->enviornment->addChild(ew->Data()->sprite);
 	//initial detection radius
 	detectionRadius = INITIAL_DETECTION_RADIUS;
 	currAwareness = 0.0f;
 	AudioEngine::stopAll();
+	currentFingerPos = Vec2(0.0f, 0.0f);
 	currentSong = new SongDecomposition(120.0, "songs/ChillDeepHouse.mp3", -.051);
 	audioid = AudioEngine::play2d("songs/ChillDeepHouse.mp3", true, 1);
 
@@ -247,6 +282,24 @@ void GameController::update(float deltaTime) {
 			state->weapons.Remove(toDelete);
 		}
 
+		CTypedPtrDblElement<EnvironmentWeapon> *e_weapon = state->environment_weapons.GetHeadPtr();
+		CTypedPtrDblElement<EnvironmentWeapon> *toDelete1 = NULL;
+		EnvironmentWeapon *eweap = NULL;
+		while (!state->environment_weapons.IsSentinel(e_weapon))
+		{
+			eweap = e_weapon->Data();
+			if (eweap->isUsed || eweap->hitWall){
+				eweap->isUsed = false;
+				toDelete1 = e_weapon;
+				state->world->DestroyBody(eweap->body);
+				view->enviornment->removeChild(eweap->sprite);
+			}
+			e_weapon = e_weapon->Next();
+		}
+		if (toDelete1 != NULL){
+			state->environment_weapons.Remove(toDelete1);
+		}
+
 		CTypedPtrDblElement<Zombie> *zombie = state->zombies.GetHeadPtr();
 		CTypedPtrDblElement<Zombie> *zombToDel = NULL;
 		while (!state->zombies.IsSentinel(zombie))
@@ -264,15 +317,62 @@ void GameController::update(float deltaTime) {
 			state->zombies.Remove(zombToDel);
 		}
 
+		//if we are currently activating environment and player clicking
+		if (state->ship->isActivatingEnvironment){
+			environmentalTimer += deltaTime; //just ran into environmental object so start delay count before it registers next click
+		}
+
+		//delay is up so now 
+		if (input->clicked &&  environmentalTimer >= ENVIRONMENTAL_WEAPON_DELAY){
+			processDirection = true;
+			currentFingerPos = Vec2((input->lastClick.x - view->screen_size_x / 2.0) + state->ship->body->GetPosition().x, -1.0f*(input->lastClick.y - view->screen_size_y / 2.0) + state->ship->body->GetPosition().y);
+			currentFingerPos.subtract(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y));
+			currentFingerPos.normalize();
+			currentFingerPos.scale(225.0f);
+			currentFingerPos.add(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y));
+		}
+
+		bool activated = false;
+
+		if (environmentalTimer >= ENVIRONMENTAL_WEAPON_DELAY_MAX || (!input->clicked &&  environmentalTimer >= ENVIRONMENTAL_WEAPON_DELAY)){
+			environmentalTimer = 0.0f;
+			state->ship->isActivatingEnvironment = false;
+			processDirection = false;
+			activated = true;
+			//TODO: Process moving the mower, etc. make mower variable that says in use..might have and make sure it is still active. Iterate thru mower list and point to the correct one, then switch position of ricky to it and it to slightly towards new direction
+
+			currentEnvironment->isUsed = true;
+
+		}
+
+		if (currentEnvironment != NULL && currentEnvironment->isUsed && !currentEnvironment->hasMoved){
+			Vec2 mowerDir = currentFingerPos;
+			mowerDir.subtract(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y));
+			mowerDir.normalize();
+			mowerDir.scale(125.0f);
+			mowerDir.add(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y));
+
+			b2Vec2 dir = b2Vec2(mowerDir.x, mowerDir.y);
+			Lawnmower *lm = new Lawnmower(state->world, mowerDir.x, mowerDir.y, dir);
+			state->environment_weapons.AddTail(lm);
+			view->enviornment->addChild(lm->sprite);
+			currentMower = lm;
+			currentEnvironment = lm;
+
+			/*
+			b2Vec2 dir = b2Vec2(mowerDir.x,mowerDir.y);
+			dir.Normalize();
+			dir *= MOWER_IMPULSE;
+			lm->body->ApplyLinearImpulse(dir, lm->body->GetPosition(), true);*/
+		}
 		if (state->ship->isDestroyed){
 			restartGame();
 		}
-
 		updateFog();
 		float x = state->ship->body->GetPosition().x;
 		float y = state->ship->body->GetPosition().y;
 		MapNode *from = state->level->locateCharacter(x, y);
-		if (!input->clickProcessed){
+		if (!input->clickProcessed && !activated){
 			//if on beat then flag it
 			onBeat = currentSong->isOnBeat(AudioEngine::getCurrentTime(audioid));
 			//cout << "PBF: " << elapsedTime << "\n";
@@ -343,6 +443,21 @@ void GameController::update(float deltaTime) {
 		}
 		ai->update(state);
 
+		activated = false;
+
+		if (state->ship->isActivatingEnvironment){
+			state->ship->body->SetLinearVelocity(b2Vec2_zero);
+			destination = 0;
+		}
+
+		if (currentMower != NULL && currentMower->hasMoved){
+			Vec2 mowerDir = currentFingerPos;
+			mowerDir.subtract(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y));
+			mowerDir.normalize();
+
+			currentMower->update(deltaTime, mowerDir);
+		}
+
 
 
 
@@ -382,12 +497,19 @@ void GameController::update(float deltaTime) {
 			z->Data()->sprite->setPosition(pos.x, pos.y);
 			z->Data()->advanceFrame();
 			z = z->Next();
+
+		}
+
+		CTypedPtrDblElement<EnvironmentWeapon> *envwe = state->environment_weapons.GetHeadPtr();
+		while (!state->environment_weapons.IsSentinel(envwe)){
+			pos = envwe->Data()->body->GetPosition();
+			envwe->Data()->sprite->setPosition(pos.x, pos.y);
+			envwe = envwe->Next();
 		}
 	}
+
 	//game is paused, do sth else
 	else {
-
-
 	}
 }
 
@@ -408,17 +530,20 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 	sss << "Click: (" << input->lastClick.x << "," << input->lastClick.y << ")";
 	view->thrustHUD->setString(sss.str());
 	view->path->clear();
+	view->directionUseEnvironmentWeapon->clear();
 	//clear the old detection circle
 	view->detectionRadiusCircle->clear();
 	//clear the old hitbox
 	view->hitBox->clear();
 
 	stringstream d;
-	d << "Detection Radius: " << detectionRadius;
+	//d << "Detection Radius: " << detectionRadius;
+	d << "Ricky Pos: " << state->ship->body->GetPosition().x << "," << state->ship->body->GetPosition().y;
 	view->detectionRadiusHUD->setString(d.str());
 
 	stringstream awr;
-	awr << "Zombie 1 Awarness: " << currAwareness;
+	//awr << "Zombie 1 Awarness: " << currAwareness;
+	awr << "endpt: " << currentFingerPos.x << "," << currentFingerPos.y;
 	view->zombieOneAwarenessHUD->setString(awr.str());
 
 	//visualize the detection radius
@@ -427,6 +552,12 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 	//visualize the hitbox for main character
 	view->hitBox->drawRect(Vec2(state->ship->body->GetPosition().x - 29.5f, state->ship->body->GetPosition().y - 55.0f), Vec2(state->ship->body->GetPosition().x + 29.5f, state->ship->body->GetPosition().y + 55.0f), ccColor4F(2.0f, 2.0f, 2.0f, 1.0f));
 
+	//visualize the arrow for activating the environment
+	if (processDirection){
+		view->directionUseEnvironmentWeapon->drawLine(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y), Vec2(currentFingerPos.x, currentFingerPos.y), ccColor4F(0.0f, 0.0f, 0.0f, 0.8f));
+	}
+	//view->directionUseEnvironmentWeapon->drawLine(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y), currentFingerPos, ccColor4F(128.0f, 128.0f, 128.0f, 0.5f));
+	
 	if (destination != 0){
 		MapNode *last = state->level->locateCharacter(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y);
 		MapNode *cur = destination;
