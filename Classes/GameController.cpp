@@ -263,6 +263,11 @@ void GameController::resumeGame() {
 */
 void GameController::update(float deltaTime) {
 	if (!isPaused) {
+		if (input->lastClick.x < 911 && input->lastClick.x > 866 && input->lastClick.y > 32 && input->lastClick.y < 79) {
+			isPaused = true;
+			return;
+		}
+
 		// Read the thrust from the user input
 		//input->update();
 		Vec2 thrust = input->lastClick;
