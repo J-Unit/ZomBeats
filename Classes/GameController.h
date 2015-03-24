@@ -14,7 +14,7 @@
 #include "LevelSerializer.h"
 
 //define couple parameters here for grooviness meter
-#define INITIAL_DETECTION_RADIUS    100.0f
+#define INITIAL_DETECTION_RADIUS    150.0f
 #define DETECTION_RADIUS_INCREASE   20.0f
 #define DETECTION_RADIUS_DECREASE   6.0f
 #define MIN_DETECTION_RADIUS 125.0f

@@ -81,6 +81,11 @@ void View::buildScene(LevelMap *level, Layer* l) {
 	path->setPosition(center);
 	path->setAnchorPoint(anchor);
 
+	ai = DrawNode::create();
+	ai->setContentSize(allSpace->getContentSize());
+	ai->setPosition(center);
+	ai->setAnchorPoint(anchor);
+
 	detectionRadiusCircle = DrawNode::create();
 	detectionRadiusCircle->setContentSize(allSpace->getContentSize());
 	detectionRadiusCircle->setPosition(center);
@@ -107,6 +112,7 @@ void View::buildScene(LevelMap *level, Layer* l) {
 
 	enviornment->addChild(meshVis);
 	enviornment->addChild(path);
+	enviornment->addChild(ai);
 	enviornment->addChild(detectionRadiusCircle);
 	enviornment->addChild(hitBox);
 

@@ -438,6 +438,17 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 			cur = cur->next;
 		} while (cur != 0);
 	}
+	view->ai->clear();
+	for (CTypedPtrDblElement<Zombie> *z = state->zombies.GetHeadPtr(); !state->zombies.IsSentinel(z); z = z->Next()){
+		Zombie *zom = z->Data();
+		b2Vec2 pos = zom->body->GetPosition();
+		view->ai->drawLine(Vec2(pos.x, pos.y), Vec2(pos.x + zom->seperation.x, pos.y + zom->seperation.y), ccColor4F(1, 0, 0, 1.0f));
+		view->ai->drawLine(Vec2(pos.x, pos.y), Vec2(pos.x + zom->attraction.x, pos.y + zom->attraction.y), ccColor4F(0, 1, 0, 1.0f));
+		view->ai->drawLine(Vec2(pos.x, pos.y), Vec2(pos.x + zom->aidir.x / 38, pos.y + zom->aidir.y / 38), ccColor4F(0, 0, 0, 1.0f));
+		view->ai->drawLine(Vec2(pos.x, pos.y), Vec2(pos.x + zom->alignment.x, pos.y + zom->alignment.y), ccColor4F(1,0,1,1.0f));
+		view->ai->drawLine(Vec2(pos.x, pos.y), Vec2(pos.x + zom->cohesion.x, pos.y + zom->cohesion.y), ccColor4F(0, 0, 1, 1.0f));
+		view->ai->drawLine(Vec2(pos.x, pos.y), Vec2(pos.x + zom->zombiness.x, pos.y + zom->zombiness.y), ccColor4F(1, 1, 0, 1.0f));
+	}
 
 	if (currentSong->isOnBeat(AudioEngine::getCurrentTime(audioid))){
 		view->mainBeatHUD->setString("BEAT!");

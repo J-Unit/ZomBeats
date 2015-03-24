@@ -20,6 +20,11 @@ Zombie::Zombie(float x, float y, b2World *world)
 	setSprite(Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("zombie")));
 	//initialize the awareness
 	awareness = INITIAL_AWARENESS;
+	cohesion.SetZero();
+	seperation.SetZero();
+	attraction.SetZero();
+	zombiness.SetZero();
+	alignment.SetZero();
 }
 
 void Zombie::setSprite(Sprite* value)

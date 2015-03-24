@@ -15,7 +15,8 @@ public:
 	b2CircleShape circle;
 
 	Sprite *sprite;
-	b2Vec2 direction;
+	b2Vec2 direction, seperation, zombiness, cohesion, alignment, attraction, aidir;
+
 
 
 	void setSprite(Sprite *value);
