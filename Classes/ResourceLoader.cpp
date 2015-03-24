@@ -39,15 +39,10 @@ ResourceLoader::ResourceLoader() {
         text->retain();
         textures["ricky"] = text;
     }
-    text = Director::getInstance()->getTextureCache()->addImage("textures/zombie.png");
+    text = Director::getInstance()->getTextureCache()->addImage("textures/zombie_new.png");
     if (text) {
         text->retain();
-        textures["planet1"] = text;
-    }
-    text = Director::getInstance()->getTextureCache()->addImage("textures/zombie.png");
-    if (text) {
-        text->retain();
-        textures["planet2"] = text;
+        textures["zombie"] = text;
     }
 
 	//add the wall textures here
@@ -70,6 +65,13 @@ ResourceLoader::ResourceLoader() {
 		text->retain();
 		textures["fog"] = text;
 	}
+
+	text = Director::getInstance()->getTextureCache()->addImage("textures/pause.png");
+	if (text) {
+		text->retain();
+		textures["pause"] = text;
+	}
+
 
 }
 

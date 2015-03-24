@@ -140,7 +140,7 @@ void View::buildScene(LevelMap *level, Layer* l) {
 		enviornment->addChild(n_wallTile);
 	}*/
 
-
+	
 
 	coordHUD = Label::create();
 	coordHUD->setTTFConfig(*ResourceLoader::getInstance()->getFont("MarkerFelt"));

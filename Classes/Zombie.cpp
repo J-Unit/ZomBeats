@@ -17,7 +17,7 @@ Zombie::Zombie(float x, float y, b2World *world)
 	body->SetUserData(&type);
 	direction.Set(1, 0);
 	//setVecRandom(&direction);
-	setSprite(Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("planet1")));
+	setSprite(Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("zombie")));
 	//initialize the awareness
 	awareness = INITIAL_AWARENESS;
 }
