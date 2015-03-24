@@ -219,166 +219,173 @@ void GameController::restartGame() {
  * However, this method is responsible for updating any transforms in the scene graph.
  */
 void GameController::update(float deltaTime) {
-    // Read the thrust from the user input
-    //input->update();
-	Vec2 thrust = input->lastClick;
-	elapsedTime += deltaTime; //a float in seconds
+	if (!isPaused) {
+		// Read the thrust from the user input
+		//input->update();
+		Vec2 thrust = input->lastClick;
+		elapsedTime += deltaTime; //a float in seconds
 
-	//cout << "Elapsed time: "<< elapsedTime <<endl;
-	// Read the thrust from the user input
-	//input->update();
-	//bool clicked = input->didClick();
+		//cout << "Elapsed time: "<< elapsedTime <<endl;
+		// Read the thrust from the user input
+		//input->update();
+		//bool clicked = input->didClick();
 
-	CTypedPtrDblElement<Weapon> *weapon = state->weapons.GetHeadPtr();
-	CTypedPtrDblElement<Weapon> *toDelete = NULL;
-	while (!state->weapons.IsSentinel(weapon))
-	{
-		Weapon *weap = weapon->Data();
-		if (weap->isDesroyed){
-			weap->isDesroyed = false;
-			toDelete = weapon;
-			state->world->DestroyBody(weap->body);
-			view->enviornment->removeChild(weap->sprite);
-		}
-		weapon = weapon->Next();
-	}
-	if (toDelete != NULL){
-		state->weapons.Remove(toDelete);
-	}
-
-	CTypedPtrDblElement<Zombie> *zombie = state->zombies.GetHeadPtr();
-	CTypedPtrDblElement<Zombie> *zombToDel = NULL;
-	while (!state->zombies.IsSentinel(zombie))
-	{
-		Zombie *zomb = zombie->Data();
-		if (zomb->isDestroyed){
-			zomb->isDestroyed = false;
-			toDelete = weapon;
-			state->world->DestroyBody(zomb->body);
-			view->enviornment->removeChild(zomb->sprite);
-		}
-		zombie = zombie->Next();
-	}
-	if (zombToDel != NULL){
-		state->zombies.Remove(zombToDel);
-	}
-
-	if (state->ship->isDestroyed){
-		restartGame();
-	}
-
-	updateFog();
-	float x = state->ship->body->GetPosition().x;
-	float y = state->ship->body->GetPosition().y;
-	MapNode *from = state->level->locateCharacter(x, y);
-	if (!input->clickProcessed){
-		//if on beat then flag it
-		onBeat = currentSong->isOnBeat(AudioEngine::getCurrentTime(audioid));
-		//cout << "PBF: " << elapsedTime << "\n";
-		stringstream st;
-		//char* tempstr = "kgkgk";
-		//std::sprintf(tempstr, "%f", elapsedTime);
-
-		//view->beatHUD->setString("Actual time: " + std::to_string(elapsedTime) + " song time: " + std::to_string(AudioEngine::getCurrentTime(audioid)));
-		if (!onBeat) {
-			state->ship->body->SetLinearVelocity(b2Vec2_zero);
-			destination = 0;
-
-			//if it is not on beat, increase the detection radius slightly
-			if (detectionRadius < MAX_DETECTION_RADIUS) {
-				detectionRadius += DETECTION_RADIUS_INCREASE;
+		CTypedPtrDblElement<Weapon> *weapon = state->weapons.GetHeadPtr();
+		CTypedPtrDblElement<Weapon> *toDelete = NULL;
+		while (!state->weapons.IsSentinel(weapon))
+		{
+			Weapon *weap = weapon->Data();
+			if (weap->isDesroyed){
+				weap->isDesroyed = false;
+				toDelete = weapon;
+				state->world->DestroyBody(weap->body);
+				view->enviornment->removeChild(weap->sprite);
 			}
+			weapon = weapon->Next();
 		}
-		else{
-			state->ship->boostFrames = MAX_BOOST_FRAMES;
-			MapNode *dest = state->level->locateCharacter((input->lastClick.x - view->screen_size_x/2.0) + x, 
-				-(input->lastClick.y - view->screen_size_y/2.0) + y);
-			state->level->shortestPath(from, dest);
+		if (toDelete != NULL){
+			state->weapons.Remove(toDelete);
+		}
+
+		CTypedPtrDblElement<Zombie> *zombie = state->zombies.GetHeadPtr();
+		CTypedPtrDblElement<Zombie> *zombToDel = NULL;
+		while (!state->zombies.IsSentinel(zombie))
+		{
+			Zombie *zomb = zombie->Data();
+			if (zomb->isDestroyed){
+				zomb->isDestroyed = false;
+				toDelete = weapon;
+				state->world->DestroyBody(zomb->body);
+				view->enviornment->removeChild(zomb->sprite);
+			}
+			zombie = zombie->Next();
+		}
+		if (zombToDel != NULL){
+			state->zombies.Remove(zombToDel);
+		}
+
+		if (state->ship->isDestroyed){
+			restartGame();
+		}
+
+		updateFog();
+		float x = state->ship->body->GetPosition().x;
+		float y = state->ship->body->GetPosition().y;
+		MapNode *from = state->level->locateCharacter(x, y);
+		if (!input->clickProcessed){
+			//if on beat then flag it
+			onBeat = currentSong->isOnBeat(AudioEngine::getCurrentTime(audioid));
+			//cout << "PBF: " << elapsedTime << "\n";
+			stringstream st;
+			//char* tempstr = "kgkgk";
+			//std::sprintf(tempstr, "%f", elapsedTime);
+
+			//view->beatHUD->setString("Actual time: " + std::to_string(elapsedTime) + " song time: " + std::to_string(AudioEngine::getCurrentTime(audioid)));
+			if (!onBeat) {
+				state->ship->body->SetLinearVelocity(b2Vec2_zero);
+				destination = 0;
+
+				//if it is not on beat, increase the detection radius slightly
+				if (detectionRadius < MAX_DETECTION_RADIUS) {
+					detectionRadius += DETECTION_RADIUS_INCREASE;
+				}
+			}
+			else{
+				state->ship->boostFrames = MAX_BOOST_FRAMES;
+				MapNode *dest = state->level->locateCharacter((input->lastClick.x - view->screen_size_x / 2.0) + x,
+					-(input->lastClick.y - view->screen_size_y / 2.0) + y);
+				state->level->shortestPath(from, dest);
+				destination = from->next;
+
+				//if it is on beat, decrease the detection radius slightly
+				if (detectionRadius > MIN_DETECTION_RADIUS) {
+					detectionRadius -= DETECTION_RADIUS_DECREASE;
+				}
+
+			}
+			input->clickProcessed = true;
+
+			//check if there is a zombie within the radius
+			CTypedPtrDblElement<Zombie> *cur = state->zombies.GetHeadPtr();
+			Zombie *curZ;
+			b2Vec2 tmp;
+			int count = 0;
+			while (!state->zombies.IsSentinel(cur)){
+				curZ = cur->Data();
+				tmp = state->ship->body->GetPosition() - curZ->body->GetPosition();
+				//if this zombie is within our detection radius and we messed up the beat
+				float dis;
+				dis = sqrt(tmp.x*tmp.x + tmp.y*tmp.y);
+				if (!onBeat && dis < detectionRadius) {
+					curZ->increaseAwarness();
+				}
+				if (count == 0) {
+					currAwareness = curZ->awareness;
+				}
+
+				count++;
+				cur = cur->Next();
+			}
+
+
+		}
+
+		if (destination != 0 && from == destination){
 			destination = from->next;
-
-			//if it is on beat, decrease the detection radius slightly
-			if (detectionRadius > MIN_DETECTION_RADIUS) {
-				detectionRadius -= DETECTION_RADIUS_DECREASE;
-			}
-
 		}
-		input->clickProcessed = true;
-
-		//check if there is a zombie within the radius
-		CTypedPtrDblElement<Zombie> *cur = state->zombies.GetHeadPtr();
-		Zombie *curZ;
-		b2Vec2 tmp;
-		int count = 0;
-		while (!state->zombies.IsSentinel(cur)){
-			curZ = cur->Data();
-			tmp = state->ship->body->GetPosition() - curZ->body->GetPosition();
-			//if this zombie is within our detection radius and we messed up the beat
-			float dis;
-			dis = sqrt(tmp.x*tmp.x + tmp.y*tmp.y);
-			if (!onBeat && dis < detectionRadius) {
-				curZ->increaseAwarness();
+		if (destination != 0){
+			Vec2 dir = Vec2(state->level->getTileCenterX(destination) - x, state->level->getTileCenterY(destination) - y);
+			dir.normalize();
+			if (!state->ship->update(deltaTime, dir)){
+				destination = 0;
 			}
-			if (count == 0) {
-				currAwareness = curZ->awareness;
-			}
-
-			count++;
-			cur = cur->Next();
 		}
+		ai->update(state);
 
 
-	}
 
-	if (destination != 0 && from == destination){
-			destination = from->next;
-	}
-	if (destination != 0){
-		Vec2 dir = Vec2(state->level->getTileCenterX(destination) - x, state->level->getTileCenterY(destination) - y);
-		dir.normalize();
-		if (!state->ship->update(deltaTime, dir)){
-			destination = 0;
+
+		// Move the ship (MODEL ONLY)
+		//shipModel->setForward(thrust.y);
+		//shipModel->setTurning(thrust.x);
+		//shipModel->update(deltaTime, thrust);
+		state->world->Step(deltaTime, 8, 3);
+		//world->ClearForces();
+
+
+		// "Drawing" code.  Move everything BUT the ship
+		// Update the HUD
+		displayPosition(view->coordHUD, state->ship->body->GetPosition());
+
+		b2Vec2 pos = state->ship->body->GetPosition();
+		Vec2 offset = Vec2(pos.x, pos.y);// -enviornment->getPosition();
+		Vec2 center(0.5f, 0.5f);
+
+		// Anchor points are in texture coordinates (0 to 1). Scale it.
+		offset.x = offset.x / view->allSpace->getContentSize().width;
+		offset.y = offset.y / view->allSpace->getContentSize().height;
+
+		// Reanchor the node at the center of the screen and rotate about center.
+		//farSpace->setAnchorPoint(offset*PARALLAX_AMT+center);
+		//farSpace->setRotation(-shipModel->body->GetAngle());
+		//shipImage->setAnchorPoint(-offset);
+		view->enviornment->setAnchorPoint(offset);
+
+		// Reanchor the node at the center of the screen and rotate about center.
+		//nearSpace->setAnchorPoint(offset+center);
+		//nearSpace->setRotation(-shipModel->body->GetAngle());
+		state->ship->getSprite()->setRotation(state->ship->body->GetAngle());
+		CTypedPtrDblElement<Zombie> *z = state->zombies.GetHeadPtr();
+		while (!state->zombies.IsSentinel(z)){
+			pos = z->Data()->body->GetPosition();
+			z->Data()->sprite->setPosition(pos.x, pos.y);
+			z = z->Next();
 		}
 	}
-	ai->update(state);
+	//game is paused, do sth else
+	else {
 
 
-
-
-    // Move the ship (MODEL ONLY)
-    //shipModel->setForward(thrust.y);
-    //shipModel->setTurning(thrust.x);
-    //shipModel->update(deltaTime, thrust);
-	state->world->Step(deltaTime, 8, 3);
-	//world->ClearForces();
-	
-    
-    // "Drawing" code.  Move everything BUT the ship
-    // Update the HUD
-    displayPosition(view->coordHUD, state->ship->body->GetPosition());
-
-	b2Vec2 pos = state->ship->body->GetPosition();
-	Vec2 offset = Vec2(pos.x, pos.y);// -enviornment->getPosition();
-    Vec2 center(0.5f,0.5f);
-    
-    // Anchor points are in texture coordinates (0 to 1). Scale it.
-    offset.x = offset.x/view->allSpace->getContentSize().width;
-	offset.y = offset.y / view->allSpace->getContentSize().height;
-
-    // Reanchor the node at the center of the screen and rotate about center.
-    //farSpace->setAnchorPoint(offset*PARALLAX_AMT+center);
-    //farSpace->setRotation(-shipModel->body->GetAngle());
-	//shipImage->setAnchorPoint(-offset);
-	view->enviornment->setAnchorPoint(offset);
-	
-	// Reanchor the node at the center of the screen and rotate about center.
-    //nearSpace->setAnchorPoint(offset+center);
-    //nearSpace->setRotation(-shipModel->body->GetAngle());
-	state->ship->getSprite()->setRotation(state->ship->body->GetAngle());
-	CTypedPtrDblElement<Zombie> *z = state->zombies.GetHeadPtr();
-	while (!state->zombies.IsSentinel(z)){
-		pos = z->Data()->body->GetPosition();
-		z->Data()->sprite->setPosition(pos.x, pos.y);
-		z = z->Next();
 	}
 }
 
