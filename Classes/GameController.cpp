@@ -170,6 +170,7 @@ bool GameController::init() {
 
 	// Tell the director we are ready for animation.
 	this->scheduleUpdate();
+	isPaused = false;
     return true;
 }
 
