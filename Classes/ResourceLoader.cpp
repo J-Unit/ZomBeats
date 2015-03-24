@@ -80,6 +80,12 @@ ResourceLoader::ResourceLoader() {
 		text->retain();
 		textures["mower"] = text;
 	}
+
+	text = Director::getInstance()->getTextureCache()->addImage("textures/pause_button.png");
+	if (text) {
+		text->retain();
+		textures["pause_button"] = text;
+	}
 }
 
 /**

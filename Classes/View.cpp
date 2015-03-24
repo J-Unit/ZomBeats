@@ -190,6 +190,11 @@ void View::buildScene(LevelMap *level, Layer* l) {
 	mainBeatHUD->setScale(1.6f);
 	mainBeatHUD->setAnchorPoint(Vec2::ZERO);
 
+	//a fake pause button goes here
+	Sprite* pause = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("pause_button"));
+	pause->setScale(0.3f);
+	pause->setPosition(Vec2(HUD_OFFSET.x*89, HUD_OFFSET.y * 58));
+
 	// Remove the welcome screen and display the game.
 	allSpace->addChild(enviornment, 0);
 	//allSpace->addChild(nearSpace,0.5);
@@ -202,6 +207,7 @@ void View::buildScene(LevelMap *level, Layer* l) {
 	l->addChild(mainBeatHUD);
 	l->addChild(detectionRadiusHUD);
 	l->addChild(zombieOneAwarenessHUD); //remove this later
+	l->addChild(pause);
 }
 
 

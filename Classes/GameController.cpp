@@ -246,6 +246,14 @@ void GameController::restartGame() {
 	destination = 0;
 }
 
+void GameController::pauseGame() {
+	isPaused = true;
+}
+
+void GameController::resumeGame() {
+	isPaused = false;
+}
+
 /**
 * Update the game state.
 *
@@ -457,9 +465,6 @@ void GameController::update(float deltaTime) {
 
 			currentMower->update(deltaTime, mowerDir);
 		}
-
-
-
 
 		// Move the ship (MODEL ONLY)
 		//shipModel->setForward(thrust.y);

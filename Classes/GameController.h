@@ -141,6 +141,10 @@ public:
 
 	void restartGame();
 
+	void pauseGame();
+
+	void resumeGame();
+
 
 private:
 	void createZombies();
