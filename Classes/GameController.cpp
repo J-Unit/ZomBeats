@@ -380,6 +380,7 @@ void GameController::update(float deltaTime) {
 		while (!state->zombies.IsSentinel(z)){
 			pos = z->Data()->body->GetPosition();
 			z->Data()->sprite->setPosition(pos.x, pos.y);
+			z->Data()->advanceFrame();
 			z = z->Next();
 		}
 	}
