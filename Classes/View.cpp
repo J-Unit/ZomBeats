@@ -112,9 +112,9 @@ void View::buildScene(LevelMap *level, Layer* l) {
 
 	enviornment->addChild(meshVis);
 	enviornment->addChild(path);
-	enviornment->addChild(ai);
+	enviornment->addChild(ai, 1);
 	enviornment->addChild(detectionRadiusCircle);
-	enviornment->addChild(hitBox);
+	enviornment->addChild(hitBox, 2);
 
 	// Put planets in the foreground.
 	/*nearSpace = Node::create();

@@ -423,7 +423,7 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 	view->detectionRadiusCircle->drawCircle(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y), detectionRadius, 0.0f, 1000, false, ccColor4F(0, 0, 2.0f, 1.0f));
 
 	//visualize the hitbox for main character
-	view->hitBox->drawRect(Vec2(state->ship->body->GetPosition().x-30.0f, state->ship->body->GetPosition().y-40.0f), Vec2(state->ship->body->GetPosition().x+30.0f, state->ship->body->GetPosition().y+40.0f), ccColor4F(2.0f, 2.0f, 2.0f, 1.0f));
+	view->hitBox->drawRect(Vec2(state->ship->body->GetPosition().x-29.5f, state->ship->body->GetPosition().y-55.0f), Vec2(state->ship->body->GetPosition().x+29.5f, state->ship->body->GetPosition().y+55.0f), ccColor4F(2.0f, 2.0f, 2.0f, 1.0f));
 
 	if (destination != 0){
 		MapNode *last = state->level->locateCharacter(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y);
