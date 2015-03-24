@@ -19,6 +19,7 @@ using namespace cocos2d;
 #define SHIP_IMG_FLAT   9
 #define SHIP_IMG_RIGHT 17
 #define MAX_BOOST_FRAMES 45
+#define FRAME_INTERVAL 10
 
 
 // Forward declaration to minimize imports in header
@@ -43,7 +44,7 @@ private:
      * This method includes some dampening of the turn, and should be called before
      * moving the ship.
      */
-    void advanceFrame(Vec2 dir);
+    void advanceFrame(Vec2* dir);
 
 protected:
 
@@ -71,6 +72,8 @@ public:
 	Weapon *currentWeapon;
 	b2PolygonShape dynamicBox; 
 	int boostFrames;
+	int frameRate;
+	b2Vec2 lastPosition;
     /**
      * Creates a new ship at the specified position (in world space).
      *

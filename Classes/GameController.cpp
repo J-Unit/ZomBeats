@@ -27,11 +27,11 @@ using namespace experimental;
 float lastbeat = 0;
 int audioid = 0;
 /**
- * Initialize the game state.
- *
- * This is an overridden method inherited from the super(super) class Node.
- * The Director calls this soon after start up.
- */
+* Initialize the game state.
+*
+* This is an overridden method inherited from the super(super) class Node.
+* The Director calls this soon after start up.
+*/
 
 void GameController::BeginContact(b2Contact* contact){
 	Type *b1, *b2;
@@ -39,8 +39,8 @@ void GameController::BeginContact(b2Contact* contact){
 	b2 = (Type *)contact->GetFixtureB()->GetBody()->GetUserData();
 
 	//wall contact
-	if(b1->type == WallType || b2->type== WallType) return;
-	
+	if (b1->type == WallType || b2->type == WallType) return;
+
 	//weapon pickup
 	Weapon *w;
 	if ((b1->type == WeaponType && b2->type == ShipType) || (b1->type == ShipType && b2->type == WeaponType)){
@@ -164,14 +164,14 @@ bool GameController::init() {
 	//createZombies();
 	//createWalls();
 	//createWeapons();
-    // Start listening to input
-    input = new InputController(_eventDispatcher);
-    input->startInput();
+	// Start listening to input
+	input = new InputController(_eventDispatcher);
+	input->startInput();
 
 	// Tell the director we are ready for animation.
 	this->scheduleUpdate();
 	isPaused = false;
-    return true;
+	return true;
 }
 
 void GameController::loadLevel(int i){
@@ -188,7 +188,7 @@ void GameController::loadLevel(int i){
 	this->removeAllChildren();
 	view->buildScene(state->level, this);
 	view->allSpace->addChild(state->ship->getSprite());
-	for(int i=0;i<state->level->nWalls;i++) view->enviornment->addChild(state->level->walls[i].sprite);
+	for (int i = 0; i<state->level->nWalls; i++) view->enviornment->addChild(state->level->walls[i].sprite);
 	for (CTypedPtrDblElement<Zombie> *cz = state->zombies.GetHeadPtr(); !state->zombies.IsSentinel(cz); cz = cz->Next()) view->enviornment->addChild(cz->Data()->sprite);
 	for (CTypedPtrDblElement<Weapon> *cw = state->weapons.GetHeadPtr(); !state->weapons.IsSentinel(cw); cw = cw->Next()) view->enviornment->addChild(cw->Data()->sprite);
 	//initial detection radius
@@ -212,12 +212,12 @@ void GameController::restartGame() {
 }
 
 /**
- * Update the game state.
- *
- * This method is called every animation frame.  There is no draw() or render()
- * counterpoint to this method; drawing is done automatically in the scene graph.
- * However, this method is responsible for updating any transforms in the scene graph.
- */
+* Update the game state.
+*
+* This method is called every animation frame.  There is no draw() or render()
+* counterpoint to this method; drawing is done automatically in the scene graph.
+* However, this method is responsible for updating any transforms in the scene graph.
+*/
 void GameController::update(float deltaTime) {
 	if (!isPaused) {
 		// Read the thrust from the user input
@@ -391,14 +391,14 @@ void GameController::update(float deltaTime) {
 }
 
 /**
- * Writes the current ship position to the HUD.
- *
- * @param label The HUD label
- * #param coords The current ship coordinates
- */
+* Writes the current ship position to the HUD.
+*
+* @param label The HUD label
+* #param coords The current ship coordinates
+*/
 void GameController::displayPosition(Label* label, const b2Vec2& coords) {
-    stringstream ss;
-    ss << "Coords: (" << (int)coords.x/10 << "," << (int)coords.y/10 << ")";
+	stringstream ss;
+	ss << "Coords: (" << (int)coords.x / 10 << "," << (int)coords.y / 10 << ")";
 	view->coordHUD->setString(ss.str());
 	stringstream s;
 	s << "Speed: " << state->ship->body->GetLinearVelocity().Length();
@@ -415,7 +415,7 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 	stringstream d;
 	d << "Detection Radius: " << detectionRadius;
 	view->detectionRadiusHUD->setString(d.str());
-	
+
 	stringstream awr;
 	awr << "Zombie 1 Awarness: " << currAwareness;
 	view->zombieOneAwarenessHUD->setString(awr.str());
@@ -424,7 +424,7 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 	view->detectionRadiusCircle->drawCircle(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y), detectionRadius, 0.0f, 1000, false, ccColor4F(0, 0, 2.0f, 1.0f));
 
 	//visualize the hitbox for main character
-	view->hitBox->drawRect(Vec2(state->ship->body->GetPosition().x-29.5f, state->ship->body->GetPosition().y-55.0f), Vec2(state->ship->body->GetPosition().x+29.5f, state->ship->body->GetPosition().y+55.0f), ccColor4F(2.0f, 2.0f, 2.0f, 1.0f));
+	view->hitBox->drawRect(Vec2(state->ship->body->GetPosition().x - 29.5f, state->ship->body->GetPosition().y - 55.0f), Vec2(state->ship->body->GetPosition().x + 29.5f, state->ship->body->GetPosition().y + 55.0f), ccColor4F(2.0f, 2.0f, 2.0f, 1.0f));
 
 	if (destination != 0){
 		MapNode *last = state->level->locateCharacter(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y);
@@ -446,7 +446,7 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 		view->ai->drawLine(Vec2(pos.x, pos.y), Vec2(pos.x + zom->seperation.x, pos.y + zom->seperation.y), ccColor4F(1, 0, 0, 1.0f));
 		view->ai->drawLine(Vec2(pos.x, pos.y), Vec2(pos.x + zom->attraction.x, pos.y + zom->attraction.y), ccColor4F(0, 1, 0, 1.0f));
 		view->ai->drawLine(Vec2(pos.x, pos.y), Vec2(pos.x + zom->aidir.x / 38, pos.y + zom->aidir.y / 38), ccColor4F(0, 0, 0, 1.0f));
-		view->ai->drawLine(Vec2(pos.x, pos.y), Vec2(pos.x + zom->alignment.x, pos.y + zom->alignment.y), ccColor4F(1,0,1,1.0f));
+		view->ai->drawLine(Vec2(pos.x, pos.y), Vec2(pos.x + zom->alignment.x, pos.y + zom->alignment.y), ccColor4F(1, 0, 1, 1.0f));
 		view->ai->drawLine(Vec2(pos.x, pos.y), Vec2(pos.x + zom->cohesion.x, pos.y + zom->cohesion.y), ccColor4F(0, 0, 1, 1.0f));
 		view->ai->drawLine(Vec2(pos.x, pos.y), Vec2(pos.x + zom->zombiness.x, pos.y + zom->zombiness.y), ccColor4F(1, 1, 0, 1.0f));
 	}
@@ -459,8 +459,8 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 	}
 
 	/*if (!input->clickProcessed) {
-		mouse->drawDot(input->lastClick, 2.0f, ccColor4F(0.0f, 0.0f, 0.0f, 0.0f));
-		input->clickProcessed = true;
+	mouse->drawDot(input->lastClick, 2.0f, ccColor4F(0.0f, 0.0f, 0.0f, 0.0f));
+	input->clickProcessed = true;
 	}*/
 	stringstream st;
 	if (onBeat){

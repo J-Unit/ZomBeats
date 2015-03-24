@@ -37,6 +37,7 @@ Ship::Ship(b2World *world, float x, float y, float mx, float my) {
    // turning = 0.0f;
    // forward = 0.0f;
 	boostFrames = 0;
+	frameRate = 0;
 	isDestroyed = false;
 	hasWeapon = false;
 	currentWeapon = NULL;
@@ -56,6 +57,7 @@ Ship::Ship(b2World *world, float x, float y, float mx, float my) {
     sprite  = NULL;
 	//setSprite(FilmStrip::create(ResourceLoader::getInstance()->getTexture("ricky"), 1, 2, 2), mx, my);
 	setSprite(FilmStrip::create(ResourceLoader::getInstance()->getTexture("ricky"), 4, 3, 12), mx, my);
+	lastPosition = body->GetPosition();
 }
 
 /**
@@ -103,6 +105,10 @@ void Ship::setSprite(FilmStrip* value, float mx, float my) {
 bool Ship::update(float deltaTime, Vec2 dir) {
 	if (boostFrames <= 0) return false;
 	boostFrames--;
+	frameRate++;
+	if (frameRate > 10000) {
+		frameRate = 0;
+	}
 	//float32 angle = body->GetAngle();
 	body->ApplyLinearImpulse(b2Vec2(dir.x * IMPULSE, dir.y * IMPULSE), body->GetPosition(), true);
 	//body->ApplyForceToCenter(b2Vec2(thrust.y * 1000 * DCOS_90(angle)  * SHIP_THRUST_FACTOR, thrust.y * 1000 * (-DSIN_90(angle)) * SHIP_THRUST_FACTOR), true);
@@ -116,7 +122,10 @@ bool Ship::update(float deltaTime, Vec2 dir) {
 		sprite->setFrame(1);
     }
 	else if(sprite!=NULL && !hasWeapon) {
-		advanceFrame(dir);
+		if (frameRate % FRAME_INTERVAL == 0) {
+			Vec2* moveDir = new Vec2(round(body->GetPosition().x - lastPosition.x), round(body->GetPosition().y - lastPosition.y));
+			advanceFrame(moveDir);
+		}
 	}
     
     // Process the ship thrust.
@@ -134,6 +143,7 @@ bool Ship::update(float deltaTime, Vec2 dir) {
     
     // Move the ship
     position += velocity;*/
+	lastPosition = body->GetPosition();
 	return true;
 }
 
@@ -143,27 +153,12 @@ bool Ship::update(float deltaTime, Vec2 dir) {
  * This method includes some dampening of the turn, and should be called before
  * moving the ship.
  */
-void Ship::advanceFrame(Vec2 dir) {
+void Ship::advanceFrame(Vec2* dir) {
     // Our animation depends on the current frame.
     unsigned int frame = sprite->getFrame();
     
-	if (dir.x > 0) {
-		if (frame == 6 || frame == 7) {
-			frame++;
-		}
-		else {
-			frame = 6;
-		}
-	}
-	else if (dir.x < 0) {
-		if (frame == 9 || frame == 10) {
-			frame++;
-		}
-		else {
-			frame = 9;
-		}
-	}
-	else if (dir.y > 0) {
+
+	if (dir->y > 0) {
 		if (frame == 0 || frame == 1) {
 			frame++;
 		}
@@ -171,7 +166,7 @@ void Ship::advanceFrame(Vec2 dir) {
 			frame = 0;
 		}
 	}
-	else if (dir.y < 0) {
+	else if (dir->y < 0) {
 		if (frame == 3 || frame == 4) {
 			frame++;
 		}
@@ -179,8 +174,24 @@ void Ship::advanceFrame(Vec2 dir) {
 			frame = 3;
 		}
 	}
+	else if (dir->x > 0) {
+		if (frame == 6 || frame == 7) {
+			frame++;
+		}
+		else {
+			frame = 6;
+		}
+	}
+	else if (dir->x < 0) {
+		if (frame == 9 || frame == 10) {
+			frame++;
+		}
+		else {
+			frame = 9;
+		}
+	}
 	else {
-		frame = 4;
+		frame = sprite->getFrame();
 	}
 	
     sprite->setFrame(frame);
