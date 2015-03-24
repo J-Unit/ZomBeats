@@ -155,7 +155,7 @@ bool GameController::init() {
 	view = new View(winsize.width, winsize.height);
 	view->scene->addChild(this);
 
-	loadLevel(1);
+	loadLevel(2);
 
 	//add the fog of war here
 	createFog();
@@ -205,7 +205,7 @@ void GameController::loadLevel(int i){
 void GameController::restartGame() {
 	AudioEngine::stopAll();
 	this->removeAllChildren();
-	loadLevel(1);
+	loadLevel(2);
 	createFog();
 	input->clickProcessed = true;
 	destination = 0;

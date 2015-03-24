@@ -72,7 +72,9 @@ void AIController::update(GameState *state){
 		//ALIGNMENT
 		curZ->alignment.SetZero();
 		for (CTypedPtrDblElement<Zombie> *other = flock.GetHeadPtr(); !flock.IsSentinel(other); other = other->Next()){
-			curZ->alignment += 1 / other->Data()->body->GetLinearVelocity().Length() * other->Data()->body->GetLinearVelocity();
+			if (!isZero(other->Data()->body->GetLinearVelocity())){
+				curZ->alignment += 1 / other->Data()->body->GetLinearVelocity().Length() * other->Data()->body->GetLinearVelocity();
+			}
 		}
 		curZ->alignment.Normalize();
 		curZ->alignment *= ALIGNMENT;
