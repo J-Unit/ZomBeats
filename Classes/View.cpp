@@ -92,7 +92,7 @@ void View::buildScene(LevelMap *level, Layer* l) {
 	hitBox->setAnchorPoint(anchor);
 	// Tile the background with deep space
 	Vec2 rivet;
-	Texture2D* bkgd = ResourceLoader::getInstance()->getTexture("woodTile");
+	Texture2D* bkgd = ResourceLoader::getInstance()->getTexture("tile1");
 	for (int ii = -level->bkgTilesX / 2 + 1; ii <= level->bkgTilesX / 2; ii++) {
 		for (int jj = -level->bkgTilesY / 2 + 1; jj <= level->bkgTilesY / 2; jj++) {
 			// Create a new autorelease sprite for each tile

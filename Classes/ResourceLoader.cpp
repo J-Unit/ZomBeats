@@ -27,11 +27,13 @@ ResourceLoader::ResourceLoader() {
 
     // Load the textures (Autorelease objects)
     Texture2D* text;
-    text = Director::getInstance()->getTextureCache()->addImage("textures/wood.png");
+    text = Director::getInstance()->getTextureCache()->addImage("textures/tile_new.png");
     if (text) {
         text->retain();
-        textures["woodTile"] = text;
+        textures["tile1"] = text;
     }
+
+
     //text = Director::getInstance()->getTextureCache()->addImage("textures/ships.png");
 	//text = Director::getInstance()->getTextureCache()->addImage("textures/chuck.png");
 	text = Director::getInstance()->getTextureCache()->addImage("textures/spritebasic.png");
