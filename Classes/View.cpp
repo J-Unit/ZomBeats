@@ -91,6 +91,11 @@ void View::buildScene(LevelMap *level, Layer* l) {
 	detectionRadiusCircle->setPosition(center);
 	detectionRadiusCircle->setAnchorPoint(anchor);
 
+	directionUseEnvironmentWeapon = DrawNode::create();
+	directionUseEnvironmentWeapon->setContentSize(allSpace->getContentSize());
+	directionUseEnvironmentWeapon->setPosition(center);
+	directionUseEnvironmentWeapon->setAnchorPoint(anchor);
+
 	hitBox = DrawNode::create();
 	hitBox->setContentSize(allSpace->getContentSize());
 	hitBox->setPosition(center);
@@ -115,6 +120,37 @@ void View::buildScene(LevelMap *level, Layer* l) {
 	enviornment->addChild(ai, 1);
 	enviornment->addChild(detectionRadiusCircle);
 	enviornment->addChild(hitBox, 2);
+
+	enviornment->addChild(directionUseEnvironmentWeapon);
+	// Put planets in the foreground.
+	/*nearSpace = Node::create();
+	nearSpace->setContentSize(allSpace->getContentSize());
+	nearSpace->setPosition(center);
+	nearSpace->setAnchorPoint(anchor);*/
+
+	/*Sprite* planet = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("planet1"));
+	planet->setScale(PLANET_SCALE, PLANET_SCALE);
+	planet->setPosition(PLANET1_POS);
+	planet->setAnchorPoint(anchor);
+	enviornment->addChild(planet);
+	// nearSpace->addChild(planet);
+
+
+	planet = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("planet2"));
+	planet->setScale(PLANET_SCALE, PLANET_SCALE);
+	planet->setPosition(PLANET2_POS);
+	planet->setAnchorPoint(anchor);
+	enviornment->addChild(planet);*/
+
+	//shipImage = FilmStrip::create(ResourceLoader::getInstance()->getTexture("ship"),4,5,18);
+	/*shipImage = FilmStrip::create(ResourceLoader::getInstance()->getTexture("ship"), 1, 1, 1);
+
+	//create 30 wall bricks 
+	for (int i = 0; i < 30; i++) {
+		Sprite* n_wallTile = );
+		walls.push_back(n_wallTile);
+		enviornment->addChild(n_wallTile);
+	}*/
 
 
 	coordHUD = Label::create();

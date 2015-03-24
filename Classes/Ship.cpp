@@ -40,6 +40,7 @@ Ship::Ship(b2World *world, float x, float y, float mx, float my) {
 	frameRate = 0;
 	isDestroyed = false;
 	hasWeapon = false;
+	isActivatingEnvironment = false;
 	currentWeapon = NULL;
 	bodyDef.type = b2_dynamicBody;
 	bodyDef.position.Set(x, y);

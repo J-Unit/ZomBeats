@@ -59,7 +59,7 @@ protected:
     /** Current forward thrust (stored to facilitate decay) */
     //float       forward;
     /** Reference to image in SceneGraph for animation */
-    FilmStrip* sprite;
+    
 
     
 public:
@@ -69,11 +69,13 @@ public:
     Ship(b2World *world);
 	bool isDestroyed;
 	bool hasWeapon;
+	bool isActivatingEnvironment;
 	Weapon *currentWeapon;
 	b2PolygonShape dynamicBox; 
 	int boostFrames;
 	int frameRate;
 	b2Vec2 lastPosition;
+	FilmStrip* sprite;
     /**
      * Creates a new ship at the specified position (in world space).
      *

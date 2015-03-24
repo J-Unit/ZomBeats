@@ -64,6 +64,9 @@ InputController::InputController(cocos2d::EventDispatcher* dispatcher) {
     touchListener->onTouchBegan = [=](Touch* t, Event* event) {
                                         return this->touchBeganCB(t,event);
                                     };
+	touchListener->onTouchMoved = [=](Touch* t, Event* event) {
+										this->touchContinueCB(t, event);
+									};
     touchListener->onTouchEnded = [=](Touch* t, Event* event) {
                                         this->touchEndedCB(t,event);
                                     };
@@ -74,6 +77,9 @@ InputController::InputController(cocos2d::EventDispatcher* dispatcher) {
 	mouseListener = EventListenerMouse::create();
 	mouseListener->onMouseDown = [=](Event* event){
 		this->mousePressedCB(event);
+	};
+	mouseListener->onMouseMove = [=](Event* event){
+		this->mouseContinuedCB(event);
 	};
 	mouseListener->onMouseUp = [=](Event* event){
 		this->mouseReleasedCB(event);
@@ -153,11 +159,17 @@ bool InputController::touchBeganCB(Touch* t, Event* event) {
 	clicked = true;
 	startTouch.x = RANGE_CLAMP(startTouch.x, -INPUT_MAXIMUM_FORCE, INPUT_MAXIMUM_FORCE);
 	startTouch.y = RANGE_CLAMP(startTouch.y, -INPUT_MAXIMUM_FORCE, INPUT_MAXIMUM_FORCE);
-	inputThrust.x = startTouch.x / X_ADJUST_FACTOR;
-	inputThrust.y = startTouch.y / Y_ADJUST_FACTOR;
 	return true;
 }
 
+bool InputController::touchContinueCB(Touch* t, Event* event) {
+	startTouch = t->getLocation();
+	Vec2 touch = t->getLocationInView();
+	lastClick.set(touch.x, touch.y);
+	startTouch.x = RANGE_CLAMP(startTouch.x, -INPUT_MAXIMUM_FORCE, INPUT_MAXIMUM_FORCE);
+	startTouch.y = RANGE_CLAMP(startTouch.y, -INPUT_MAXIMUM_FORCE, INPUT_MAXIMUM_FORCE);
+	return true;
+}
 
 
 /**
@@ -206,6 +218,25 @@ void InputController::mousePressedCB(Event* event) {
 	// Go ahead and apply to thrust now.
 	inputThrust.x = inputPos.x / X_ADJUST_FACTOR;
 	inputThrust.y = inputPos.y / Y_ADJUST_FACTOR;
+
+}
+
+void InputController::mouseContinuedCB(Event* event) {
+	if (clicked){
+		EventMouse* mouseEvent = dynamic_cast<EventMouse*>(event);
+		Vec2 mouseTouch = mouseEvent->getLocationInView();
+		//mouseTouch.x = RANGE_CLAMP(mouseTouch.x, -INPUT_MAXIMUM_FORCE, INPUT_MAXIMUM_FORCE);
+		//mouseTouch.y = RANGE_CLAMP(mouseTouch.y, -INPUT_MAXIMUM_FORCE, INPUT_MAXIMUM_FORCE);
+
+		lastClick.set(mouseTouch.x, -mouseTouch.y);
+		inputPos = mouseEvent->getLocation();
+		inputPos.x = RANGE_CLAMP(inputPos.x, -INPUT_MAXIMUM_FORCE, INPUT_MAXIMUM_FORCE);
+		inputPos.y = RANGE_CLAMP(inputPos.y, -INPUT_MAXIMUM_FORCE, INPUT_MAXIMUM_FORCE);
+
+		// Go ahead and apply to thrust now.
+		inputThrust.x = inputPos.x / X_ADJUST_FACTOR;
+		inputThrust.y = inputPos.y / Y_ADJUST_FACTOR;
+	}
 
 }
 
