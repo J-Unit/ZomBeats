@@ -19,7 +19,7 @@ using namespace cocos2d;
 #define SHIP_IMG_FLAT   9
 #define SHIP_IMG_RIGHT 17
 #define MAX_BOOST_FRAMES 45
-#define FRAME_INTERVAL 10
+#define FRAME_INTERVAL 5
 
 
 // Forward declaration to minimize imports in header

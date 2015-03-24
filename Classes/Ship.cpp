@@ -119,7 +119,7 @@ bool Ship::update(float deltaTime, Vec2 dir) {
    // forward = RANGE_CLAMP(forward, -SHIP_MAX_SPEED, SHIP_MAX_SPEED);
    // turning = RANGE_CLAMP(turning, -SHIP_MAX_TURN, SHIP_MAX_TURN);
     if (sprite != NULL && hasWeapon) {
-		sprite->setFrame(1);
+		sprite->setFrame(4);
     }
 	else if(sprite!=NULL && !hasWeapon) {
 		if (frameRate % FRAME_INTERVAL == 0) {
