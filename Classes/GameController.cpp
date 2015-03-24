@@ -317,6 +317,7 @@ void GameController::update(float deltaTime) {
 				float dis;
 				dis = sqrt(tmp.x*tmp.x + tmp.y*tmp.y);
 				if (!onBeat && dis < detectionRadius) {
+					AudioEngine::play2d("sound_effects/ZombieHiss.mp3", false, 1);
 					curZ->increaseAwarness();
 				}
 				if (count == 0) {
