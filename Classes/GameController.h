@@ -77,7 +77,6 @@ public:
     /** The current coordinates of the ship */
 
 	SongDecomposition*  currentSong;
-   
 	AIController *ai;
 	GameState *state;
 	// Box2D world for physics, collisions etc.

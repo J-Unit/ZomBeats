@@ -160,7 +160,6 @@ bool GameController::init() {
 	//add the fog of war here
 	createFog();
 
-
 	ai = new AIController();
 	//createZombies();
 	//createWalls();
@@ -194,7 +193,7 @@ void GameController::loadLevel(int i){
 	//initial detection radius
 	detectionRadius = INITIAL_DETECTION_RADIUS;
 	currAwareness = 0.0f;
-
+	AudioEngine::stopAll();
 	currentSong = new SongDecomposition(120.0, "songs/ChillDeepHouse.mp3", -.051);
 	audioid = AudioEngine::play2d("songs/ChillDeepHouse.mp3", true, 1);
 
