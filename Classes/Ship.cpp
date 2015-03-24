@@ -54,7 +54,8 @@ Ship::Ship(b2World *world, float x, float y, float mx, float my) {
 	body->SetLinearDamping(3.0f);
 	//body->SetAngularDamping(0.5f);
     sprite  = NULL;
-	setSprite(FilmStrip::create(ResourceLoader::getInstance()->getTexture("ricky"), 1, 2, 2), mx, my);
+	//setSprite(FilmStrip::create(ResourceLoader::getInstance()->getTexture("ricky"), 1, 2, 2), mx, my);
+	setSprite(FilmStrip::create(ResourceLoader::getInstance()->getTexture("ricky"), 4, 3, 12), mx, my);
 }
 
 /**
@@ -115,7 +116,7 @@ bool Ship::update(float deltaTime, Vec2 dir) {
 		sprite->setFrame(1);
     }
 	else if(sprite!=NULL && !hasWeapon) {
-		sprite->setFrame(0);
+		advanceFrame(dir);
 	}
     
     // Process the ship thrust.
@@ -142,38 +143,46 @@ bool Ship::update(float deltaTime, Vec2 dir) {
  * This method includes some dampening of the turn, and should be called before
  * moving the ship.
  */
-/*void Ship::advanceFrame() {
+void Ship::advanceFrame(Vec2 dir) {
     // Our animation depends on the current frame.
     unsigned int frame = sprite->getFrame();
     
-	float32 turning = RANGE_CLAMP(body->GetAngularVelocity()/20, -SHIP_MAX_TURN, SHIP_MAX_TURN);
-    // Process the ship turning.
-    if (turning < 0.0f) {
-        float offset = (turning/SHIP_MAX_TURN)*(SHIP_IMG_FLAT-SHIP_IMG_RIGHT);
-        unsigned int goal  = SHIP_IMG_FLAT+offset;
-        if (frame != goal) {
-            frame += (frame < goal ? 1 : -1);
-        }
-        if (frame == SHIP_IMG_FLAT) {
-            turning = 0.0f;
-        }
-    } else if (turning > 0.0f) {
-        float offset = (turning/SHIP_MAX_TURN)*(SHIP_IMG_FLAT-SHIP_IMG_LEFT);
-        unsigned int goal  = SHIP_IMG_FLAT-offset;
-        if (frame != goal) {
-            frame += (frame < goal ? 1 : -1);
-        }
-        if (frame == SHIP_IMG_FLAT) {
-            turning = 0.0f;
-        }
-    } else {
-        if (frame < SHIP_IMG_FLAT) {
-            frame++;
-        } else if (frame > SHIP_IMG_FLAT) {
-            frame--;
-        }
-    }
-    
+	if (dir.x > 0) {
+		if (frame == 6 || frame == 7) {
+			frame++;
+		}
+		else {
+			frame = 6;
+		}
+	}
+	else if (dir.x < 0) {
+		if (frame == 9 || frame == 10) {
+			frame++;
+		}
+		else {
+			frame = 9;
+		}
+	}
+	else if (dir.y > 0) {
+		if (frame == 0 || frame == 1) {
+			frame++;
+		}
+		else {
+			frame = 0;
+		}
+	}
+	else if (dir.y < 0) {
+		if (frame == 3 || frame == 4) {
+			frame++;
+		}
+		else {
+			frame = 3;
+		}
+	}
+	else {
+		frame = 4;
+	}
+	
     sprite->setFrame(frame);
-}*/
+}
 

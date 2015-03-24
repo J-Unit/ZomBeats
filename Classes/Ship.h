@@ -43,7 +43,7 @@ private:
      * This method includes some dampening of the turn, and should be called before
      * moving the ship.
      */
-    void advanceFrame();
+    void advanceFrame(Vec2 dir);
 
 protected:
 
