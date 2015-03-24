@@ -8,8 +8,8 @@ Zombie::Zombie(float x, float y, b2World *world)
 	bodyDef.position.Set(x, y);
 	isDestroyed = false;
 	body = world->CreateBody(&bodyDef);
-	circle.m_radius = 60;
-	fixture.shape = &circle;
+	dynamicBox.SetAsBox(30.0f, 60.0f);
+	fixture.shape = &dynamicBox;
 	fixture.density = 0.5f;
 	body->CreateFixture(&fixture);
 	body->SetLinearDamping(1.0f);
@@ -20,6 +20,11 @@ Zombie::Zombie(float x, float y, b2World *world)
 	setSprite(Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("zombie")));
 	//initialize the awareness
 	awareness = INITIAL_AWARENESS;
+	cohesion.SetZero();
+	seperation.SetZero();
+	attraction.SetZero();
+	zombiness.SetZero();
+	alignment.SetZero();
 }
 
 void Zombie::setSprite(Sprite* value)

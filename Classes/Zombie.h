@@ -12,10 +12,11 @@ class Zombie : public BoxObject
 public:
 	float awareness;
 	bool isDestroyed;
-	b2CircleShape circle;
+	b2PolygonShape dynamicBox;
 
 	Sprite *sprite;
-	b2Vec2 direction;
+	b2Vec2 direction, seperation, zombiness, cohesion, alignment, attraction, aidir;
+
 
 
 	void setSprite(Sprite *value);

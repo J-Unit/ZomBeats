@@ -24,4 +24,8 @@ static bool rectanglesOverlap(float b1x1, float b1y1, float b1x2, float b1y2, fl
 	return !((b1x1 > b2x2 || b2x1 > b1x2) || (b2y2 < b1y1 || b1y2 < b2y1));
 }
 
+static bool isZero(b2Vec2 v){
+	return v.x == 0.0f && v.y == 0.0f;
+}
+
 #endif

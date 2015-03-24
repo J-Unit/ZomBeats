@@ -44,6 +44,7 @@ public:
 	DrawNode* path;
 	DrawNode* detectionRadiusCircle;
 	DrawNode* hitBox;
+	DrawNode* ai; 
 
 	Node*   enviornment;
 
