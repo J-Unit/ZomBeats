@@ -57,7 +57,7 @@ Ship::Ship(b2World *world, float x, float y, float mx, float my) {
 	//body->SetAngularDamping(0.5f);
     sprite  = NULL;
 	//setSprite(FilmStrip::create(ResourceLoader::getInstance()->getTexture("ricky"), 1, 2, 2), mx, my);
-	setSprite(FilmStrip::create(ResourceLoader::getInstance()->getTexture("ricky"), 4, 3, 12), mx, my);
+	setSprite(FilmStrip::create(ResourceLoader::getInstance()->getTexture("ricky"), 5, 3, 13), mx, my);
 	lastPosition = body->GetPosition();
 }
 
@@ -120,7 +120,7 @@ bool Ship::update(float deltaTime, Vec2 dir) {
    // forward = RANGE_CLAMP(forward, -SHIP_MAX_SPEED, SHIP_MAX_SPEED);
    // turning = RANGE_CLAMP(turning, -SHIP_MAX_TURN, SHIP_MAX_TURN);
     if (sprite != NULL && hasWeapon) {
-		sprite->setFrame(4);
+		sprite->setFrame(12);
     }
 	else if(sprite!=NULL && !hasWeapon) {
 		if (frameRate % FRAME_INTERVAL == 0) {

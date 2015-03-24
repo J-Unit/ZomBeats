@@ -36,7 +36,7 @@ ResourceLoader::ResourceLoader() {
 
     //text = Director::getInstance()->getTextureCache()->addImage("textures/ships.png");
 	//text = Director::getInstance()->getTextureCache()->addImage("textures/chuck.png");
-	text = Director::getInstance()->getTextureCache()->addImage("textures/spritebasic_withoutsword.png");
+	text = Director::getInstance()->getTextureCache()->addImage("textures/spritebasic_withsword.png");
     if (text) {
         text->retain();
         textures["ricky"] = text;
