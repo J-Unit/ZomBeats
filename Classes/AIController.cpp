@@ -6,7 +6,7 @@
 
 #define FLOCK_RADIUS 400.0f
 #define MIN_DIST 115.0f
-#define IMPULSE 2000.0f
+#define IMPULSE 2800.0f
 #define COHESION 50.0f
 #define ALIGNMENT 50.0f
 #define SEPERATION 300.0f

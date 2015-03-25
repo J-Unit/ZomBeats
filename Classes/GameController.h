@@ -84,7 +84,7 @@ public:
     // MODEL
     // A page-out could dispose of the view as long as it just has this.
     /** The current coordinates of the ship */
-
+	int curLevel;
 	SongDecomposition*  currentSong;
 	AIController *ai;
 	GameState *state;

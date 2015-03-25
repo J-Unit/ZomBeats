@@ -24,6 +24,8 @@
 #include "audio/include/AudioEngine.h"
 #include "AIController.h"
 
+#define STARTING_LEVEL 1
+
 using namespace experimental;
 float lastbeat = 0;
 int audioid = 0;
@@ -197,7 +199,9 @@ bool GameController::init() {
 	cocos2d::Size winsize = director->getWinSizeInPixels();
 	view = new View(winsize.width, winsize.height);
 	view->scene->addChild(this);
-	loadLevel(1);
+
+	curLevel = STARTING_LEVEL;
+	loadLevel(curLevel);
 
 	//add the fog of war here
 	createFog();
@@ -254,7 +258,7 @@ void GameController::loadLevel(int i){
 void GameController::restartGame() {
 	AudioEngine::stopAll();
 	this->removeAllChildren();
-	loadLevel(1);
+	loadLevel(curLevel);
 	createFog();
 	input->clickProcessed = true;
 	destination = 0;
@@ -626,7 +630,7 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 		b2Vec2 pos = zom->body->GetPosition();
 		view->ai->drawLine(Vec2(pos.x, pos.y), Vec2(pos.x + zom->seperation.x, pos.y + zom->seperation.y), ccColor4F(1, 0, 0, 1.0f));
 		view->ai->drawLine(Vec2(pos.x, pos.y), Vec2(pos.x + zom->attraction.x, pos.y + zom->attraction.y), ccColor4F(0, 1, 0, 1.0f));
-		view->ai->drawLine(Vec2(pos.x, pos.y), Vec2(pos.x + zom->aidir.x / 38, pos.y + zom->aidir.y / 38), ccColor4F(0, 0, 0, 1.0f));
+		view->ai->drawLine(Vec2(pos.x, pos.y), Vec2(pos.x + zom->aidir.x / 28, pos.y + zom->aidir.y / 28), ccColor4F(0, 0, 0, 1.0f));
 		view->ai->drawLine(Vec2(pos.x, pos.y), Vec2(pos.x + zom->alignment.x, pos.y + zom->alignment.y), ccColor4F(1, 0, 1, 1.0f));
 		view->ai->drawLine(Vec2(pos.x, pos.y), Vec2(pos.x + zom->cohesion.x, pos.y + zom->cohesion.y), ccColor4F(0, 0, 1, 1.0f));
 		view->ai->drawLine(Vec2(pos.x, pos.y), Vec2(pos.x + zom->zombiness.x, pos.y + zom->zombiness.y), ccColor4F(1, 1, 0, 1.0f));
