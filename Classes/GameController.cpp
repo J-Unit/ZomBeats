@@ -168,7 +168,7 @@ void GameController::removeGameMenu() {
 void GameController::updateFog() {
 	if (fogSp != NULL) {
 		if (INITIAL_DETECTION_RADIUS / detectionRadius > 0.65f) {
-			fogSp->setScale(FOG_SCALE*(INITIAL_DETECTION_RADIUS / detectionRadius), FOG_SCALE*(INITIAL_DETECTION_RADIUS / detectionRadius));
+			fogSp->setScale(FOG_SCALE*(detectionRadius / INITIAL_DETECTION_RADIUS), FOG_SCALE*(detectionRadius / INITIAL_DETECTION_RADIUS));
 
 		}
 
