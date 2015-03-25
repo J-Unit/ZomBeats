@@ -23,8 +23,9 @@
 #include <string>
 #include "audio/include/AudioEngine.h"
 #include "AIController.h"
+#include "Box2d/Box2d.h"
 
-#define STARTING_LEVEL 1
+#define STARTING_LEVEL 0
 
 using namespace experimental;
 float lastbeat = 0;
@@ -101,7 +102,7 @@ void GameController::BeginContact(b2Contact* contact){
 void GameController::EndContact(b2Contact* contact){
 
 }
-
+/*
 void GameController::createZombies(){
 	Zombie *z1 = new Zombie(PLANET1_POS.x, PLANET1_POS.y, state->world);
 	Zombie *z2 = new Zombie(PLANET2_POS.x, PLANET2_POS.y, state->world);
@@ -109,19 +110,6 @@ void GameController::createZombies(){
 	state->zombies.AddTail(z2);
 	view->enviornment->addChild(z1->sprite);
 	view->enviornment->addChild(z2->sprite);
-
-	/*b2BodyDef b1, b2;
-	b1.position.Set(PLANET1_POS.x, PLANET1_POS.y);
-	b2.position.Set(PLANET2_POS.x, PLANET2_POS.y);
-	b2Body* b1b;
-	b2Body* b2b;
-	b1b = state->world->CreateBody(&b1);
-	b2b = state->world->CreateBody(&b2);
-	b2CircleShape c1, c2;
-	c1.m_radius = 60;
-	c2.m_radius = 60;
-	b1b->CreateFixture(&c1, 0.0f);
-	b2b->CreateFixture(&c2, 0.0f);*/
 }
 
 void GameController::createWalls(){
@@ -152,7 +140,7 @@ void GameController::createWeapons(){
 	Sword *s1 = new Sword(state->world, SPACE_TILE*9.0f, SPACE_TILE*(5.5f + 1 * 0.25f));
 	state->weapons.AddTail(s1);
 	view->enviornment->addChild(s1->sprite);
-}
+}*/
 
 void GameController::createFog() {
 	//add the fog of war here
@@ -249,8 +237,12 @@ void GameController::loadLevel(int i){
 	currAwareness = 0.0f;
 	AudioEngine::stopAll();
 	currentFingerPos = Vec2(0.0f, 0.0f);
-	currentSong = new SongDecomposition(128.0, "songs/ChillDeepHouse.mp3", -0.03);
+	currentSong = new SongDecomposition(128.0, "songs/ChillDeepHouse.mp3", -0.04);
 	audioid = AudioEngine::play2d("songs/01 OverDrive.mp3", true, 1);
+	b2Transform *t = new b2Transform();
+	b2Mat22 x = b2Mat22();
+	b2Rot y = b2Rot();
+	
 
 }
 

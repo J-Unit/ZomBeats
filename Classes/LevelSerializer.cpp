@@ -23,7 +23,8 @@ void LevelSerializer::addObjects(GameState *s){
 	s->level->nWalls = d["walls"].Size();
 	s->level->walls = new Wall[s->level->nWalls];
 	for (int i = 0; i < s->level->nWalls; i++){
-		s->level->walls[i].init(s->world, s->level->tileWidth*(d["walls"][i]["x"].GetInt()+0.5f), top-s->level->tileHeight*(d["walls"][i]["y"].GetInt()+0.5f));
+		float off = getWallOffsetByType(d["walls"][i]["type"].GetString());
+		s->level->walls[i].init(s->world, s->level->tileWidth*(d["walls"][i]["x"].GetInt()+off), top-s->level->tileHeight*(d["walls"][i]["y"].GetInt()+off), d["walls"][i]["type"].GetString());
 	}
 	s->level->markWallTiles();
 	for (int i = 0; i < d["weapons"].Size(); i++){
@@ -36,4 +37,16 @@ void LevelSerializer::addObjects(GameState *s){
 		s->zombies.AddTail(new Zombie(s->level->tileWidth*(d["zombies"][i]["x"].GetInt()+0.5f), top-s->level->tileHeight*(d["zombies"][i]["y"].GetInt()+0.5f), s->world));
 	}
 	s->ship = new Ship(s->world, s->level->tileWidth*(d["startX"].GetInt()+0.5f), top-s->level->tileHeight*(d["startY"].GetInt()+0.5f), 0.5f * d["bkgX"].GetInt() * 256, 0.5f * d["bkgY"].GetInt() * 256);
+}
+
+float LevelSerializer::getWallOffsetByType(std::string type){
+	if (type == "tree"){
+		return 1.0f;
+	}
+	else if (type == "house"){
+		return 2.0f;
+	}
+	else{
+		return 0.5f;
+	}
 }

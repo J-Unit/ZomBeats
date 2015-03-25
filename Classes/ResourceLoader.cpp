@@ -51,9 +51,28 @@ ResourceLoader::ResourceLoader() {
 	text = Director::getInstance()->getTextureCache()->addImage("textures/wall.png");
 	if (text) {
 		text->retain();
-		textures["wall"] = text;
+		textures["pyramid"] = text;
 	}
-
+	text = Director::getInstance()->getTextureCache()->addImage("textures/fence.png");
+	if (text) {
+		text->retain();
+		textures["fence"] = text;
+	}
+	text = Director::getInstance()->getTextureCache()->addImage("textures/house.png");
+	if (text) {
+		text->retain();
+		textures["house"] = text;
+	}
+	text = Director::getInstance()->getTextureCache()->addImage("textures/rock.png");
+	if (text) {
+		text->retain();
+		textures["rock"] = text;
+	}
+	text = Director::getInstance()->getTextureCache()->addImage("textures/tree.png");
+	if (text) {
+		text->retain();
+		textures["tree"] = text;
+	}
 	//add the weapon textures here
 	text = Director::getInstance()->getTextureCache()->addImage("textures/sword.png");
 	if (text) {

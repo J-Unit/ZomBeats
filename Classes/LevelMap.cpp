@@ -27,8 +27,8 @@ bool LevelMap::nodeWallOverlap(MapNode *node, Wall *wall){
 	float x, y;
 	float tw, th;
 	v = wall->body->GetPosition();
-	w = wall->width / 2;
-	h = wall->height / 2;
+	w = wall->width;
+	h = wall->height;
 	tw = tileWidth / 2;
 	th = tileHeight / 2;
 	x = getTileCenterX(node);
