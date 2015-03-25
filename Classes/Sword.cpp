@@ -7,6 +7,8 @@ Sword::Sword(b2World *world, float x, float y)
 {
 	pos_x = x;
 	pos_y = y;
+	width = 130.0f;
+	range = 105.0f;
 	isDesroyed = false;
 	weapon_type = 0; //TODO: Make array of different weapon types somewhere
 	bodyDef.type = b2_staticBody;

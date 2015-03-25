@@ -100,6 +100,12 @@ void View::buildScene(LevelMap *level, Layer* l) {
 	hitBox->setContentSize(allSpace->getContentSize());
 	hitBox->setPosition(center);
 	hitBox->setAnchorPoint(anchor);
+
+	weaponBox = DrawNode::create();
+	weaponBox->setContentSize(allSpace->getContentSize());
+	weaponBox->setPosition(center);
+	weaponBox->setAnchorPoint(anchor);
+
 	// Tile the background with deep space
 	Vec2 rivet;
 	Texture2D* bkgd = ResourceLoader::getInstance()->getTexture("tile1");
@@ -119,7 +125,8 @@ void View::buildScene(LevelMap *level, Layer* l) {
 	enviornment->addChild(path);
 	enviornment->addChild(ai, 1);
 	enviornment->addChild(detectionRadiusCircle);
-	enviornment->addChild(hitBox, 2);
+	enviornment->addChild(hitBox, 3);
+	enviornment->addChild(weaponBox);
 
 	enviornment->addChild(directionUseEnvironmentWeapon);
 	// Put planets in the foreground.

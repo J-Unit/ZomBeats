@@ -15,6 +15,7 @@
 #include "SimpleAudioEngine.h"
 #include "Wall.h"
 #include "Sword.h"
+#include "Ship.h"
 #include "Lawnmower.h"
 #include "Zombie.h"
 #include <math.h>
@@ -79,23 +80,22 @@ void GameController::BeginContact(b2Contact* contact){
 	}
 
 	Zombie *zb;
+	EnvironmentWeapon *envwep;
 	//trigger environment weapon activation
 	if ((b1->type == EnvironmentWeaponType && b2->type == ZombieType) || (b1->type == ZombieType && b2->type == EnvironmentWeaponType)){
-		zb = (b1->type == ZombieType) ? b1->getZombie() : b2->getZombie();
-		zb->isDestroyed = true;
+		envwep = (b1->type == EnvironmentWeaponType) ? b1->getEnvironmentWeapon() : b2->getEnvironmentWeapon();
+		if (envwep->hasMoved){
+			zb = (b1->type == ZombieType) ? b1->getZombie() : b2->getZombie();
+			zb->isDestroyed = true;
+			return;
+		}
 		return;
 	}
 
 	//fucking up zombies
 	Zombie *z;
 	if ((b1->type == ZombieType && b2->type == ShipType) || (b1->type == ShipType && b2->type == ZombieType)){
-		if (state->ship->hasWeapon){
-			z = (b1->type == ZombieType) ? b1->getZombie() : b2->getZombie();
-			z->isDestroyed = true;
-		}
-		else{
-			state->ship->isDestroyed = true;;
-		}
+			state->ship->isDestroyed = true;
 	}
 }
 
@@ -216,6 +216,8 @@ bool GameController::init() {
 void GameController::loadLevel(int i){
 	destination = 0;
 	onBeat = false;
+	dRickyTap = new Vec2(1.0f,0.0f);
+	dRickyTap->normalize();
 	elapsedTime = 0.0;
 	stringstream ss;
 	ss << "levels/level" << i << ".zbl";
@@ -239,11 +241,6 @@ void GameController::loadLevel(int i){
 	currentFingerPos = Vec2(0.0f, 0.0f);
 	currentSong = new SongDecomposition(128.0, "songs/ChillDeepHouse.mp3", -0.04);
 	audioid = AudioEngine::play2d("songs/01 OverDrive.mp3", true, 1);
-	b2Transform *t = new b2Transform();
-	b2Mat22 x = b2Mat22();
-	b2Rot y = b2Rot();
-	
-
 }
 
 //restart the game upon death or reset
@@ -263,6 +260,33 @@ void GameController::pauseGame() {
 
 void GameController::resumeGame() {
 	isPaused = false;
+}
+
+void GameController::createWeaponRanges(float weapWidth, float weapRange, b2Vec2 dir){
+	weaponRectangle[0] = b2Vec2(-weapRange / 2.0f, weapWidth / 2.0f); //top left
+	weaponRectangle[1] = b2Vec2(weapRange / 2.0f,weapWidth / 2.0f); //top right
+	weaponRectangle[2] = b2Vec2(-weapRange / 2.0f ,- weapWidth / 2.0f); //bottom left
+	weaponRectangle[3] = b2Vec2(weapRange / 2.0f,-weapWidth / 2.0f); //bottom right
+
+	float theta = atan2(dir.y, dir.x);
+	b2Rot rotationM = b2Rot(theta);
+
+	//add ricky pos to each point and translate box in front by mult dir facing * half range weap
+	for (int i = 0; i < sizeof(weaponRectangle)/sizeof(b2Vec2); i++){
+		b2Vec2 rickPos = state->ship->body->GetPosition();
+		weaponRectangle[i] = b2MulT(rotationM,weaponRectangle[i]);
+		weaponRectangle[i] = weaponRectangle[i] + rickPos + ((weapRange / 2.0f + SHIP_HEIGHT)*dir);
+	}
+	
+}
+
+bool GameController::isZombieHit(b2Vec2 az, b2Vec2 bz, b2Vec2 ab, b2Vec2 bc){
+	//0 <= dot(AB, AM) <= dot(AB, AB) &&
+	//	0 <= dot(BC, BM) <= dot(BC, BC)
+	if ((0 <= b2Dot(ab, az) && b2Dot(ab, az) <= b2Dot(ab, ab)) && (0 <= b2Dot(bc, bz) && b2Dot(bc, bz) <= b2Dot(bc, bc))){
+		return true;
+	}
+	else return false;
 }
 
 /**
@@ -333,7 +357,7 @@ void GameController::update(float deltaTime) {
 			Zombie *zomb = zombie->Data();
 			if (zomb->isDestroyed){
 				zomb->isDestroyed = false;
-				toDelete = weapon;
+				zombToDel = zombie;
 				state->world->DestroyBody(zomb->body);
 				view->enviornment->removeChild(zomb->sprite);
 			}
@@ -420,14 +444,54 @@ void GameController::update(float deltaTime) {
 			}
 			else{
 				state->ship->boostFrames = MAX_BOOST_FRAMES;
-				MapNode *dest = state->level->locateCharacter((input->lastClick.x - view->screen_size_x / 2.0) + x,
-					-(input->lastClick.y - view->screen_size_y / 2.0) + y);
+				float xClick = (input->lastClick.x - view->screen_size_x / 2.0) + x;
+				float yClick = -(input->lastClick.y - view->screen_size_y / 2.0) + y;
+				MapNode *dest = state->level->locateCharacter(xClick,yClick);
 				state->level->shortestPath(from, dest);
 				destination = from->next;
+				MapNode *destPrev = from;
 
 				//if it is on beat, decrease the detection radius slightly
 				if (detectionRadius > MIN_DETECTION_RADIUS) {
 					detectionRadius -= DETECTION_RADIUS_DECREASE;
+				}
+
+				if (state->ship->hasWeapon){
+					//if you have a weapon and click on the beat, check if you kill any zombies in that direction
+					//mouseclick to world coords subtract rickies pos from that...normalize it...snap it to nearest rotation: round nearest int(arctan2(normalized) /. pi/2) * pi/4
+					/*if ((destination != 0 && destPrev != 0) && (destination == destPrev)){
+						dRickyTap = dRickyTap;
+					}
+					else{
+						dRickyTap = new Vec2(destination->x - destPrev->x, destination->y - destPrev->y);
+						dRickyTap->normalize();
+					}*/
+					dRickyTap->set(xClick - state->ship->body->GetPosition().x, yClick - state->ship->body->GetPosition().y);
+					float theta = atan2(dRickyTap->y, dRickyTap->x);
+					theta = round(theta / (M_PI / 4.0f)) * (M_PI / 4.0f);
+
+					createWeaponRanges(state->ship->currentWeapon->width, state->ship->currentWeapon->range, b2Vec2(cos(theta), sin(theta)));
+					
+					//detect if zombies are inside rectangle of weapon
+					CTypedPtrDblElement<Zombie> *zambie = state->zombies.GetHeadPtr();
+					while (!state->zombies.IsSentinel(zambie))
+					{
+						Zombie *zombb = zambie->Data();
+						//AB is vector AB, with coordinates (Bx-Ax,By-Ay)
+						b2Vec2 az = b2Vec2(zombb->body->GetPosition().x - weaponRectangle[0].x, zombb->body->GetPosition().y - weaponRectangle[0].y);
+						b2Vec2 bz = b2Vec2(zombb->body->GetPosition().x - weaponRectangle[1].x, zombb->body->GetPosition().y - weaponRectangle[1].y);
+						b2Vec2 ab = b2Vec2(weaponRectangle[1].x - weaponRectangle[0].x, weaponRectangle[1].y - weaponRectangle[0].y);
+						b2Vec2 bc = b2Vec2(weaponRectangle[3].x - weaponRectangle[1].x, weaponRectangle[3].y - weaponRectangle[1].y);
+						
+						if (isZombieHit(az, bz, ab, bc)){
+							//zombie got hit so delete it
+							zombb->isDestroyed = true;
+							
+						}
+
+						zambie = zambie->Next();
+					}
+
 				}
 
 			}
@@ -580,6 +644,7 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 	view->detectionRadiusCircle->clear();
 	//clear the old hitbox
 	view->hitBox->clear();
+	view->weaponBox->clear();
 
 	stringstream d;
 	//d << "Detection Radius: " << detectionRadius;
@@ -595,11 +660,16 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 	view->detectionRadiusCircle->drawCircle(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y), detectionRadius, 0.0f, 1000, false, ccColor4F(0, 0, 2.0f, 1.0f));
 
 	//visualize the hitbox for main character
-	view->hitBox->drawRect(Vec2(state->ship->body->GetPosition().x - 29.5f, state->ship->body->GetPosition().y - 55.0f), Vec2(state->ship->body->GetPosition().x + 29.5f, state->ship->body->GetPosition().y + 55.0f), ccColor4F(2.0f, 2.0f, 2.0f, 1.0f));
+	//view->hitBox->drawRect(Vec2(state->ship->body->GetPosition().x - 29.5f, state->ship->body->GetPosition().y - 55.0f), Vec2(state->ship->body->GetPosition().x + 29.5f, state->ship->body->GetPosition().y + 55.0f), ccColor4F(2.0f, 2.0f, 2.0f, 1.0f));
 
 	//visualize the arrow for activating the environment
 	if (processDirection){
 		view->directionUseEnvironmentWeapon->drawLine(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y), Vec2(currentFingerPos.x, currentFingerPos.y), ccColor4F(0.0f, 0.0f, 0.0f, 0.8f));
+	}
+
+	if (state->ship->hasWeapon){
+		view->hitBox->clear();
+		view->weaponBox->drawRect(Vec2(weaponRectangle[0].x, weaponRectangle[0].y), Vec2(weaponRectangle[1].x, weaponRectangle[1].y), Vec2(weaponRectangle[3].x, weaponRectangle[3].y), Vec2(weaponRectangle[2].x, weaponRectangle[2].y),ccColor4F(2.0f, 2.0f, 2.0f, 1.0f));
 	}
 	//view->directionUseEnvironmentWeapon->drawLine(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y), currentFingerPos, ccColor4F(128.0f, 128.0f, 128.0f, 0.5f));
 	

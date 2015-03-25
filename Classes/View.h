@@ -45,6 +45,7 @@ public:
 	DrawNode* detectionRadiusCircle;
 	DrawNode* directionUseEnvironmentWeapon;
 	DrawNode* hitBox;
+	DrawNode* weaponBox;
 	DrawNode* ai; 
 
 	Node*   enviornment;

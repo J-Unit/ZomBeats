@@ -48,7 +48,7 @@ Ship::Ship(b2World *world, float x, float y, float mx, float my) {
 	body = world->CreateBody(&bodyDef);
 	type = Type(this);
 	body->SetUserData(&type);
-	dynamicBox.SetAsBox(29.5f, 55.0f);
+	dynamicBox.SetAsBox(SHIP_WIDTH, SHIP_HEIGHT);
 	fixture.shape = &dynamicBox;
 	fixture.density = 0.1f;
 	fixture.friction = 0.5f;

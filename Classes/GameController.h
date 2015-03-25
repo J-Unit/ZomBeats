@@ -147,6 +147,9 @@ public:
 	void pauseGame();
 
 	void resumeGame();
+	b2Vec2 weaponRectangle[4];
+
+	Vec2 *dRickyTap;
 
 
 private:
@@ -157,6 +160,8 @@ private:
 	void createGameMenu();
 	void removeGameMenu();
 	void updateFog();
+	void createWeaponRanges(float weapWidth, float weapRange, b2Vec2 dir);
+	bool isZombieHit(b2Vec2 az, b2Vec2 bz, b2Vec2 ab, b2Vec2 bc);
 
 	LevelSerializer ls;
 

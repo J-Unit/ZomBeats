@@ -21,6 +21,10 @@ using namespace cocos2d;
 #define MAX_BOOST_FRAMES 45
 #define FRAME_INTERVAL 5
 
+#define SHIP_WIDTH 29.5f
+#define SHIP_HEIGHT 55.0f
+#define SHIP_DIAGONAL sqrt(WIDTH*WIDTH+HEIGHT*HEIGHT) / 2
+
 
 // Forward declaration to minimize imports in header
 class FilmStrip;
