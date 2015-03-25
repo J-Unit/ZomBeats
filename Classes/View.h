@@ -59,6 +59,7 @@ public:
 	FilmStrip* shipImage;
 
 
+
 	/**
 	* Builds the scene graph for the game.
 	*

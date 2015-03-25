@@ -86,6 +86,12 @@ ResourceLoader::ResourceLoader() {
 		text->retain();
 		textures["pause_button"] = text;
 	}
+
+	text = Director::getInstance()->getTextureCache()->addImage("textures/pause_menu.png");
+	if (text) {
+		text->retain();
+		textures["pause_menu"] = text;
+	}
 }
 
 /**

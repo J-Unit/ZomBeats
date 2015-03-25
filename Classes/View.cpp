@@ -195,6 +195,11 @@ void View::buildScene(LevelMap *level, Layer* l) {
 	pause->setScale(0.3f);
 	pause->setPosition(Vec2(HUD_OFFSET.x*89, HUD_OFFSET.y * 58));
 
+	//a pause menu goes here
+	//pauseMenu->setSprite(Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("pause_menu")));
+	//pauseMenu->sprite->setScale(0.15f);
+	//pauseMenu->sprite->setPosition(Vec2(HUD_OFFSET.x * 50, HUD_OFFSET.y * 35));
+
 	// Remove the welcome screen and display the game.
 	allSpace->addChild(enviornment, 0);
 	//allSpace->addChild(nearSpace,0.5);
@@ -208,6 +213,7 @@ void View::buildScene(LevelMap *level, Layer* l) {
 	l->addChild(detectionRadiusHUD);
 	l->addChild(zombieOneAwarenessHUD); //remove this later
 	l->addChild(pause);
+	//l->addChild(pauseMenu->sprite);
 }
 
 

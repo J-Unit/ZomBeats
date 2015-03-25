@@ -160,6 +160,17 @@ void GameController::createFog() {
 	//view->enviornment->addChild(fogSpOuter);
 }
 
+void GameController::createGameMenu() {
+	pauseMenu = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("pause_menu"));
+	pauseMenu->setScale(0.15f);
+	pauseMenu->setPosition(Vec2(HUD_OFFSET.x * 50, HUD_OFFSET.y * 35));
+	this->addChild(pauseMenu);
+}
+
+void GameController::removeGameMenu() {
+	this->removeChild(pauseMenu);
+}
+
 void GameController::updateFog() {
 	if (fogSp != NULL && fogSpOuter != NULL) {
 		if (INITIAL_DETECTION_RADIUS / detectionRadius > 0.65f) {
@@ -182,11 +193,11 @@ bool GameController::init() {
 	cocos2d::Size winsize = director->getWinSizeInPixels();
 	view = new View(winsize.width, winsize.height);
 	view->scene->addChild(this);
-
 	loadLevel(1);
 
 	//add the fog of war here
 	createFog();
+
 
 	ai = new AIController();
 	environmentalTimer = 0.0f;
@@ -244,6 +255,7 @@ void GameController::restartGame() {
 	createFog();
 	input->clickProcessed = true;
 	destination = 0;
+	isPaused = false;
 }
 
 void GameController::pauseGame() {
@@ -264,7 +276,8 @@ void GameController::resumeGame() {
 void GameController::update(float deltaTime) {
 	if (!isPaused) {
 		if (input->lastClick.x < 911 && input->lastClick.x > 866 && input->lastClick.y > 32 && input->lastClick.y < 79) {
-			isPaused = true;
+			pauseGame();
+			createGameMenu();
 			return;
 		}
 
@@ -518,8 +531,21 @@ void GameController::update(float deltaTime) {
 		}
 	}
 
-	//game is paused, do sth else
+	//game is paused, check if they click on the game menu buttons
 	else {
+		//if resume is clicked
+		if (input->lastClick.x < 602 && input->lastClick.x > 389 && input->lastClick.y > 116 && input->lastClick.y < 176) {
+			resumeGame();
+			removeGameMenu();
+		}
+		else if (input->lastClick.x < 602 && input->lastClick.x > 389 && input->lastClick.y > 351 && input->lastClick.y < 415) {
+			removeGameMenu();
+			restartGame();
+		}
+		//do nothing
+		else {
+
+		}
 	}
 }
 

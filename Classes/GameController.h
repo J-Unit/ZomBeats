@@ -78,6 +78,9 @@ public:
 	Sprite* fogSp;
 	Sprite* fogSpOuter;
 
+	//game menu sprite
+	Sprite* pauseMenu;
+
     // MODEL
     // A page-out could dispose of the view as long as it just has this.
     /** The current coordinates of the ship */
@@ -151,6 +154,8 @@ private:
 	void createWalls();
 	void createWeapons();
 	void createFog();
+	void createGameMenu();
+	void removeGameMenu();
 	void updateFog();
 
 	LevelSerializer ls;
