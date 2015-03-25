@@ -27,7 +27,6 @@ LOCAL_SRC_FILES := hellocpp/main.cpp \
                    ../../Classes/SongDecomposition.cpp \
                    ../../Classes/InputController.cpp \
                    ../../Classes/Weapon.cpp \
-                   ../../Classes/AIController.cpp \
                    ../../Classes/EnvironmentWeapon.cpp \
                    ../../Classes/GameMenu.cpp \
                    ../../Classes/Lawnmower.cpp \

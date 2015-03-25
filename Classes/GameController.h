@@ -20,7 +20,7 @@
 #define MIN_DETECTION_RADIUS 125.0f
 #define MAX_DETECTION_RADIUS 400.0f
 //fog scale
-#define FOG_SCALE 3.0f
+#define FOG_SCALE 4.2f
 #define OUTER_FOG_SCALE 2.8f
 
 //delays

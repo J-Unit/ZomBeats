@@ -166,7 +166,7 @@ void GameController::removeGameMenu() {
 }
 
 void GameController::updateFog() {
-	if (fogSp != NULL && fogSpOuter != NULL) {
+	if (fogSp != NULL) {
 		if (INITIAL_DETECTION_RADIUS / detectionRadius > 0.65f) {
 			fogSp->setScale(FOG_SCALE*(INITIAL_DETECTION_RADIUS / detectionRadius), FOG_SCALE*(INITIAL_DETECTION_RADIUS / detectionRadius));
 
@@ -298,7 +298,7 @@ bool GameController::isZombieHit(b2Vec2 az, b2Vec2 bz, b2Vec2 ab, b2Vec2 bc){
 */
 void GameController::update(float deltaTime) {
 	if (!isPaused) {
-		if (input->lastClick.x < 911 && input->lastClick.x > 866 && input->lastClick.y > 32 && input->lastClick.y < 79) {
+		if (!input->clickProcessed && input->lastClick.x < 100 && input->lastClick.y < 100) {
 			pauseGame();
 			createGameMenu();
 			return;

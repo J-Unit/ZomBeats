@@ -21,9 +21,6 @@
     <ClCompile Include="..\Classes\HelloWorldScene.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\AIController.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\Classes\FilmStrip.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -72,6 +69,9 @@
     <ClCompile Include="..\Classes\Lawnmower.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\AIController.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -110,9 +110,6 @@
     <ClInclude Include="..\Classes\Zombie.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\AIController.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\Classes\BoxObject.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -147,6 +144,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\Lawnmower.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\AIController.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

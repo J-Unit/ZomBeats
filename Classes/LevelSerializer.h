@@ -1,6 +1,6 @@
 #include <string>
-#include "cocos2d/external/json/document.h"
-#include "cocos2d\external\Box2D\Box2D.h"
+#include "json\document.h"
+#include "Box2D\Box2D.h"
 
 class GameState;
 
