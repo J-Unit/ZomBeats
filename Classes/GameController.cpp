@@ -486,7 +486,12 @@ void GameController::update(float deltaTime) {
 						if (isZombieHit(az, bz, ab, bc)){
 							//zombie got hit so delete it
 							zombb->isDestroyed = true;
-							
+							state->ship->currentWeapon->durability -= 1;
+							if (state->ship->currentWeapon->durability == 0){
+								state->ship->hasWeapon = false;
+								free(state->ship->currentWeapon);
+								state->ship->currentWeapon = NULL;
+							}
 						}
 
 						zambie = zambie->Next();

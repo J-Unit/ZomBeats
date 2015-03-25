@@ -9,6 +9,7 @@ class Weapon : public BoxObject
 {
 public:
 	int weapon_type;
+	int durability;
 	Sprite* sprite;
 	b2PolygonShape box;
 	float pos_x;
