@@ -27,6 +27,10 @@
 using namespace experimental;
 float lastbeat = 0;
 int audioid = 0;
+float keepit = 0;
+float total_kept = 0;
+float total_beats = 0;
+float estimated_song_time = 0;
 /**
 * Initialize the game state.
 *
@@ -241,9 +245,8 @@ void GameController::loadLevel(int i){
 	currAwareness = 0.0f;
 	AudioEngine::stopAll();
 	currentFingerPos = Vec2(0.0f, 0.0f);
-	currentSong = new SongDecomposition(120.0, "songs/ChillDeepHouse.mp3", -.051);
-	audioid = AudioEngine::play2d("songs/ChillDeepHouse.mp3", true, 1);
-
+	currentSong = new SongDecomposition(128.0, "songs/ChillDeepHouse.mp3", -0.03);
+	audioid = AudioEngine::play2d("songs/01 OverDrive.mp3", true, 1);
 
 }
 
@@ -285,6 +288,7 @@ void GameController::update(float deltaTime) {
 		//input->update();
 		Vec2 thrust = input->lastClick;
 		elapsedTime += deltaTime; //a float in seconds
+
 
 		//cout << "Elapsed time: "<< elapsedTime <<endl;
 		// Read the thrust from the user input
@@ -400,7 +404,9 @@ void GameController::update(float deltaTime) {
 		MapNode *from = state->level->locateCharacter(x, y);
 		if (!input->clickProcessed && !activated){
 			//if on beat then flag it
-			onBeat = currentSong->isOnBeat(AudioEngine::getCurrentTime(audioid));
+			//AudioEngine::getCurrentTime(audioid)
+			onBeat = currentSong->isOnBeat(elapsedTime - keepit);
+
 			//cout << "PBF: " << elapsedTime << "\n";
 			stringstream st;
 			//char* tempstr = "kgkgk";
@@ -429,6 +435,13 @@ void GameController::update(float deltaTime) {
 				}
 
 			}
+			if (onBeat){
+				st << "HIT";
+			}
+			else{
+				st << "MISS BY: " << estimated_song_time - (elapsedTime - keepit);
+			}
+			view->beatHUD->setString(st.str());
 			input->clickProcessed = true;
 
 			//check if there is a zombie within the radius
@@ -619,8 +632,18 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 		view->ai->drawLine(Vec2(pos.x, pos.y), Vec2(pos.x + zom->zombiness.x, pos.y + zom->zombiness.y), ccColor4F(1, 1, 0, 1.0f));
 	}
 
-	if (currentSong->isOnBeat(AudioEngine::getCurrentTime(audioid))){
+	stringstream st;
+	total_kept += elapsedTime - AudioEngine::getCurrentTime(audioid);
+	total_beats += 1;
+	keepit = total_kept / total_beats;
+
+	if (currentSong->isOnBeat(elapsedTime - keepit)){//AudioEngine::getCurrentTime(audioid))){
+
 		view->mainBeatHUD->setString("BEAT!");
+		estimated_song_time = elapsedTime - keepit;
+
+		st << "Difference is: " << keepit;
+		//view->beatHUD->setString(st.str());
 	}
 	else{
 		view->mainBeatHUD->setString("");
@@ -630,14 +653,14 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 	mouse->drawDot(input->lastClick, 2.0f, ccColor4F(0.0f, 0.0f, 0.0f, 0.0f));
 	input->clickProcessed = true;
 	}*/
-	stringstream st;
+	/*stringstream st;
 	if (onBeat){
 		st << "HIT";
 	}
 	else{
 		st << "MISS";
 	}
-	view->beatHUD->setString(st.str());
+	view->beatHUD->setString(st.str());*/
 	//TODO: Add new HUD for BPM
 }
 
