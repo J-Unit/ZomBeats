@@ -26,7 +26,7 @@
 #include "AIController.h"
 #include "Box2d/Box2d.h"
 
-#define STARTING_LEVEL 0
+#define STARTING_LEVEL 2
 
 using namespace experimental;
 float lastbeat = 0;
@@ -239,7 +239,7 @@ void GameController::loadLevel(int i){
 	currAwareness = 0.0f;
 	AudioEngine::stopAll();
 	currentFingerPos = Vec2(0.0f, 0.0f);
-	currentSong = new SongDecomposition(128.0, "songs/ChillDeepHouse.mp3", -0.04);
+	currentSong = new SongDecomposition(128.0, "songs/ChillDeepHouse.mp3", -0.05);
 	audioid = AudioEngine::play2d("songs/01 OverDrive.mp3", true, 1);
 }
 
