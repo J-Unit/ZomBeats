@@ -31,6 +31,66 @@ Scene* View::createScene() {
 	return scene;
 }
 
+void View::makeResolutionIndependent(){
+	Size size = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+	Vec2 center(size.width / 2.0f + origin.x, size.height / 2.0f + origin.y);
+	float aspect = size.width / (float)size.height;
+	float width = VIEW_WDITH;
+	float height = VIEW_HEIGHT;
+
+	// Masks the hidden areas if aspect ratio is not a match.
+	if (aspect > width / height) {
+		// Time for horizontal bars.
+		allSpace->setScale(size.height / height);
+
+		Size band((size.width - width*size.height / height) / 2.0f, size.height);
+		Vec2 offset(band.width, band.height);
+
+		if (band.width > LETTERBOX_EPSILON && band.height > LETTERBOX_EPSILON) {
+			auto left = DrawNode::create();
+			left->setContentSize(band);
+			left->drawSolidRect(Vec2::ZERO, offset, Color4F(0, 0, 0, 1));
+			left->setAnchorPoint(Vec2(0, 0));
+			left->setPosition(origin);
+			this->addChild(left, 1);
+
+			auto rght = DrawNode::create();
+			rght->setContentSize(band);
+			rght->drawSolidRect(Vec2::ZERO, offset, Color4F(0, 0, 0, 1));
+			rght->setAnchorPoint(Vec2(1, 1));
+			rght->setPosition(origin + size);
+			this->addChild(rght, 1);
+		}
+	}
+	else if (aspect < width / height) {
+		// Time for vertical bars.
+		allSpace->setScale(size.width / width);
+
+		Size band(size.width, (size.height - height*size.width / width) / 2.0f);
+		Vec2 offset(band.width, band.height);
+
+		if (band.width > LETTERBOX_EPSILON && band.height > LETTERBOX_EPSILON) {
+			auto bot = DrawNode::create();
+			bot->setContentSize(band);
+			bot->drawSolidRect(Vec2::ZERO, offset, Color4F(0, 0, 0, 1));
+			bot->setAnchorPoint(Vec2(0, 0));
+			bot->setPosition(origin);
+			this->addChild(bot, 1);
+
+			auto top = DrawNode::create();
+			top->setContentSize(band);
+			top->drawSolidRect(Vec2::ZERO, offset, Color4F(0, 0, 0, 1));
+			top->setAnchorPoint(Vec2(1, 1));
+			top->setPosition(origin + size);
+			this->addChild(top, 2);
+		}
+	}
+	else {
+		allSpace->setScale(size.width / width);
+	}
+}
+
 /**
 * Builds the scene graph for the game.
 *
@@ -50,6 +110,8 @@ void View::buildScene(LevelMap *level, Layer* l) {
 	allSpace->setContentSize(Size(SPACE_TILE*level->bkgTilesX, SPACE_TILE*level->bkgTilesY));
 	allSpace->setPosition(center);
 	allSpace->setAnchorPoint(anchor);
+	makeResolutionIndependent();
+
 
 	// Everything else is relative to all space, not the screen!
 	center.set(allSpace->getContentSize().width / 2.0f, allSpace->getContentSize().height / 2.0f);

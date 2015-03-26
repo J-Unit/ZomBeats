@@ -5,6 +5,10 @@
 #ifndef VIEW_H
 #define VIEW_H
 
+#define VIEW_WDITH 800.0f
+#define VIEW_HEIGHT 600.0f
+#define LETTERBOX_EPSILON 0.00001f
+
 #define SPACE_TILE   256
 #define PARALLAX_AMT 0.0f
 #define PLANET1_POS  Vec2(950, 1100)
@@ -81,6 +85,9 @@ public:
 	cocos2d::Scene* createScene();
 
 	~View();
+
+private:
+	void makeResolutionIndependent();
 };
 
 #endif
