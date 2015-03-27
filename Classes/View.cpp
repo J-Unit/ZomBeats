@@ -148,6 +148,11 @@ void View::buildScene(LevelMap *level, Layer* l) {
 	ai->setPosition(center);
 	ai->setAnchorPoint(anchor);
 
+	zombiePositions = DrawNode::create();
+	zombiePositions->setContentSize(allSpace->getContentSize());
+	zombiePositions->setPosition(center);
+	zombiePositions->setAnchorPoint(anchor);
+
 	detectionRadiusCircle = DrawNode::create();
 	detectionRadiusCircle->setContentSize(allSpace->getContentSize());
 	detectionRadiusCircle->setPosition(center);
@@ -186,6 +191,7 @@ void View::buildScene(LevelMap *level, Layer* l) {
 	enviornment->addChild(meshVis);
 	enviornment->addChild(path);
 	enviornment->addChild(ai, 1);
+	enviornment->addChild(zombiePositions, 1);
 	enviornment->addChild(detectionRadiusCircle);
 	enviornment->addChild(hitBox, 3);
 	enviornment->addChild(weaponBox);

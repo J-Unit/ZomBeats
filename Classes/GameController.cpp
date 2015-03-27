@@ -97,6 +97,7 @@ void GameController::BeginContact(b2Contact* contact){
 	if ((b1->type == ZombieType && b2->type == ShipType) || (b1->type == ShipType && b2->type == ZombieType)){
 			state->ship->isDestroyed = true;
 	}
+
 }
 
 void GameController::EndContact(b2Contact* contact){
@@ -167,10 +168,10 @@ void GameController::removeGameMenu() {
 
 void GameController::updateFog() {
 	if (fogSp != NULL) {
-		if (INITIAL_DETECTION_RADIUS / detectionRadius > 0.65f) {
-			fogSp->setScale(FOG_SCALE*(detectionRadius / INITIAL_DETECTION_RADIUS), FOG_SCALE*(detectionRadius / INITIAL_DETECTION_RADIUS));
+		//if (INITIAL_DETECTION_RADIUS / detectionRadius > 0.65f) {
+			fogSp->setScale(FOG_SCALE + (detectionRadius - MIN_DETECTION_RADIUS)/120.0f, FOG_SCALE + (detectionRadius - MIN_DETECTION_RADIUS)/120.0f);
 
-		}
+		//}
 
 		fogSp->setPosition(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y);
 		//fogSpOuter->setPosition(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y);
@@ -591,14 +592,26 @@ void GameController::update(float deltaTime) {
 		// Reanchor the node at the center of the screen and rotate about center.
 		//nearSpace->setAnchorPoint(offset+center);
 		//nearSpace->setRotation(-shipModel->body->GetAngle());
-		state->ship->getSprite()->setRotation(state->ship->body->GetAngle());
+		//state->ship->getSprite()->setRotation(state->ship->body->GetAngle());
 		CTypedPtrDblElement<Zombie> *z = state->zombies.GetHeadPtr();
 		while (!state->zombies.IsSentinel(z)){
-			pos = z->Data()->body->GetPosition();
-			z->Data()->sprite->setPosition(pos.x, pos.y);
-			z->Data()->advanceFrame();
-			z = z->Next();
+			if ((z->Data()->body->GetPosition() - state->ship->body->GetPosition()).Length() <= detectionRadius + 40){
+				pos = z->Data()->body->GetPosition();
+				z->Data()->sprite->setVisible(true);
+				z->Data()->sprite->setPosition(pos.x, pos.y);
+				z->Data()->advanceFrame();
+			}
+			else{
+				z->Data()->sprite->setVisible(false);
+				if (!frameOnBeat){
+					view->zombiePositions->clear();
+				}else if (!prevOnBeat){
+					pos = z->Data()->body->GetPosition();
+					view->zombiePositions->drawSolidCircle(Vec2(pos.x, pos.y), 8.0f, 0.0f, 20.0f, ccColor4F(0.5f, 0, 0, 1.0f));
+				}
 
+			}
+			z = z->Next();
 		}
 
 		CTypedPtrDblElement<EnvironmentWeapon> *envwe = state->environment_weapons.GetHeadPtr();
@@ -691,7 +704,7 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 			cur = cur->next;
 		} while (cur != 0);
 	}
-	view->ai->clear();
+	/*view->ai->clear();
 	for (CTypedPtrDblElement<Zombie> *z = state->zombies.GetHeadPtr(); !state->zombies.IsSentinel(z); z = z->Next()){
 		Zombie *zom = z->Data();
 		b2Vec2 pos = zom->body->GetPosition();
@@ -701,14 +714,16 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 		view->ai->drawLine(Vec2(pos.x, pos.y), Vec2(pos.x + zom->alignment.x, pos.y + zom->alignment.y), ccColor4F(1, 0, 1, 1.0f));
 		view->ai->drawLine(Vec2(pos.x, pos.y), Vec2(pos.x + zom->cohesion.x, pos.y + zom->cohesion.y), ccColor4F(0, 0, 1, 1.0f));
 		view->ai->drawLine(Vec2(pos.x, pos.y), Vec2(pos.x + zom->zombiness.x, pos.y + zom->zombiness.y), ccColor4F(1, 1, 0, 1.0f));
-	}
+	}*/
+
 
 	stringstream st;
 	total_kept += elapsedTime - AudioEngine::getCurrentTime(audioid);
 	total_beats += 1;
 	keepit = total_kept / total_beats;
-
-	if (currentSong->isOnBeat(elapsedTime - keepit)){//AudioEngine::getCurrentTime(audioid))){
+	prevOnBeat = frameOnBeat;
+	frameOnBeat = currentSong->isOnBeat(elapsedTime - keepit);
+	if (frameOnBeat){//AudioEngine::getCurrentTime(audioid))){
 
 		view->mainBeatHUD->setString("BEAT!");
 		estimated_song_time = elapsedTime - keepit;

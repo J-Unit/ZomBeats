@@ -14,13 +14,13 @@
 #include "LevelSerializer.h"
 
 //define couple parameters here for grooviness meter
-#define INITIAL_DETECTION_RADIUS    150.0f
+#define INITIAL_DETECTION_RADIUS    200.0f
 #define DETECTION_RADIUS_INCREASE   20.0f
 #define DETECTION_RADIUS_DECREASE   6.0f
-#define MIN_DETECTION_RADIUS 125.0f
+#define MIN_DETECTION_RADIUS 150.0f
 #define MAX_DETECTION_RADIUS 400.0f
 //fog scale
-#define FOG_SCALE 4.2f
+#define FOG_SCALE 1.25f
 #define OUTER_FOG_SCALE 2.8f
 
 //delays
@@ -109,6 +109,8 @@ public:
 	float environmentalTimer;
 
 	bool processDirection;
+	bool prevOnBeat;
+	bool frameOnBeat;
 
 	EnvironmentWeapon *currentEnvironment;
 	Lawnmower *currentMower;

@@ -50,7 +50,8 @@ public:
 	DrawNode* directionUseEnvironmentWeapon;
 	DrawNode* hitBox;
 	DrawNode* weaponBox;
-	DrawNode* ai; 
+	DrawNode* ai;
+	DrawNode* zombiePositions;
 
 	Node*   enviornment;
 
