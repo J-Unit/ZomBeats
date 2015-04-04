@@ -14,6 +14,7 @@
 #define PLANET1_POS  Vec2(950, 1100)
 #define PLANET2_POS  Vec2(1600, 1500)
 #define HUD_OFFSET   Vec2(10.0f,10.f)
+#define SHAKE_STRENGTH 2.0f
 
 using namespace cocos2d;
 using namespace std;
@@ -52,6 +53,9 @@ public:
 	DrawNode* weaponBox;
 	DrawNode* ai;
 	DrawNode* zombiePositions;
+	Label* grooviness;
+	DrawNode* meter;
+	Vec2 shakeCenter;
 
 	Node*   enviornment;
 
@@ -75,6 +79,8 @@ public:
 	void buildScene(LevelMap *n, Layer* l);
 
 	void setMesh();
+
+	void shake(float start, float now, Vec2 dir);
 
 	/**
 	* Creates a new game with an instance of this controller class.

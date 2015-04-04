@@ -16,7 +16,7 @@
 #define SHIP_MAX_TURN      1.0f
 #define SHIP_MAX_SPEED    10.0f
 #define SHIP_THRUST_FACTOR 0.4f
-#define IMPULSE 2300
+#define IMPULSE 2875
 
 #define DCOS_90(a)  (cos(M_PI*(a+90.0f)/180.0f))
 #define DSIN_90(a)  (sin(M_PI*(a+90.0f)/180.0f))

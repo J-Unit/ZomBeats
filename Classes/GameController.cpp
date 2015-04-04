@@ -14,6 +14,7 @@
 #include "LevelMap.h"
 #include "SimpleAudioEngine.h"
 #include "Wall.h"
+#include "GrooveMeter.h"
 #include "Sword.h"
 #include "Ship.h"
 #include "Lawnmower.h"
@@ -169,7 +170,7 @@ void GameController::removeGameMenu() {
 void GameController::updateFog() {
 	if (fogSp != NULL) {
 		//if (INITIAL_DETECTION_RADIUS / detectionRadius > 0.65f) {
-			fogSp->setScale(FOG_SCALE + (detectionRadius - MIN_DETECTION_RADIUS)/120.0f, FOG_SCALE + (detectionRadius - MIN_DETECTION_RADIUS)/120.0f);
+			fogSp->setScale(FOG_SCALE + (meter->detectionRadius - MIN_DETECTION_RADIUS)/120.0f, FOG_SCALE + (meter->detectionRadius - MIN_DETECTION_RADIUS)/120.0f);
 
 		//}
 
@@ -184,6 +185,7 @@ bool GameController::init() {
 	if (!Layer::init()) {
 		return false;
 	}
+	meter = new GrooveMeter();
 	Director* director = Director::getInstance();
 	cocos2d::Size winsize = director->getWinSizeInPixels();
 	view = new View(winsize.width, winsize.height);
@@ -194,7 +196,6 @@ bool GameController::init() {
 
 	//add the fog of war here
 	createFog();
-
 
 	ai = new AIController();
 	environmentalTimer = 0.0f;
@@ -212,6 +213,12 @@ bool GameController::init() {
 	this->scheduleUpdate();
 	isPaused = false;
 	return true;
+}
+
+Vec2 GameController::mouseToWorld(Vec2 click){
+	b2Vec2 pos = state->ship->body->GetPosition();
+	return Vec2((input->lastClick.x - view->screen_size_x / 2.0) / view->allSpace->getScale() + pos.x, 
+		-(input->lastClick.y - view->screen_size_y / 2.0) / view->allSpace->getScale() + pos.y);
 }
 
 void GameController::loadLevel(int i){
@@ -236,11 +243,11 @@ void GameController::loadLevel(int i){
 	for (CTypedPtrDblElement<Weapon> *cw = state->weapons.GetHeadPtr(); !state->weapons.IsSentinel(cw); cw = cw->Next()) view->enviornment->addChild(cw->Data()->sprite);
 	for (CTypedPtrDblElement<EnvironmentWeapon> *ew = state->environment_weapons.GetHeadPtr(); !state->environment_weapons.IsSentinel(ew); ew = ew->Next()) view->enviornment->addChild(ew->Data()->sprite);
 	//initial detection radius
-	detectionRadius = INITIAL_DETECTION_RADIUS;
+	meter->detectionRadius = INITIAL_DETECTION_RADIUS;
 	currAwareness = 0.0f;
 	AudioEngine::stopAll();
 	currentFingerPos = Vec2(0.0f, 0.0f);
-	currentSong = new SongDecomposition(128.0, "songs/ChillDeepHouse.mp3", -0.05);
+	currentSong = new SongDecomposition(128.0, "songs/ChillDeepHouse.mp3", -0.04);
 	audioid = AudioEngine::play2d("songs/01 OverDrive.mp3", true, 1);
 }
 
@@ -435,27 +442,22 @@ void GameController::update(float deltaTime) {
 
 			//view->beatHUD->setString("Actual time: " + std::to_string(elapsedTime) + " song time: " + std::to_string(AudioEngine::getCurrentTime(audioid)));
 			if (!onBeat) {
-				state->ship->body->SetLinearVelocity(b2Vec2_zero);
-				destination = 0;
+				//state->ship->body->SetLinearVelocity(b2Vec2_zero);
+				//destination = 0;
 
 				//if it is not on beat, increase the detection radius slightly
-				if (detectionRadius < MAX_DETECTION_RADIUS) {
-					detectionRadius += DETECTION_RADIUS_INCREASE;
-				}
+				meter->increaseRadius();
 			}
 			else{
 				state->ship->boostFrames = MAX_BOOST_FRAMES;
-				float xClick = (input->lastClick.x - view->screen_size_x / 2.0) + x;
-				float yClick = -(input->lastClick.y - view->screen_size_y / 2.0) + y;
-				MapNode *dest = state->level->locateCharacter(xClick,yClick);
+				Vec2 click = mouseToWorld(input->lastClick);
+				MapNode *dest = state->level->locateCharacter(click.x, click.y);
 				state->level->shortestPath(from, dest);
 				destination = from->next;
 				MapNode *destPrev = from;
 
 				//if it is on beat, decrease the detection radius slightly
-				if (detectionRadius > MIN_DETECTION_RADIUS) {
-					detectionRadius -= DETECTION_RADIUS_DECREASE;
-				}
+				meter->decreaseRadius();
 
 				if (state->ship->hasWeapon){
 					//if you have a weapon and click on the beat, check if you kill any zombies in that direction
@@ -467,7 +469,7 @@ void GameController::update(float deltaTime) {
 						dRickyTap = new Vec2(destination->x - destPrev->x, destination->y - destPrev->y);
 						dRickyTap->normalize();
 					}*/
-					dRickyTap->set(xClick - state->ship->body->GetPosition().x, yClick - state->ship->body->GetPosition().y);
+					dRickyTap->set(click.x - state->ship->body->GetPosition().x, click.y - state->ship->body->GetPosition().y);
 					float theta = atan2(dRickyTap->y, dRickyTap->x);
 					theta = round(theta / (M_PI / 4.0f)) * (M_PI / 4.0f);
 
@@ -521,7 +523,7 @@ void GameController::update(float deltaTime) {
 				//if this zombie is within our detection radius and we messed up the beat
 				float dis;
 				dis = sqrt(tmp.x*tmp.x + tmp.y*tmp.y);
-				if (!onBeat && dis < detectionRadius) {
+				if (!onBeat && dis < meter->detectionRadius) {
 					AudioEngine::play2d("sound_effects/ZombieHiss.mp3", false, 1);
 					curZ->increaseAwarness();
 				}
@@ -595,7 +597,7 @@ void GameController::update(float deltaTime) {
 		//state->ship->getSprite()->setRotation(state->ship->body->GetAngle());
 		CTypedPtrDblElement<Zombie> *z = state->zombies.GetHeadPtr();
 		while (!state->zombies.IsSentinel(z)){
-			if ((z->Data()->body->GetPosition() - state->ship->body->GetPosition()).Length() <= detectionRadius + 40){
+			if ((z->Data()->body->GetPosition() - state->ship->body->GetPosition()).Length() <= meter->detectionRadius + 40){
 				pos = z->Data()->body->GetPosition();
 				z->Data()->sprite->setVisible(true);
 				z->Data()->sprite->setPosition(pos.x, pos.y);
@@ -675,7 +677,7 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 	view->zombieOneAwarenessHUD->setString(awr.str());
 
 	//visualize the detection radius
-	view->detectionRadiusCircle->drawCircle(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y), detectionRadius, 0.0f, 1000, false, ccColor4F(0, 0, 2.0f, 1.0f));
+	view->detectionRadiusCircle->drawCircle(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y), meter->detectionRadius, 0.0f, 1000, false, ccColor4F(0, 0, 2.0f, 1.0f));
 
 	//visualize the hitbox for main character
 	//view->hitBox->drawRect(Vec2(state->ship->body->GetPosition().x - 29.5f, state->ship->body->GetPosition().y - 55.0f), Vec2(state->ship->body->GetPosition().x + 29.5f, state->ship->body->GetPosition().y + 55.0f), ccColor4F(2.0f, 2.0f, 2.0f, 1.0f));
@@ -730,10 +732,17 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 
 		st << "Difference is: " << keepit;
 		//view->beatHUD->setString(st.str());
+		b2Vec2 shaked = randomUnitVector();
+		view->shake(currentSong->getBeatStart(elapsedTime - keepit), elapsedTime - keepit, Vec2(1, 0));
 	}
 	else{
 		view->mainBeatHUD->setString("");
 	}
+	float g = meter->getGrooviness();
+	view->grooviness->setString(meter->getGroovinessDisplay(g));
+	view->meter->clear();
+	view->meter->drawSolidRect(Vec2(-15, 0), Vec2(+15, g*180), ccColor4F(0.0f, 1.0f, 1.0f, 1.0f));
+	view->meter->drawRect(Vec2(-15, 0), Vec2(+15, 180), ccColor4F(0.5f, 0.5f, 0.5f, 1.0f));
 
 	/*if (!input->clickProcessed) {
 	mouse->drawDot(input->lastClick, 2.0f, ccColor4F(0.0f, 0.0f, 0.0f, 0.0f));

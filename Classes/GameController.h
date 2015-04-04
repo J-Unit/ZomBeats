@@ -13,12 +13,6 @@
 #include "Box2D/Box2D.h"
 #include "LevelSerializer.h"
 
-//define couple parameters here for grooviness meter
-#define INITIAL_DETECTION_RADIUS    200.0f
-#define DETECTION_RADIUS_INCREASE   20.0f
-#define DETECTION_RADIUS_DECREASE   6.0f
-#define MIN_DETECTION_RADIUS 150.0f
-#define MAX_DETECTION_RADIUS 400.0f
 //fog scale
 #define FOG_SCALE 1.25f
 #define OUTER_FOG_SCALE 2.8f
@@ -41,6 +35,7 @@ class View;
 class AIController;
 class EnvironmentWeapon;
 class Lawnmower;
+class GrooveMeter;
 
 /**
  * Class represents the root node for the game engine.
@@ -67,6 +62,8 @@ public:
 
 	//for game menu use
 	bool isPaused;
+
+	GrooveMeter *meter;
 
 	/**
     // VIEW
@@ -95,9 +92,6 @@ public:
 
 	//Whether the user is on beat or not
 	bool onBeat;
-
-	//the current detection radius
-	float detectionRadius;
 
 	//zombie awarness output, remove it later
 	float currAwareness;
@@ -152,6 +146,8 @@ public:
 	b2Vec2 weaponRectangle[4];
 
 	Vec2 *dRickyTap;
+
+	Vec2 mouseToWorld(Vec2 click);
 
 
 private:
