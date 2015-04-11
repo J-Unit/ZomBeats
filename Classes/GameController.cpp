@@ -313,6 +313,19 @@ bool GameController::isZombieHit(b2Vec2 az, b2Vec2 bz, b2Vec2 ab, b2Vec2 bc){
 	else return false;
 }
 
+//helper method, check if user has clicked the pause botton during game
+bool GameController::hasPressedPauseButton() {
+	Size visibleScreenSize = Director::getInstance()->getVisibleSize();
+	Vec2 ScreenOrigin = Director::getInstance()->getVisibleOrigin();
+	if (!input->clickProcessed && (input->lastClick.x > (visibleScreenSize.width*0.97 + ScreenOrigin.x - PAUSE_BUTTON_HALF_WIDTH)) &&
+		(input->lastClick.y < (visibleScreenSize.height*0.04 + PAUSE_BUTTON_HALF_HEIGHT))) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
 /**
 * Update the game state.
 *
@@ -322,7 +335,8 @@ bool GameController::isZombieHit(b2Vec2 az, b2Vec2 bz, b2Vec2 ab, b2Vec2 bc){
 */
 void GameController::update(float deltaTime) {
 	if (!isPaused) {
-		if (!input->clickProcessed && input->lastClick.x < 100 && input->lastClick.y < 100) {
+		//if (!input->clickProcessed && input->lastClick.x < 100 && input->lastClick.y < 100) {
+		if (hasPressedPauseButton()) {
 			pauseGame();
 			createGameMenu();
 			return;

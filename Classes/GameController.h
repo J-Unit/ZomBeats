@@ -16,6 +16,9 @@
 //fog scale
 #define FOG_SCALE 1.25f
 #define OUTER_FOG_SCALE 2.8f
+#define PAUSE_BUTTON_HALF_WIDTH 15
+#define PAUSE_BUTTON_HALF_HEIGHT 15
+
 
 //delays
 #define ENVIRONMENTAL_WEAPON_DELAY 1.0f
@@ -143,6 +146,10 @@ public:
 	void pauseGame();
 
 	void resumeGame();
+
+	//helper method, check if user has clicked the pause botton during game
+	bool hasPressedPauseButton();
+
 	b2Vec2 weaponRectangle[4];
 
 	Vec2 *dRickyTap;
