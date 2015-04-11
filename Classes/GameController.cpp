@@ -156,10 +156,26 @@ void GameController::createFog() {
 }
 
 void GameController::createGameMenu() {
+	
 	pauseMenu = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("pause_menu"));
 	pauseMenu->setScale(0.15f);
 	pauseMenu->setPosition(Vec2(HUD_OFFSET.x * 50, HUD_OFFSET.y * 35));
 	this->addChild(pauseMenu);
+	/*Size visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+	pauseMenu = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("blank_pause_menu"));
+	pauseMenu->setScale(0.15f);
+	pauseMenu->setPosition(Point(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
+	this->addChild(pauseMenu);
+
+	auto resumeButton = MenuItemImage::create("resume_button.png", "resume_button.png", CC_CALLBACK_0(GameController::resumeGame));
+	resumeButton->setPosition(Point(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
+
+	auto menu = Menu::create(resumeButton, NULL);
+	menu->setPosition(Point::ZERO);
+	this->addChild(menu);*/
+	
 }
 
 void GameController::removeGameMenu() {
@@ -185,7 +201,7 @@ bool GameController::init() {
 		return false;
 	}
 	Director* director = Director::getInstance();
-	cocos2d::Size winsize = director->getWinSizeInPixels();
+	Size winsize = director->getWinSizeInPixels();
 	view = new View(winsize.width, winsize.height);
 	view->scene->addChild(this);
 

@@ -78,7 +78,7 @@ public:
 	Sprite* fogSp;
 	Sprite* fogSpOuter;
 
-	//game menu sprite
+	//game menu sprite and associated buttons
 	Sprite* pauseMenu;
 
     // MODEL
@@ -152,6 +152,7 @@ public:
 	b2Vec2 weaponRectangle[4];
 
 	Vec2 *dRickyTap;
+
 
 
 private:

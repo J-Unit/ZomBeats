@@ -86,12 +86,12 @@ ResourceLoader::ResourceLoader() {
 		text->retain();
 		textures["fog"] = text;
 	}
-
+	/*
 	text = Director::getInstance()->getTextureCache()->addImage("textures/pause.png");
 	if (text) {
 		text->retain();
 		textures["pause"] = text;
-	}
+	}*/
 
 	//add the weapon textures here
 	text = Director::getInstance()->getTextureCache()->addImage("textures/mower.png");
@@ -110,6 +110,12 @@ ResourceLoader::ResourceLoader() {
 	if (text) {
 		text->retain();
 		textures["pause_menu"] = text;
+	}
+
+	text = Director::getInstance()->getTextureCache()->addImage("textures/menu_background.png");
+	if (text) {
+		text->retain();
+		textures["blank_pause_menu"] = text;
 	}
 }
 
