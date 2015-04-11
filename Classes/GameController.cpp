@@ -170,12 +170,21 @@ void GameController::createGameMenu() {
 	pauseMenuBackground->setPosition(Point(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
 	this->addChild(pauseMenuBackground);
 
-	auto resumeButton = MenuItemImage::create("textures/resume_button.png", "textures/resume_button.png", CC_CALLBACK_0(GameController::resumeGame, this));
+
+	//---remove these later-----
+	Sprite* resumeButtonTexture = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("resume_button"));
+	Sprite* resumeButtonClickedTexture = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("resume_button_clicked"));
+	Sprite* restartButtonTexture = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("restart_button"));
+	Sprite* restartButtonClickedTexture = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("restart_button_clicked"));
+	//---remove above later----- 
+
+
+	auto resumeButton = MenuItemImage::create("textures/resume_button.png", "textures/resume_button_clicked_temp.png", CC_CALLBACK_0(GameController::resumeGame, this));
 	resumeButton->setPosition(Point(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y + GAME_MENU_BUTTON_OFFSET));
 	resumeButton->setScale(GAME_MENU_BUTTON_SCALE);
 
-	auto restartButton = MenuItemImage::create("textures/restart_button.png", "textures/restart_button.png", CC_CALLBACK_0(GameController::restartGame, this));
-	restartButton->setPosition(Point(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
+	auto restartButton = MenuItemImage::create("textures/restart_button.png", "textures/restart_button_clicked_temp.png", CC_CALLBACK_0(GameController::restartGame, this));
+	restartButton->setPosition(Point(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y - GAME_MENU_BUTTON_OFFSET/2));
 	restartButton->setScale(GAME_MENU_BUTTON_SCALE);
 
 	menu = Menu::create(resumeButton, restartButton, NULL);
@@ -664,21 +673,7 @@ void GameController::update(float deltaTime) {
 
 	//game is paused, check if they click on the game menu buttons
 	else {
-		/*
-		//if resume is clicked
-		if (input->lastClick.x < 602 && input->lastClick.x > 389 && input->lastClick.y > 116 && input->lastClick.y < 176) {
-			resumeGame();
-			removeGameMenu();
-		}
-		//if restart game button has been pressed
-		else if (input->lastClick.x < 602 && input->lastClick.x > 389 && input->lastClick.y > 351 && input->lastClick.y < 415) {
-			removeGameMenu();
-			restartGame();
-		}
-		//do nothing
-		else {
-
-		}*/
+		//do nothing, might gonna need it to do something later
 	}
 }
 
