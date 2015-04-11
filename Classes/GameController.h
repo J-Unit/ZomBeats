@@ -18,6 +18,9 @@
 #define OUTER_FOG_SCALE 2.8f
 #define PAUSE_BUTTON_HALF_WIDTH 15
 #define PAUSE_BUTTON_HALF_HEIGHT 15
+#define GAME_MENU_SCALE 0.15f
+#define GAME_MENU_BUTTON_SCALE 0.75f
+#define GAME_MENU_BUTTON_OFFSET 150
 
 
 //delays
@@ -79,7 +82,9 @@ public:
 	Sprite* fogSpOuter;
 
 	//game menu sprite and associated buttons
-	Sprite* pauseMenu;
+	Sprite* pauseMenuBackground;
+	//the in-game menu
+	Menu* menu;
 
     // MODEL
     // A page-out could dispose of the view as long as it just has this.

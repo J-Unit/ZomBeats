@@ -280,8 +280,10 @@ void View::buildScene(LevelMap *level, Layer* l) {
 
 	//a fake pause button goes here
 	Sprite* pause = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("pause_button"));
-	pause->setScale(0.5f);
-	pause->setPosition(Vec2(50, HUD_OFFSET.y * 116));
+	Size visibleSize2 = Director::getInstance()->getVisibleSize();
+	Vec2 origin2 = Director::getInstance()->getVisibleOrigin();
+	pause->setScale(0.2f);
+	pause->setPosition(Point(visibleSize2.width*0.97 + origin2.x, visibleSize2.height*0.96 + origin2.y));
 
 	//a pause menu goes here
 	//pauseMenu->setSprite(Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("pause_menu")));

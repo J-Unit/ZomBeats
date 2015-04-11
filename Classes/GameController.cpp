@@ -158,29 +158,35 @@ void GameController::createFog() {
 
 void GameController::createGameMenu() {
 	
-	pauseMenu = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("pause_menu"));
+	/*pauseMenu = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("pause_menu"));
 	pauseMenu->setScale(0.15f);
 	pauseMenu->setPosition(Vec2(HUD_OFFSET.x * 50, HUD_OFFSET.y * 35));
-	this->addChild(pauseMenu);
-	/*Size visibleSize = Director::getInstance()->getVisibleSize();
+	this->addChild(pauseMenu);*/
+	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-	pauseMenu = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("blank_pause_menu"));
-	pauseMenu->setScale(0.15f);
-	pauseMenu->setPosition(Point(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
-	this->addChild(pauseMenu);
+	pauseMenuBackground = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("blank_pause_menu"));
+	pauseMenuBackground->setScale(GAME_MENU_SCALE);
+	pauseMenuBackground->setPosition(Point(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
+	this->addChild(pauseMenuBackground);
 
-	auto resumeButton = MenuItemImage::create("resume_button.png", "resume_button.png", CC_CALLBACK_0(GameController::resumeGame));
-	resumeButton->setPosition(Point(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
+	auto resumeButton = MenuItemImage::create("textures/resume_button.png", "textures/resume_button.png", CC_CALLBACK_0(GameController::resumeGame, this));
+	resumeButton->setPosition(Point(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y + GAME_MENU_BUTTON_OFFSET));
+	resumeButton->setScale(GAME_MENU_BUTTON_SCALE);
 
-	auto menu = Menu::create(resumeButton, NULL);
+	auto restartButton = MenuItemImage::create("textures/restart_button.png", "textures/restart_button.png", CC_CALLBACK_0(GameController::restartGame, this));
+	restartButton->setPosition(Point(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
+	restartButton->setScale(GAME_MENU_BUTTON_SCALE);
+
+	menu = Menu::create(resumeButton, restartButton, NULL);
 	menu->setPosition(Point::ZERO);
-	this->addChild(menu);*/
+	this->addChild(menu);
 	
 }
 
 void GameController::removeGameMenu() {
-	this->removeChild(pauseMenu);
+	this->removeChild(pauseMenuBackground);
+	this->removeChild(menu);
 }
 
 void GameController::updateFog() {
@@ -276,6 +282,7 @@ void GameController::restartGame() {
 	input->clickProcessed = true;
 	destination = 0;
 	isPaused = false;
+	removeGameMenu();
 }
 
 void GameController::pauseGame() {
@@ -284,6 +291,7 @@ void GameController::pauseGame() {
 
 void GameController::resumeGame() {
 	isPaused = false;
+	removeGameMenu();
 }
 
 void GameController::createWeaponRanges(float weapWidth, float weapRange, b2Vec2 dir){
@@ -656,11 +664,13 @@ void GameController::update(float deltaTime) {
 
 	//game is paused, check if they click on the game menu buttons
 	else {
+		/*
 		//if resume is clicked
 		if (input->lastClick.x < 602 && input->lastClick.x > 389 && input->lastClick.y > 116 && input->lastClick.y < 176) {
 			resumeGame();
 			removeGameMenu();
 		}
+		//if restart game button has been pressed
 		else if (input->lastClick.x < 602 && input->lastClick.x > 389 && input->lastClick.y > 351 && input->lastClick.y < 415) {
 			removeGameMenu();
 			restartGame();
@@ -668,7 +678,7 @@ void GameController::update(float deltaTime) {
 		//do nothing
 		else {
 
-		}
+		}*/
 	}
 }
 
