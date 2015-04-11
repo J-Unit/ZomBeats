@@ -72,6 +72,9 @@
     <ClCompile Include="..\Classes\AIController.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\GrooveMeter.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -147,6 +150,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\AIController.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GrooveMeter.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

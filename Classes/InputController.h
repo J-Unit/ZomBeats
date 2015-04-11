@@ -79,6 +79,8 @@ protected:
 
 	/** The position produced by the player input */
 	Vec2 inputPos;
+
+
     
 public:
 	bool clickProcessed;

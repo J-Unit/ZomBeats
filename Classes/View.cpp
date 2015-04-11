@@ -6,6 +6,7 @@
 #include <string>
 #include <math.h>
 #include <iostream>
+#include "SongDecomposition.h"
 #include "Wall.h"
 
 View::View(int w, int h){
@@ -101,20 +102,20 @@ void View::buildScene(LevelMap *level, Layer* l) {
 	Size dimen = Director::getInstance()->getVisibleSize();
 	pix_to_opengl_scale = dimen.width / screen_size_x;
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
-	Vec2 center(origin.x + dimen.width / 2.0f, origin.y + dimen.height / 2.0f);
+	shakeCenter = Vec2(origin.x + dimen.width / 2.0f, origin.y + dimen.height / 2.0f);
 	Vec2 anchor(0.5f, 0.5f);
 
 	// Create the master node.  This, unlike the layer, is resolution independent.
 	// If we do not do this, the children will not all line up correctly on different devices.
 	allSpace = Node::create();
 	allSpace->setContentSize(Size(SPACE_TILE*level->bkgTilesX, SPACE_TILE*level->bkgTilesY));
-	allSpace->setPosition(center);
+	allSpace->setPosition(shakeCenter);
 	allSpace->setAnchorPoint(anchor);
 	makeResolutionIndependent();
 
 
 	// Everything else is relative to all space, not the screen!
-	center.set(allSpace->getContentSize().width / 2.0f, allSpace->getContentSize().height / 2.0f);
+	Vec2 center(allSpace->getContentSize().width / 2.0f, allSpace->getContentSize().height / 2.0f);
 	background = Node::create();
 	background->setContentSize(allSpace->getContentSize());
 	background->setPosition(center);
@@ -157,9 +158,10 @@ void View::buildScene(LevelMap *level, Layer* l) {
 	detectionRadiusCircle->setContentSize(allSpace->getContentSize());
 	detectionRadiusCircle->setPosition(center);
 	detectionRadiusCircle->setAnchorPoint(anchor);
+	detectionRadiusCircle->setVisible(false);
 
 	directionUseEnvironmentWeapon = DrawNode::create();
-	directionUseEnvironmentWeapon->setContentSize(allSpace->getContentSize());
+	directionUseEnvironmentWeapon->setContentSize(allSpace->getContentSize());	
 	directionUseEnvironmentWeapon->setPosition(center);
 	directionUseEnvironmentWeapon->setAnchorPoint(anchor);
 
@@ -255,15 +257,26 @@ void View::buildScene(LevelMap *level, Layer* l) {
 
 	beatHUD = Label::create();
 	beatHUD->setTTFConfig(*ResourceLoader::getInstance()->getFont("MarkerFelt"));
-	beatHUD->setPosition(Vec2(HUD_OFFSET.x, HUD_OFFSET.y * 40));
+	beatHUD->setPosition(Vec2(HUD_OFFSET.x, HUD_OFFSET.y * 50));
 	beatHUD->setScale(2.0f);
 	beatHUD->setAnchorPoint(Vec2::ZERO);
 
 	mainBeatHUD = Label::create();
 	mainBeatHUD->setTTFConfig(*ResourceLoader::getInstance()->getFont("MarkerFelt"));
-	mainBeatHUD->setPosition(Vec2(HUD_OFFSET.x, HUD_OFFSET.y * 50));
+	mainBeatHUD->setPosition(Vec2(HUD_OFFSET.x, HUD_OFFSET.y * 60));
 	mainBeatHUD->setScale(1.6f);
 	mainBeatHUD->setAnchorPoint(Vec2::ZERO);
+
+	grooviness = Label::create();
+	grooviness->setTTFConfig(*ResourceLoader::getInstance()->getFont("MarkerFelt"));
+	grooviness->setPosition(Vec2(HUD_OFFSET.x, HUD_OFFSET.y * 40));
+	grooviness->setAnchorPoint(Vec2::ZERO);
+	
+	meter = DrawNode::create();
+	meter->setPosition(HUD_OFFSET.x * 3.5f, HUD_OFFSET.y * 21);
+	meter->setContentSize(allSpace->getContentSize());
+	meter->setAnchorPoint(Vec2::ZERO);
+
 
 	//a fake pause button goes here
 	Sprite* pause = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("pause_button"));
@@ -285,11 +298,19 @@ void View::buildScene(LevelMap *level, Layer* l) {
 	l->addChild(thrustHUD);
 	l->addChild(beatHUD);
 	l->addChild(mainBeatHUD);
+	l->addChild(grooviness);
+	l->addChild(meter);
 	l->addChild(detectionRadiusHUD);
 	l->addChild(zombieOneAwarenessHUD); //remove this later
 	l->addChild(pause);
 	//l->addChild(pauseMenu->sprite);
 }
+
+void View::shake(float start, float now, Vec2 dir){
+	float v = sin((now - start) * 2 * M_PI / ERROR_WINDOW);
+	allSpace->setPosition(shakeCenter + v * SHAKE_STRENGTH * dir);
+}
+
 
 
 View::~View()

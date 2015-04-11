@@ -5,17 +5,20 @@
 class SongDecomposition
 {
 public:
-	float bpm;
+	float bpm; //beats per minute
+	float spb; //
 	std::string trackName;
 	float trackStartTime;
 
 	SongDecomposition(float beats, std::string name, float start) {
 		bpm = beats;
+		spb = 60 / bpm;
 		trackName = name;
 		trackStartTime = start;
 	}
 
 	bool isOnBeat(float clickTime);
+	float getBeatStart(float time);
 
 	~SongDecomposition();
 };

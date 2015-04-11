@@ -147,6 +147,7 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
     <ClCompile Include="..\Classes\FilmStrip.cpp" />
     <ClCompile Include="..\Classes\GameController.cpp" />
     <ClCompile Include="..\Classes\GameState.cpp" />
+    <ClCompile Include="..\Classes\GrooveMeter.cpp" />
     <ClCompile Include="..\Classes\HelloWorldScene.cpp" />
     <ClCompile Include="..\Classes\InputController.cpp" />
     <ClCompile Include="..\Classes\Lawnmower.cpp" />
@@ -170,6 +171,7 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
     <ClInclude Include="..\Classes\FilmStrip.h" />
     <ClInclude Include="..\Classes\GameController.h" />
     <ClInclude Include="..\Classes\GameState.h" />
+    <ClInclude Include="..\Classes\GrooveMeter.h" />
     <ClInclude Include="..\Classes\HelloWorldScene.h" />
     <ClInclude Include="..\Classes\InputController.h" />
     <ClInclude Include="..\Classes\Lawnmower.h" />

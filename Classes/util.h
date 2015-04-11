@@ -4,12 +4,19 @@
 #include "Box2D/Box2D.h"
 #include <random>
 
-
 static void setVecRandom(b2Vec2 *v){
 	float x = float(rand() - RAND_MAX / 2) / (RAND_MAX / 2);
 	float y = float(rand() - RAND_MAX / 2) / (RAND_MAX / 2);
 	v->Set(x, y);
 	v->Normalize();
+}
+
+static b2Vec2 randomUnitVector(){
+	float x = float(rand() - RAND_MAX / 2) / (RAND_MAX / 2);
+	float y = float(rand() - RAND_MAX / 2) / (RAND_MAX / 2);
+	b2Vec2 ret(x, y);
+	ret.Normalize();
+	return ret;
 }
 
 static std::default_random_engine genr;
@@ -27,5 +34,13 @@ static bool rectanglesOverlap(float b1x1, float b1y1, float b1x2, float b1y2, fl
 static bool isZero(b2Vec2 v){
 	return v.x == 0.0f && v.y == 0.0f;
 }
+/*
+static Vec2 cVec2(b2Vec2 v){
+	return Vec2(v.x, v.y);
+}
+
+static b2Vec2 cb2Vec2(Vec2 v){
+	return b2Vec2(v.x, v.y);
+}*/
 
 #endif
