@@ -12,6 +12,7 @@
 #include "cocos2d.h"
 #include "Box2D/Box2D.h"
 #include "LevelSerializer.h"
+#include <vector>
 
 //fog scale
 #define FOG_SCALE 1.25f
@@ -21,6 +22,7 @@
 #define GAME_MENU_SCALE 0.15f
 #define GAME_MENU_BUTTON_SCALE 0.75f
 #define GAME_MENU_BUTTON_OFFSET 130
+#define MUSIC_NOTE_SCALE 0.1f
 
 
 //delays
@@ -161,7 +163,11 @@ public:
 
 	Vec2 mouseToWorld(Vec2 click);
 
+	void drawMusicNotePath(Vec2 origin);
 
+	void clearMusicNotePath();
+
+	vector<Sprite*> musicNotes;
 
 private:
 	void createZombies();

@@ -677,6 +677,24 @@ void GameController::update(float deltaTime) {
 	}
 }
 
+//draw a new music note path
+void GameController::drawMusicNotePath(Vec2 origin) {
+	Sprite* singleMusicNote = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("music_note"));
+	singleMusicNote->setScale(MUSIC_NOTE_SCALE);
+	singleMusicNote->setPosition(Point(origin.x, origin.y));
+	view->enviornment->addChild(singleMusicNote);
+	musicNotes.push_back(singleMusicNote);
+}
+
+//clear the old path for every iteration
+void GameController::clearMusicNotePath() {
+	for (int i = 0; i < musicNotes.size(); i++) {
+		Sprite* aMusicNote = musicNotes[i];
+		view->enviornment->removeChild(aMusicNote);
+	}
+	musicNotes.clear();
+}
+
 /**
 * Writes the current ship position to the HUD.
 *
@@ -693,7 +711,10 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 	stringstream sss;
 	sss << "Click: (" << input->lastClick.x << "," << input->lastClick.y << ")";
 	view->thrustHUD->setString(sss.str());
-	view->path->clear();
+	//view->path->clear();
+
+	//clear the old music notes path
+	clearMusicNotePath();
 	view->directionUseEnvironmentWeapon->clear();
 	//clear the old detection circle
 	view->detectionRadiusCircle->clear();
@@ -736,7 +757,10 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 			float y1 = state->level->getTileCenterY(last);
 			float x2 = state->level->getTileCenterX(cur);
 			float y2 = state->level->getTileCenterY(cur);
-			view->path->drawLine(Vec2(x1, y1), Vec2(x2, y2), ccColor4F(1, 1, 1, 1.0f));
+			//draw main character's path
+			//view->path->drawLine(Vec2(x1, y1), Vec2(x2, y2), ccColor4F(1.0f, 1.0f, 1.0f, 1.0f));
+			drawMusicNotePath(Vec2(x1, y1));
+			drawMusicNotePath(Vec2(x2, y2));
 			last = cur;
 			cur = cur->next;
 		} while (cur != 0);
