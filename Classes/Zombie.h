@@ -17,7 +17,7 @@ public:
 	int frameRate;
 	bool isDestroyed;
 	b2PolygonShape dynamicBox;
-
+	b2Vec2 lastPosition;
 	FilmStrip* sprite;
 	b2Vec2 direction, seperation, zombiness, cohesion, alignment, attraction, aidir;
 

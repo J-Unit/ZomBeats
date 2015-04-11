@@ -20,7 +20,7 @@ Zombie::Zombie(float x, float y, b2World *world)
 	direction.Set(1, 0);
 	//setVecRandom(&direction);
 	frameRate = 0;
-	setSprite(FilmStrip::create(ResourceLoader::getInstance()->getTexture("zombie"), 2, 2, 4));
+	setSprite(FilmStrip::create(ResourceLoader::getInstance()->getTexture("zombie"), 2, 3, 6));
 	//initialize the awareness
 	awareness = INITIAL_AWARENESS;
 	cohesion.SetZero();
@@ -50,15 +50,30 @@ void Zombie::advanceFrame() {
 	}
 
 	if (frameRate % ZOMBIE_FRAME_INTERVAL == 0) {
+		float yMovement = round(body->GetPosition().y - lastPosition.y);
 		unsigned int frame = sprite->getFrame();
-		if (frame == 3) {
-			frame = 0;
+		//zombie is moving up, using the up frames
+		if (yMovement > 0) {
+			if (frame <= 2 || frame == 5) {
+				frame = 3;
+			}
+			else {
+				frame++;
+			}
 		}
+		//zombie is moving down, using down frames
 		else {
-			frame++;
+			if (frame >= 2) {
+				frame = 0;
+			}
+			else {
+				frame++;
+			}
 		}
 		sprite->setFrame(frame);
+		lastPosition = body->GetPosition();
 	}
+	
 }
 
 void Zombie::increaseAwarness()
