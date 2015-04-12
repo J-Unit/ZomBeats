@@ -122,13 +122,13 @@ ResourceLoader::ResourceLoader() {
 		textures["resume_button"] = text;
 	}
 
-	text = Director::getInstance()->getTextureCache()->addImage("textures/restart_button_clicked_temp.png");
+	text = Director::getInstance()->getTextureCache()->addImage("textures/restart_button_clicked.png");
 	if (text) {
 		text->retain();
 		textures["restart_button_clicked"] = text;
 	}
 
-	text = Director::getInstance()->getTextureCache()->addImage("textures/resume_button_clicked_temp.png");
+	text = Director::getInstance()->getTextureCache()->addImage("textures/resume_button_clicked.png");
 	if (text) {
 		text->retain();
 		textures["resume_button_clicked"] = text;

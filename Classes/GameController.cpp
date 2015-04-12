@@ -179,11 +179,11 @@ void GameController::createGameMenu() {
 	//---remove above later----- 
 
 
-	auto resumeButton = MenuItemImage::create("textures/resume_button.png", "textures/resume_button_clicked_temp.png", CC_CALLBACK_0(GameController::resumeGame, this));
+	auto resumeButton = MenuItemImage::create("textures/resume_button.png", "textures/resume_button_clicked.png", CC_CALLBACK_0(GameController::resumeGame, this));
 	resumeButton->setPosition(Point(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y + GAME_MENU_BUTTON_OFFSET));
 	resumeButton->setScale(GAME_MENU_BUTTON_SCALE);
 
-	auto restartButton = MenuItemImage::create("textures/restart_button.png", "textures/restart_button_clicked_temp.png", CC_CALLBACK_0(GameController::restartGame, this));
+	auto restartButton = MenuItemImage::create("textures/restart_button.png", "textures/restart_button_clicked.png", CC_CALLBACK_0(GameController::restartGame, this));
 	restartButton->setPosition(Point(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y - GAME_MENU_BUTTON_OFFSET/2));
 	restartButton->setScale(GAME_MENU_BUTTON_SCALE);
 
