@@ -315,8 +315,11 @@ void GameController::createWeaponRanges(float weapWidth, float weapRange, b2Vec2
 	//add ricky pos to each point and translate box in front by mult dir facing * half range weap
 	for (int i = 0; i < sizeof(weaponRectangle)/sizeof(b2Vec2); i++){
 		b2Vec2 rickPos = state->ship->body->GetPosition();
+		weaponRectangle[i] = b2Vec2(weaponRectangle[i].y, weaponRectangle[i].x);
 		weaponRectangle[i] = b2MulT(rotationM,weaponRectangle[i]);
+		weaponRectangle[i] = b2Vec2(weaponRectangle[i].y, weaponRectangle[i].x);
 		weaponRectangle[i] = weaponRectangle[i] + rickPos + ((weapRange / 2.0f + SHIP_HEIGHT)*dir);
+
 	}
 	
 }
