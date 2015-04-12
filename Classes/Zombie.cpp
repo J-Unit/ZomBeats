@@ -21,7 +21,7 @@ Zombie::Zombie(float x, float y, b2World *world)
 	//setVecRandom(&direction);
 	frameRate = 0;
 	prevFrame = 0;
-	setSprite(FilmStrip::create(ResourceLoader::getInstance()->getTexture("zombie"), 4, 3, 12));
+	setSprite(FilmStrip::create(ResourceLoader::getInstance()->getTexture("zombie"), 8, 3, 24));
 	//initialize the awareness
 	awareness = INITIAL_AWARENESS;
 	cohesion.SetZero();
@@ -54,8 +54,8 @@ void Zombie::advanceFrame() {
 		float yMovement = round(body->GetPosition().y - lastPosition.y);
 		float xMovement = round(body->GetPosition().x - lastPosition.x);
 		unsigned int frame = sprite->getFrame();
-		//zombie is moving up, using the up frames
-		if (yMovement > 0) {
+		//zombie is moving up
+		if (yMovement > 0 && xMovement == 0) {
 			//if it is not the current up frame
 			if (!(frame >=3 && frame <=5)) {
 				frame = 3;
@@ -73,7 +73,7 @@ void Zombie::advanceFrame() {
 			}
 		}
 		//zombie is moving down
-		else if (yMovement < 0) {
+		else if (yMovement < 0 && xMovement == 0) {
 			//if it is not the current down frame
 			if (!(frame >= 0 && frame <= 2)) {
 				frame = 0;
@@ -91,7 +91,7 @@ void Zombie::advanceFrame() {
 			}
 		}
 		//zombie is moving left
-		else if (xMovement < 0) {
+		else if (xMovement < 0 && yMovement == 0) {
 			//if it is not the current up frame
 			if (!(frame >= 9 && frame <= 11)) {
 				frame = 9;
@@ -109,7 +109,7 @@ void Zombie::advanceFrame() {
 			}
 		}
 		//zombie is moving right
-		else if (xMovement > 0) {
+		else if (xMovement > 0 && yMovement == 0) {
 			//if it is not the current up frame
 			if (!(frame >= 6 && frame <= 8)) {
 				frame = 6;
@@ -124,6 +124,78 @@ void Zombie::advanceFrame() {
 			}
 			else {
 				frame = 7;
+			}
+		}
+		//moving right-down
+		else if (xMovement > 0 && yMovement < 0) {
+			//if it is not the current right-down frame
+			if (!(frame >= 12 && frame <= 14)) {
+				frame = 12;
+			}
+			//go back to sequence 0
+			else if (frame == 13 || frame == 14) {
+				frame = 12;
+			}
+			//0-1-0-2-0-1-0-2
+			else if (frame == 12 && prevFrame == 13) {
+				frame = 14;
+			}
+			else {
+				frame = 13;
+			}
+		}
+		//moving left-down
+		else if (xMovement < 0 && yMovement < 0) {
+			//if it is not the current right-down frame
+			if (!(frame >= 15 && frame <= 17)) {
+				frame = 15;
+			}
+			//go back to sequence 0
+			else if (frame == 16 || frame == 17) {
+				frame = 15;
+			}
+			//0-1-0-2-0-1-0-2
+			else if (frame == 15 && prevFrame == 16) {
+				frame = 17;
+			}
+			else {
+				frame = 16;
+			}
+		}
+		//moving right-up
+		else if (xMovement > 0 && yMovement > 0) {
+			//if it is not the current right-down frame
+			if (!(frame >= 18 && frame <= 20)) {
+				frame = 18;
+			}
+			//go back to sequence 0
+			else if (frame == 19 || frame == 20) {
+				frame = 18;
+			}
+			//0-1-0-2-0-1-0-2
+			else if (frame == 18 && prevFrame == 19) {
+				frame = 20;
+			}
+			else {
+				frame = 19;
+			}
+		}
+		//moving left-up
+		else if (xMovement < 0 && yMovement > 0) {
+			//if it is not the current right-down frame
+			if (!(frame >= 21 && frame <= 23)) {
+				frame = 21;
+			}
+			//go back to sequence 0
+			else if (frame == 22 || frame == 23) {
+				frame = 21;
+			}
+			//0-1-0-2-0-1-0-2
+			else if (frame == 21 && prevFrame == 22) {
+				frame = 23;
+			}
+			else {
+				frame = 22;
 			}
 		}
 		else {
