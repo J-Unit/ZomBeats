@@ -32,7 +32,7 @@ Scene* View::createScene() {
 	return scene;
 }
 
-void View::makeResolutionIndependent(){
+void View::makeResolutionIndependent(Node *n){
 	Size size = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	Vec2 center(size.width / 2.0f + origin.x, size.height / 2.0f + origin.y);
@@ -43,7 +43,7 @@ void View::makeResolutionIndependent(){
 	// Masks the hidden areas if aspect ratio is not a match.
 	if (aspect > width / height) {
 		// Time for horizontal bars.
-		allSpace->setScale(size.height / height);
+		n->setScale(size.height / height);
 
 		Size band((size.width - width*size.height / height) / 2.0f, size.height);
 		Vec2 offset(band.width, band.height);
@@ -66,7 +66,7 @@ void View::makeResolutionIndependent(){
 	}
 	else if (aspect < width / height) {
 		// Time for vertical bars.
-		allSpace->setScale(size.width / width);
+		n->setScale(size.width / width);
 
 		Size band(size.width, (size.height - height*size.width / width) / 2.0f);
 		Vec2 offset(band.width, band.height);
@@ -88,7 +88,7 @@ void View::makeResolutionIndependent(){
 		}
 	}
 	else {
-		allSpace->setScale(size.width / width);
+		n->setScale(size.width / width);
 	}
 }
 
@@ -111,7 +111,7 @@ void View::buildScene(LevelMap *level, Layer* l) {
 	allSpace->setContentSize(Size(SPACE_TILE*level->bkgTilesX, SPACE_TILE*level->bkgTilesY));
 	allSpace->setPosition(shakeCenter);
 	allSpace->setAnchorPoint(anchor);
-	makeResolutionIndependent();
+	makeResolutionIndependent(allSpace);
 
 
 	// Everything else is relative to all space, not the screen!

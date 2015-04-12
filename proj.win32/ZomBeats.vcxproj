@@ -143,6 +143,7 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
   <ItemGroup>
     <ClCompile Include="..\Classes\AIController.cpp" />
     <ClCompile Include="..\Classes\AppDelegate.cpp" />
+    <ClCompile Include="..\Classes\AudioController.cpp" />
     <ClCompile Include="..\Classes\EnvironmentWeapon.cpp" />
     <ClCompile Include="..\Classes\FilmStrip.cpp" />
     <ClCompile Include="..\Classes\GameController.cpp" />
@@ -153,8 +154,10 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
     <ClCompile Include="..\Classes\Lawnmower.cpp" />
     <ClCompile Include="..\Classes\LevelMap.cpp" />
     <ClCompile Include="..\Classes\LevelSerializer.cpp" />
+    <ClCompile Include="..\Classes\MainMenuScene.cpp" />
     <ClCompile Include="..\Classes\ResourceLoader.cpp" />
     <ClCompile Include="..\Classes\Ship.cpp" />
+    <ClCompile Include="..\Classes\Shotgun.cpp" />
     <ClCompile Include="..\Classes\SongDecomposition.cpp" />
     <ClCompile Include="..\Classes\Sword.cpp" />
     <ClCompile Include="..\Classes\View.cpp" />
@@ -166,6 +169,7 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
   <ItemGroup>
     <ClInclude Include="..\Classes\AIController.h" />
     <ClInclude Include="..\Classes\AppDelegate.h" />
+    <ClInclude Include="..\Classes\AudioController.h" />
     <ClInclude Include="..\Classes\BoxObject.h" />
     <ClInclude Include="..\Classes\EnvironmentWeapon.h" />
     <ClInclude Include="..\Classes\FilmStrip.h" />
@@ -177,10 +181,12 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
     <ClInclude Include="..\Classes\Lawnmower.h" />
     <ClInclude Include="..\Classes\LevelMap.h" />
     <ClInclude Include="..\Classes\LevelSerializer.h" />
+    <ClInclude Include="..\Classes\MainMenuScene.h" />
     <ClInclude Include="..\Classes\Node.h" />
     <ClInclude Include="..\Classes\PriorityQueue.h" />
     <ClInclude Include="..\Classes\ResourceLoader.h" />
     <ClInclude Include="..\Classes\Ship.h" />
+    <ClInclude Include="..\Classes\Shotgun.h" />
     <ClInclude Include="..\Classes\SongDecomposition.h" />
     <ClInclude Include="..\Classes\Sword.h" />
     <ClInclude Include="..\Classes\Types.h" />
