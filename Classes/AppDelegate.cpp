@@ -6,6 +6,7 @@
 //
 #include "AppDelegate.h"
 #include "GameController.h"
+#include "MainMenuScene.h"
 #include "ResourceLoader.h"
 #include "View.h"
 
@@ -64,10 +65,12 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     // Set FPS. The default value is 1.0/60 if you don't call this
     director->setAnimationInterval(1.0 / 60);
-	GameController* gc = GameController::create();
+	//GameController* gc = GameController::create();
 
     // Run the game until the app quits
-    director->runWithScene(gc->view->scene);
+    //director->runWithScene(gc->view->scene);
+	Scene* menuScene = MainMenuScene::createScene();
+	director->runWithScene(menuScene);
 
     return true;
 }
