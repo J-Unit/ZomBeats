@@ -6,6 +6,7 @@
 #include "Zombie.h"
 #include "View.h"
 #include "Lawnmower.h"
+#include "Pistol.h"
 
 GameState *LevelSerializer::parseLevel(std::string f){
 	bool t = FileUtils::getInstance()->isFileExist(f);
@@ -28,7 +29,8 @@ void LevelSerializer::addObjects(GameState *s){
 	}
 	s->level->markWallTiles();
 	for (int i = 0; i < d["weapons"].Size(); i++){
-		s->weapons.AddTail(new Sword(s->world, s->level->tileWidth*(d["weapons"][i]["x"].GetInt()+0.5f), top-s->level->tileHeight*(d["weapons"][i]["y"].GetInt()+0.5f)));
+		//TODO: Change back to sword and add typing for pistols and other weapons
+		s->weapons.AddTail(new Pistol(s->world, s->level->tileWidth*(d["weapons"][i]["x"].GetInt()+0.5f), top-s->level->tileHeight*(d["weapons"][i]["y"].GetInt()+0.5f)));
 	}
 	for (int i = 0; i < d["environment_weapons"].Size(); i++){
 		s->environment_weapons.AddTail(new Lawnmower(s->world, s->level->tileWidth*(d["environment_weapons"][i]["x"].GetInt() + 0.5f), top - s->level->tileHeight*(d["environment_weapons"][i]["y"].GetInt() + 0.5f)));

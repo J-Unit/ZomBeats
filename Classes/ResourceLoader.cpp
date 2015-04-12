@@ -79,6 +79,11 @@ ResourceLoader::ResourceLoader() {
 		text->retain();
 		textures["sword"] = text;
 	}
+	text = Director::getInstance()->getTextureCache()->addImage("textures/pistol.png");
+	if (text) {
+		text->retain();
+		textures["pistol"] = text;
+	}
 
 	//add the fog of war
 	text = Director::getInstance()->getTextureCache()->addImage("textures/fog_new.png");

@@ -1,3 +1,6 @@
+#ifndef WEAPON_H
+#define WEAPON_H
+
 #include <stdio.h>
 #include <cocos2d.h>
 #include "Box2D/Box2D.h"
@@ -19,3 +22,5 @@ public:
 	float range;//how far out the weapon reaches away from ricky
 	float width; //how wide the weapon hits side to side
 };
+
+#endif
