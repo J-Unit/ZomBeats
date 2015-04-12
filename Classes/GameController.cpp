@@ -152,7 +152,7 @@ void GameController::createFog() {
 	//fogSpOuter->setScale(OUTER_FOG_SCALE, OUTER_FOG_SCALE);
 	fogSp->setPosition(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y);
 	//fogSpOuter->setPosition(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y);
-	view->enviornment->addChild(fogSp, 3);
+	view->enviornment->addChild(fogSp, 3); //the z-order of fog should be the largest 
 	//view->enviornment->addChild(fogSpOuter);
 }
 
