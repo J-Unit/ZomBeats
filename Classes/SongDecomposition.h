@@ -19,7 +19,7 @@ public:
 
 	bool isOnBeat(float clickTime);
 	float getBeatStart(float time);
-
+	float timeToClosestBeat(float time);
 	~SongDecomposition();
 };
 

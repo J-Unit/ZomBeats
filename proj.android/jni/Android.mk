@@ -30,7 +30,8 @@ LOCAL_SRC_FILES := hellocpp/main.cpp \
                    ../../Classes/EnvironmentWeapon.cpp \
                    ../../Classes/GameMenu.cpp \
                    ../../Classes/Lawnmower.cpp \
-                   ../../Classes/LevelSerializer.cpp
+                   ../../Classes/LevelSerializer.cpp \
+                   ../../Classes/GrooveMeter.cpp
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../Classes
 

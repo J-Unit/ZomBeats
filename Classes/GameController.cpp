@@ -12,7 +12,6 @@
 #include "FilmStrip.h"
 #include "GameState.h"
 #include "LevelMap.h"
-#include "SimpleAudioEngine.h"
 #include "Wall.h"
 #include "GrooveMeter.h"
 #include "Sword.h"
@@ -23,19 +22,12 @@
 #include <vector>
 #include <iostream>
 #include <string>
-#include "audio/include/AudioEngine.h"
 #include "AIController.h"
+#include "AudioController.h"
 #include "Box2d/Box2d.h"
 
 #define STARTING_LEVEL 2
 
-using namespace experimental;
-float lastbeat = 0;
-int audioid = 0;
-float keepit = 0;
-float total_kept = 0;
-float total_beats = 0;
-float estimated_song_time = 0;
 /**
 * Initialize the game state.
 *
@@ -213,6 +205,8 @@ bool GameController::init() {
 	view = new View(winsize.width, winsize.height);
 	view->scene->addChild(this);
 
+	audio = new AudioController();
+
 	curLevel = STARTING_LEVEL;
 	loadLevel(curLevel);
 
@@ -271,7 +265,6 @@ Vec2 GameController::mouseToWorld(Vec2 click){
 
 void GameController::loadLevel(int i){
 	destination = 0;
-	onBeat = false;
 	dRickyTap = new Vec2(1.0f,0.0f);
 	dRickyTap->normalize();
 	elapsedTime = 0.0;
@@ -293,15 +286,12 @@ void GameController::loadLevel(int i){
 	//initial detection radius
 	meter->detectionRadius = INITIAL_DETECTION_RADIUS;
 	currAwareness = 0.0f;
-	AudioEngine::stopAll();
 	currentFingerPos = Vec2(0.0f, 0.0f);
-	currentSong = new SongDecomposition(128.0, "songs/ChillDeepHouse.mp3", -0.04);
-	audioid = AudioEngine::play2d("songs/01 OverDrive.mp3", true, 1);
+	audio->playTrack(new SongDecomposition(128.0, "songs/01 OverDrive.mp3", -0.04));
 }
 
 //restart the game upon death or reset
 void GameController::restartGame() {
-	AudioEngine::stopAll();
 	this->removeAllChildren();
 	loadLevel(curLevel);
 	createFog();
@@ -310,6 +300,7 @@ void GameController::restartGame() {
 	isPaused = false;
 	createPauseButton();
 	removeGameMenu();
+	audio->total_beats = audio->total_kept = 0;
 }
 
 void GameController::pauseGame() {
@@ -353,6 +344,61 @@ bool GameController::isZombieHit(b2Vec2 az, b2Vec2 bz, b2Vec2 ab, b2Vec2 bc){
 }
 
 
+void GameController::removeDeadWeapons(){
+	
+	CTypedPtrDblElement<Weapon> *toDelete = NULL;
+	for (CTypedPtrDblElement<Weapon> *weapon = state->weapons.GetHeadPtr(); !state->weapons.IsSentinel(weapon); weapon = weapon->Next())
+	{
+		Weapon *weap = weapon->Data();
+		if (weap->isDesroyed){
+			weap->isDesroyed = false;
+			toDelete = weapon;
+			state->world->DestroyBody(weap->body);
+			view->enviornment->removeChild(weap->sprite);
+		}
+	}
+	if (toDelete != NULL){
+		state->weapons.Remove(toDelete);
+	}
+}
+
+void GameController::removeDeadEWeapons(){
+	
+	CTypedPtrDblElement<EnvironmentWeapon> *toDelete = NULL;
+	EnvironmentWeapon *eweap = NULL;
+	for (CTypedPtrDblElement<EnvironmentWeapon> *e_weapon = state->environment_weapons.GetHeadPtr(); !state->environment_weapons.IsSentinel(e_weapon); e_weapon = e_weapon->Next())
+	{
+		eweap = e_weapon->Data();
+		if (eweap->isUsed || eweap->hitWall){
+			eweap->isUsed = false;
+			toDelete = e_weapon;
+			state->world->DestroyBody(eweap->body);
+			view->enviornment->removeChild(eweap->sprite);
+		}
+	}
+	if (toDelete != NULL){
+		state->environment_weapons.Remove(toDelete);
+	}
+}
+
+void GameController::removeDeadZombies(){
+	CTypedPtrDblList<CTypedPtrDblElement<Zombie>> zombsToDel;
+	for (CTypedPtrDblElement<Zombie> *zombie = state->zombies.GetHeadPtr(); !state->zombies.IsSentinel(zombie);  zombie = zombie->Next())
+	{
+		Zombie *zomb = zombie->Data();
+		if (zomb->isDestroyed){
+			zomb->isDestroyed = false;
+			zombsToDel.AddTail(zombie);
+			state->world->DestroyBody(zomb->body);
+			view->enviornment->removeChild(zomb->sprite);
+		}
+		
+	}
+	for (CTypedPtrDblElement<CTypedPtrDblElement<Zombie>> *z = zombsToDel.GetHeadPtr(); !zombsToDel.IsSentinel(z);  z = z->Next()){
+		state->zombies.Remove(z->Data());
+	}
+}
+
 /**
 * Update the game state.
 *
@@ -362,68 +408,11 @@ bool GameController::isZombieHit(b2Vec2 az, b2Vec2 bz, b2Vec2 ab, b2Vec2 bc){
 */
 void GameController::update(float deltaTime) {
 	if (!isPaused) {
-		// Read the thrust from the user input
-		//input->update();
-		Vec2 thrust = input->lastClick;
-		elapsedTime += deltaTime; //a float in seconds
-
-
-		//cout << "Elapsed time: "<< elapsedTime <<endl;
-		// Read the thrust from the user input
-		//input->update();
-		//bool clicked = input->didClick();
-
-		CTypedPtrDblElement<Weapon> *weapon = state->weapons.GetHeadPtr();
-		CTypedPtrDblElement<Weapon> *toDelete = NULL;
-		while (!state->weapons.IsSentinel(weapon))
-		{
-			Weapon *weap = weapon->Data();
-			if (weap->isDesroyed){
-				weap->isDesroyed = false;
-				toDelete = weapon;
-				state->world->DestroyBody(weap->body);
-				view->enviornment->removeChild(weap->sprite);
-			}
-			weapon = weapon->Next();
-		}
-		if (toDelete != NULL){
-			state->weapons.Remove(toDelete);
-		}
-
-		CTypedPtrDblElement<EnvironmentWeapon> *e_weapon = state->environment_weapons.GetHeadPtr();
-		CTypedPtrDblElement<EnvironmentWeapon> *toDelete1 = NULL;
-		EnvironmentWeapon *eweap = NULL;
-		while (!state->environment_weapons.IsSentinel(e_weapon))
-		{
-			eweap = e_weapon->Data();
-			if (eweap->isUsed || eweap->hitWall){
-				eweap->isUsed = false;
-				toDelete1 = e_weapon;
-				state->world->DestroyBody(eweap->body);
-				view->enviornment->removeChild(eweap->sprite);
-			}
-			e_weapon = e_weapon->Next();
-		}
-		if (toDelete1 != NULL){
-			state->environment_weapons.Remove(toDelete1);
-		}
-
-		CTypedPtrDblElement<Zombie> *zombie = state->zombies.GetHeadPtr();
-		CTypedPtrDblElement<Zombie> *zombToDel = NULL;
-		while (!state->zombies.IsSentinel(zombie))
-		{
-			Zombie *zomb = zombie->Data();
-			if (zomb->isDestroyed){
-				zomb->isDestroyed = false;
-				zombToDel = zombie;
-				state->world->DestroyBody(zomb->body);
-				view->enviornment->removeChild(zomb->sprite);
-			}
-			zombie = zombie->Next();
-		}
-		if (zombToDel != NULL){
-			state->zombies.Remove(zombToDel);
-		}
+		elapsedTime += deltaTime;
+		audio->setFrameOnBeat(elapsedTime);
+		removeDeadWeapons();
+		removeDeadEWeapons();
+		removeDeadZombies();
 
 		//if we are currently activating environment and player clicking
 		if (state->ship->isActivatingEnvironment){
@@ -483,7 +472,6 @@ void GameController::update(float deltaTime) {
 		if (!input->clickProcessed && !activated){
 			//if on beat then flag it
 			//AudioEngine::getCurrentTime(audioid)
-			onBeat = currentSong->isOnBeat(elapsedTime - keepit);
 
 			//cout << "PBF: " << elapsedTime << "\n";
 			stringstream st;
@@ -491,9 +479,9 @@ void GameController::update(float deltaTime) {
 			//std::sprintf(tempstr, "%f", elapsedTime);
 
 			//view->beatHUD->setString("Actual time: " + std::to_string(elapsedTime) + " song time: " + std::to_string(AudioEngine::getCurrentTime(audioid)));
-			if (!onBeat) {
-				//state->ship->body->SetLinearVelocity(b2Vec2_zero);
-				//destination = 0;
+			if (!audio->frameOnBeat) {
+				state->ship->body->SetLinearVelocity(b2Vec2_zero);
+				destination = 0;
 
 				//if it is not on beat, increase the detection radius slightly
 				meter->increaseRadius();
@@ -557,11 +545,11 @@ void GameController::update(float deltaTime) {
 				}
 
 			}
-			if (onBeat){
+			if (audio->frameOnBeat){
 				st << "HIT";
 			}
 			else{
-				st << "MISS BY: " << estimated_song_time - (elapsedTime - keepit);
+				st << "MISS BY: " << audio->timeToClosestBeat();
 			}
 			view->beatHUD->setString(st.str());
 			input->clickProcessed = true;
@@ -577,8 +565,8 @@ void GameController::update(float deltaTime) {
 				//if this zombie is within our detection radius and we messed up the beat
 				float dis;
 				dis = sqrt(tmp.x*tmp.x + tmp.y*tmp.y);
-				if (!onBeat && dis < meter->detectionRadius) {
-					AudioEngine::play2d("sound_effects/ZombieHiss.mp3", false, 1);
+				if (!audio->frameOnBeat && dis < meter->detectionRadius) {
+					audio->playEffect("sound_effects/ZombieHiss.mp3");
 					curZ->increaseAwarness();
 				}
 				if (count == 0) {
@@ -659,9 +647,9 @@ void GameController::update(float deltaTime) {
 			}
 			else{
 				z->Data()->sprite->setVisible(false);
-				if (!frameOnBeat){
+				if (!audio->frameOnBeat){
 					view->zombiePositions->clear();
-				}else if (!prevOnBeat){
+				}else if (!audio->prevOnBeat){
 					pos = z->Data()->body->GetPosition();
 					view->zombiePositions->drawSolidCircle(Vec2(pos.x, pos.y), 8.0f, 0.0f, 20.0f, ccColor4F(0.5f, 0, 0, 1.0f));
 				}
@@ -801,20 +789,12 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 
 
 	stringstream st;
-	total_kept += elapsedTime - AudioEngine::getCurrentTime(audioid);
-	total_beats += 1;
-	keepit = total_kept / total_beats;
-	prevOnBeat = frameOnBeat;
-	frameOnBeat = currentSong->isOnBeat(elapsedTime - keepit);
-	if (frameOnBeat){//AudioEngine::getCurrentTime(audioid))){
-
+	if (audio->frameOnBeat){//AudioEngine::getCurrentTime(audioid))){
 		view->mainBeatHUD->setString("BEAT!");
-		estimated_song_time = elapsedTime - keepit;
-
-		st << "Difference is: " << keepit;
+		st << "Difference is: " << audio->keepit;
 		//view->beatHUD->setString(st.str());
 		b2Vec2 shaked = randomUnitVector();
-		view->shake(currentSong->getBeatStart(elapsedTime - keepit), elapsedTime - keepit, Vec2(1, 0));
+		view->shake(audio->getBeatStart(), audio->estimated_song_time, Vec2(1, 0));
 	}
 	else{
 		view->mainBeatHUD->setString("");

@@ -75,6 +75,9 @@
     <ClCompile Include="..\Classes\GrooveMeter.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\AudioController.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
     <ClCompile Include="..\Classes\Shotgun.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -159,6 +162,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\GrooveMeter.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\AudioController.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\Shotgun.h">

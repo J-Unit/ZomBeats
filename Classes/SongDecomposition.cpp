@@ -2,14 +2,20 @@
 #include <math.h>
 
 bool SongDecomposition::isOnBeat(float clickTime){
-	float time_to_first_beat = trackStartTime;//.22;//.1564
-	float offset_clicktime = clickTime + time_to_first_beat;
+	float offset_clicktime = clickTime + trackStartTime;
 	float clicked = fmod(offset_clicktime, spb);
 	return (clicked <= ERROR_WINDOW || clicked >= spb - ERROR_WINDOW);
 }
 
 float SongDecomposition::getBeatStart(float time){
-	return std::floor((time + trackStartTime) / spb) * spb - ERROR_WINDOW;
+	return floor((time + trackStartTime) / spb) * spb - ERROR_WINDOW;
+}
+
+float SongDecomposition::timeToClosestBeat(float time){
+	float prev = time - getBeatStart(time) + 2 * ERROR_WINDOW;
+	float next = getBeatStart(time + spb) - time;
+	if (prev <= next) return prev;
+	return -next;
 }
 
 SongDecomposition::~SongDecomposition()

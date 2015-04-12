@@ -41,6 +41,7 @@ class GameState;
 struct MapNode;
 class View;
 class AIController;
+class AudioController;
 class EnvironmentWeapon;
 class Lawnmower;
 class GrooveMeter;
@@ -94,14 +95,13 @@ public:
 	int curLevel;
 	SongDecomposition*  currentSong;
 	AIController *ai;
+	AudioController *audio;
 	GameState *state;
 	// Box2D world for physics, collisions etc.
 	MapNode* destination;
 	//Elapsed time of game
 	float elapsedTime;
 
-	//Whether the user is on beat or not
-	bool onBeat;
 
 	//zombie awarness output, remove it later
 	float currAwareness;
@@ -113,8 +113,6 @@ public:
 	float environmentalTimer;
 
 	bool processDirection;
-	bool prevOnBeat;
-	bool frameOnBeat;
 
 	EnvironmentWeapon *currentEnvironment;
 	Lawnmower *currentMower;
@@ -179,6 +177,10 @@ private:
 	void updateFog();
 	void createWeaponRanges(float weapWidth, float weapRange, b2Vec2 dir);
 	bool isZombieHit(b2Vec2 az, b2Vec2 bz, b2Vec2 ab, b2Vec2 bc);
+
+	void removeDeadWeapons();
+	void removeDeadEWeapons();
+	void removeDeadZombies();
 
 	LevelSerializer ls;
 

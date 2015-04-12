@@ -94,7 +94,7 @@ public:
 	~View();
 
 private:
-	void makeResolutionIndependent();
+	void makeResolutionIndependent(Node *n);
 };
 
 #endif
