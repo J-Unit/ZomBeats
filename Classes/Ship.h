@@ -78,6 +78,7 @@ public:
 	b2PolygonShape dynamicBox; 
 	int boostFrames;
 	int frameRate;
+	int prevFrame; //indicate the previous animation frame
 	b2Vec2 lastPosition;
 	FilmStrip* sprite;
     /**

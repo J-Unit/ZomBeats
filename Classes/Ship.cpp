@@ -59,6 +59,7 @@ Ship::Ship(b2World *world, float x, float y, float mx, float my) {
 	//setSprite(FilmStrip::create(ResourceLoader::getInstance()->getTexture("ricky"), 1, 2, 2), mx, my);
 	setSprite(FilmStrip::create(ResourceLoader::getInstance()->getTexture("ricky"), 5, 3, 13), mx, my);
 	lastPosition = body->GetPosition();
+	prevFrame = 1; //initialize the initial frame number
 }
 
 /**
@@ -158,34 +159,73 @@ void Ship::advanceFrame(Vec2* dir) {
     // Our animation depends on the current frame.
     unsigned int frame = sprite->getFrame();
     
-
+	//if ricky's moving up
 	if (dir->y > 0) {
-		if (frame == 0 || frame == 1) {
-			frame++;
+		//if it is not the current up frame
+		if (!(frame >= 0 && frame <= 2)) {
+			frame = 1;
+		}
+		//go back to sequence 0
+		else if (frame == 0 || frame == 2) {
+			frame = 1;
+		}
+		//0-1-0-2-0-1-0-2
+		else if (frame == 1 && prevFrame == 0) {
+			frame = 2;
 		}
 		else {
 			frame = 0;
 		}
 	}
+	//ricky's moving down
 	else if (dir->y < 0) {
-		if (frame == 3 || frame == 4) {
-			frame++;
+		//if it is not the current down frame
+		if (!(frame >= 3 && frame <= 5)) {
+			frame = 4;
+		}
+		//go back to sequence 0
+		else if (frame == 3 || frame == 5) {
+			frame = 4;
+		}
+		//0-1-0-2-0-1-0-2
+		else if (frame == 4 && prevFrame == 3) {
+			frame = 5;
 		}
 		else {
 			frame = 3;
 		}
 	}
+	//moving to the right
 	else if (dir->x > 0) {
-		if (frame == 6 || frame == 7) {
-			frame++;
+		//if it is not the current right frame
+		if (!(frame >= 6 && frame <= 8)) {
+			frame = 7;
+		}
+		//go back to sequence 0
+		else if (frame == 6 || frame == 8) {
+			frame = 7;
+		}
+		//0-1-0-2-0-1-0-2
+		else if (frame == 7 && prevFrame == 6) {
+			frame = 8;
 		}
 		else {
 			frame = 6;
 		}
 	}
+	//moving to the left
 	else if (dir->x < 0) {
-		if (frame == 9 || frame == 10) {
-			frame++;
+		//if it is not the current left frame
+		if (!(frame >= 9 && frame <= 11)) {
+			frame = 10;
+		}
+		//go back to sequence 0
+		else if (frame == 9 || frame == 11) {
+			frame = 10;
+		}
+		//0-1-0-2-0-1-0-2
+		else if (frame == 10 && prevFrame == 9) {
+			frame = 11;
 		}
 		else {
 			frame = 9;
@@ -194,7 +234,7 @@ void Ship::advanceFrame(Vec2* dir) {
 	else {
 		frame = sprite->getFrame();
 	}
-	
+	prevFrame = sprite->getFrame();
     sprite->setFrame(frame);
 }
 
