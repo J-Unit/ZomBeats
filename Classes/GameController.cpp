@@ -152,7 +152,7 @@ void GameController::createFog() {
 	//fogSpOuter->setScale(OUTER_FOG_SCALE, OUTER_FOG_SCALE);
 	fogSp->setPosition(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y);
 	//fogSpOuter->setPosition(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y);
-	view->enviornment->addChild(fogSp);
+	view->enviornment->addChild(fogSp, 3);
 	//view->enviornment->addChild(fogSpOuter);
 }
 
@@ -239,7 +239,7 @@ bool GameController::init() {
 	// Start listening to input
 	input = new InputController(_eventDispatcher);
 	input->startInput();
-
+	musicNoteCounter = 0; //initialize the sequence of music note path
 	// Tell the director we are ready for animation.
 	this->scheduleUpdate();
 	isPaused = false;
@@ -270,8 +270,8 @@ void GameController::loadLevel(int i){
 	view->buildScene(state->level, this);
 	view->allSpace->addChild(state->ship->getSprite());
 	for (int i = 0; i<state->level->nWalls; i++) view->enviornment->addChild(state->level->walls[i].sprite);
-	for (CTypedPtrDblElement<Zombie> *cz = state->zombies.GetHeadPtr(); !state->zombies.IsSentinel(cz); cz = cz->Next()) view->enviornment->addChild(cz->Data()->sprite);
-	for (CTypedPtrDblElement<Weapon> *cw = state->weapons.GetHeadPtr(); !state->weapons.IsSentinel(cw); cw = cw->Next()) view->enviornment->addChild(cw->Data()->sprite);
+	for (CTypedPtrDblElement<Zombie> *cz = state->zombies.GetHeadPtr(); !state->zombies.IsSentinel(cz); cz = cz->Next()) view->enviornment->addChild(cz->Data()->sprite, 2);
+	for (CTypedPtrDblElement<Weapon> *cw = state->weapons.GetHeadPtr(); !state->weapons.IsSentinel(cw); cw = cw->Next()) view->enviornment->addChild(cw->Data()->sprite, 2);
 	for (CTypedPtrDblElement<EnvironmentWeapon> *ew = state->environment_weapons.GetHeadPtr(); !state->environment_weapons.IsSentinel(ew); ew = ew->Next()) view->enviornment->addChild(ew->Data()->sprite);
 	//initial detection radius
 	meter->detectionRadius = INITIAL_DETECTION_RADIUS;
@@ -679,11 +679,26 @@ void GameController::update(float deltaTime) {
 
 //draw a new music note path
 void GameController::drawMusicNotePath(Vec2 origin) {
-	Sprite* singleMusicNote = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("music_note"));
+	Sprite* singleMusicNote;
+	if (musicNoteCounter == 0) {
+		singleMusicNote = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("music_note"));
+	}
+	else if (musicNoteCounter == 1) {
+		singleMusicNote = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("music_note"));
+	}
+	else {
+		singleMusicNote = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("music_note"));
+	}
 	singleMusicNote->setScale(MUSIC_NOTE_SCALE);
 	singleMusicNote->setPosition(Point(origin.x, origin.y));
-	view->enviornment->addChild(singleMusicNote);
+	view->enviornment->addChild(singleMusicNote, 1);
 	musicNotes.push_back(singleMusicNote);
+	if (musicNoteCounter == 2) {
+		musicNoteCounter = 0;
+	}
+	else {
+		musicNoteCounter++;
+	}
 }
 
 //clear the old path for every iteration

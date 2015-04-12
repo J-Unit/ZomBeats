@@ -169,6 +169,8 @@ public:
 
 	vector<Sprite*> musicNotes;
 
+	int musicNoteCounter;
+
 private:
 	void createZombies();
 	void createWalls();
