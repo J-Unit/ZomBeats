@@ -41,7 +41,7 @@ ResourceLoader::ResourceLoader() {
         text->retain();
         textures["ricky"] = text;
     }
-    text = Director::getInstance()->getTextureCache()->addImage("textures/low_res_sprite_sheet_zombie_new.png");
+    text = Director::getInstance()->getTextureCache()->addImage("textures/low_res_sprite_sheet_zombie.png");
     if (text) {
         text->retain();
         textures["zombie"] = text;

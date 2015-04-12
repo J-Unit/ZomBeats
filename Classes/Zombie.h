@@ -15,6 +15,7 @@ class Zombie : public BoxObject
 public:
 	float awareness;
 	int frameRate;
+	int prevFrame; //the previous animation frame
 	bool isDestroyed;
 	b2PolygonShape dynamicBox;
 	b2Vec2 lastPosition;

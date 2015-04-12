@@ -20,7 +20,8 @@ Zombie::Zombie(float x, float y, b2World *world)
 	direction.Set(1, 0);
 	//setVecRandom(&direction);
 	frameRate = 0;
-	setSprite(FilmStrip::create(ResourceLoader::getInstance()->getTexture("zombie"), 2, 3, 6));
+	prevFrame = 0;
+	setSprite(FilmStrip::create(ResourceLoader::getInstance()->getTexture("zombie"), 4, 3, 12));
 	//initialize the awareness
 	awareness = INITIAL_AWARENESS;
 	cohesion.SetZero();
@@ -51,25 +52,84 @@ void Zombie::advanceFrame() {
 
 	if (frameRate % ZOMBIE_FRAME_INTERVAL == 0) {
 		float yMovement = round(body->GetPosition().y - lastPosition.y);
+		float xMovement = round(body->GetPosition().x - lastPosition.x);
 		unsigned int frame = sprite->getFrame();
 		//zombie is moving up, using the up frames
 		if (yMovement > 0) {
-			if (frame <= 2 || frame == 5) {
+			//if it is not the current up frame
+			if (!(frame >=3 && frame <=5)) {
 				frame = 3;
 			}
+			//go back to sequence 0
+			else if (frame == 4 || frame == 5) {
+				frame = 3;
+			}
+			//0-1-0-2-0-1-0-2
+			else if (frame == 3 && prevFrame == 4) {
+				frame = 5;
+			}
 			else {
-				frame++;
+				frame = 4;
 			}
 		}
-		//zombie is moving down, using down frames
-		else {
-			if (frame >= 2) {
+		//zombie is moving down
+		else if (yMovement < 0) {
+			//if it is not the current down frame
+			if (!(frame >= 0 && frame <= 2)) {
 				frame = 0;
 			}
+			//go back to sequence 0
+			else if (frame == 1 || frame == 2) {
+				frame = 0;
+			}
+			//0-1-0-2-0-1-0-2
+			else if (frame == 0 && prevFrame == 1) {
+				frame = 2;
+			}
 			else {
-				frame++;
+				frame = 1;
 			}
 		}
+		//zombie is moving left
+		else if (xMovement < 0) {
+			//if it is not the current up frame
+			if (!(frame >= 9 && frame <= 11)) {
+				frame = 9;
+			}
+			//go back to sequence 0
+			else if (frame == 10 || frame == 11) {
+				frame = 9;
+			}
+			//0-1-0-2-0-1-0-2
+			else if (frame == 9 && prevFrame == 10) {
+				frame = 11;
+			}
+			else {
+				frame = 10;
+			}
+		}
+		//zombie is moving right
+		else if (xMovement > 0) {
+			//if it is not the current up frame
+			if (!(frame >= 6 && frame <= 8)) {
+				frame = 6;
+			}
+			//go back to sequence 0
+			else if (frame == 7 || frame == 8) {
+				frame = 6;
+			}
+			//0-1-0-2-0-1-0-2
+			else if (frame == 6 && prevFrame == 7) {
+				frame = 8;
+			}
+			else {
+				frame = 7;
+			}
+		}
+		else {
+			frame = sprite->getFrame();
+		}
+		prevFrame = sprite->getFrame();
 		sprite->setFrame(frame);
 		lastPosition = body->GetPosition();
 	}
