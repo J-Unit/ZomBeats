@@ -170,15 +170,6 @@ void GameController::createGameMenu() {
 	pauseMenuBackground->setPosition(Point(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
 	this->addChild(pauseMenuBackground);
 
-
-	//---remove these later-----
-	Sprite* resumeButtonTexture = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("resume_button"));
-	Sprite* resumeButtonClickedTexture = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("resume_button_clicked"));
-	Sprite* restartButtonTexture = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("restart_button"));
-	Sprite* restartButtonClickedTexture = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("restart_button_clicked"));
-	//---remove above later----- 
-
-
 	auto resumeButton = MenuItemImage::create("textures/resume_button.png", "textures/resume_button_clicked.png", CC_CALLBACK_0(GameController::resumeGame, this));
 	resumeButton->setPosition(Point(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y + GAME_MENU_BUTTON_OFFSET));
 	resumeButton->setScale(GAME_MENU_BUTTON_SCALE);
@@ -243,7 +234,33 @@ bool GameController::init() {
 	// Tell the director we are ready for animation.
 	this->scheduleUpdate();
 	isPaused = false;
+
+	//create the pause button on the upper right corner
+	//---remove these later, these don't really do anything, just to make sure yall have all the textures -----
+	Sprite* resumeButtonTexture = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("resume_button"));
+	Sprite* resumeButtonClickedTexture = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("resume_button_clicked"));
+	Sprite* restartButtonTexture = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("restart_button"));
+	Sprite* restartButtonClickedTexture = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("restart_button_clicked"));
+	Sprite* pause = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("pause_button"));
+	Sprite* pauseClicked = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("pause_button_clicked"));
+	//---remove above later----- 
+
+	createPauseButton();
+
 	return true;
+}
+
+//helper method, create pauseButton on the upper right corner
+void GameController::createPauseButton() {
+	auto pauseButton = MenuItemImage::create("textures/pause_button.png", "textures/pause_button_clicked.png", CC_CALLBACK_0(GameController::pauseGame, this));
+	Size visibleSize2 = Director::getInstance()->getVisibleSize();
+	Vec2 origin2 = Director::getInstance()->getVisibleOrigin();
+	pauseButton->setPosition(Point(visibleSize2.width*0.97 + origin2.x, visibleSize2.height*0.96 + origin2.y));
+	pauseButton->setScale(0.2f);
+
+	auto pauseButtonMenu = Menu::create(pauseButton, NULL);
+	pauseButtonMenu->setPosition(Point::ZERO);
+	this->addChild(pauseButtonMenu);
 }
 
 Vec2 GameController::mouseToWorld(Vec2 click){
@@ -291,11 +308,13 @@ void GameController::restartGame() {
 	input->clickProcessed = true;
 	destination = 0;
 	isPaused = false;
+	createPauseButton();
 	removeGameMenu();
 }
 
 void GameController::pauseGame() {
 	isPaused = true;
+	createGameMenu();
 }
 
 void GameController::resumeGame() {
@@ -333,18 +352,6 @@ bool GameController::isZombieHit(b2Vec2 az, b2Vec2 bz, b2Vec2 ab, b2Vec2 bc){
 	else return false;
 }
 
-//helper method, check if user has clicked the pause botton during game
-bool GameController::hasPressedPauseButton() {
-	Size visibleScreenSize = Director::getInstance()->getVisibleSize();
-	Vec2 ScreenOrigin = Director::getInstance()->getVisibleOrigin();
-	if (!input->clickProcessed && (input->lastClick.x > (visibleScreenSize.width*0.97 + ScreenOrigin.x - PAUSE_BUTTON_HALF_WIDTH)) &&
-		(input->lastClick.y < (visibleScreenSize.height*0.04 + PAUSE_BUTTON_HALF_HEIGHT))) {
-		return true;
-	}
-	else {
-		return false;
-	}
-}
 
 /**
 * Update the game state.
@@ -355,13 +362,6 @@ bool GameController::hasPressedPauseButton() {
 */
 void GameController::update(float deltaTime) {
 	if (!isPaused) {
-		//if (!input->clickProcessed && input->lastClick.x < 100 && input->lastClick.y < 100) {
-		if (hasPressedPauseButton()) {
-			pauseGame();
-			createGameMenu();
-			return;
-		}
-
 		// Read the thrust from the user input
 		//input->update();
 		Vec2 thrust = input->lastClick;

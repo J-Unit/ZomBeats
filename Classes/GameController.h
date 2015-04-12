@@ -154,9 +154,6 @@ public:
 
 	void resumeGame();
 
-	//helper method, check if user has clicked the pause botton during game
-	bool hasPressedPauseButton();
-
 	b2Vec2 weaponRectangle[4];
 
 	Vec2 *dRickyTap;
@@ -176,6 +173,7 @@ private:
 	void createWalls();
 	void createWeapons();
 	void createFog();
+	void createPauseButton();
 	void createGameMenu();
 	void removeGameMenu();
 	void updateFog();
