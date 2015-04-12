@@ -527,6 +527,7 @@ void GameController::update(float deltaTime) {
 					
 					//detect if zombies are inside rectangle of weapon
 					CTypedPtrDblElement<Zombie> *zambie = state->zombies.GetHeadPtr();
+					int num_zombies_killed = 0;
 					while (!state->zombies.IsSentinel(zambie))
 					{
 						Zombie *zombb = zambie->Data();
@@ -537,9 +538,12 @@ void GameController::update(float deltaTime) {
 						b2Vec2 bc = b2Vec2(weaponRectangle[3].x - weaponRectangle[1].x, weaponRectangle[3].y - weaponRectangle[1].y);
 						
 						if (isZombieHit(az, bz, ab, bc)){
+							num_zombies_killed += 1;
 							//zombie got hit so delete it
 							zombb->isDestroyed = true;
-							state->ship->currentWeapon->durability -= 1;
+							if (num_zombies_killed == 1){
+								state->ship->currentWeapon->durability -= 1;
+							}
 							if (state->ship->currentWeapon->durability == 0){
 								state->ship->hasWeapon = false;
 								free(state->ship->currentWeapon);

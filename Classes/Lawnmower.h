@@ -1,6 +1,6 @@
 #include "EnvironmentWeapon.h"
 
-#define IMPULSE 7000
+#define IMPULSE 2800000
 
 class Lawnmower : public EnvironmentWeapon
 {

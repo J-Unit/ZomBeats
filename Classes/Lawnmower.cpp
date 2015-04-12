@@ -39,7 +39,7 @@ Lawnmower::Lawnmower(b2World *world, float x, float y, b2Vec2 dir)
 	body->SetUserData(&type);
 	dynamicBox.SetAsBox(20.0f, 20.0f);
 	fixture.shape = &dynamicBox;
-	fixture.density = 0.5f;
+	fixture.density = 200.0f;
 	body->CreateFixture(&fixture);
 	body->SetLinearDamping(1.0f);
 
@@ -53,7 +53,15 @@ bool Lawnmower::update(float deltaTime, Vec2 dir) {
 	boostFrames--;*/
 	if (!hasMoved) return false;
 	//float32 angle = body->GetAngle();
-	body->ApplyLinearImpulse(b2Vec2(dir.x * IMPULSE, dir.y * IMPULSE), body->GetPosition(), true);
+	if (body->GetLinearVelocity().Length() < 0.001f){
+		body->ApplyLinearImpulse(b2Vec2(dir.x * IMPULSE, dir.y * IMPULSE), body->GetPosition(), true);
+	}
+	else{
+		b2Vec2 temp = body->GetLinearVelocity();
+		temp.Normalize();
+		body->ApplyLinearImpulse(b2Vec2(temp.x * IMPULSE, temp.y * IMPULSE), body->GetPosition(), true);
+	}
+	
 
 	return true;
 }
