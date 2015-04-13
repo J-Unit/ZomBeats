@@ -26,8 +26,6 @@
 #include "AudioController.h"
 #include "Box2d/Box2d.h"
 
-#define STARTING_LEVEL 2
-
 /**
 * Initialize the game state.
 *
@@ -136,6 +134,11 @@ void GameController::createWeapons(){
 	view->enviornment->addChild(s1->sprite);
 }*/
 
+//purpose of this function is to set a level when choosing from start menu
+void GameController::setCurrentLevel(int level){
+	currentLevel = level;
+}
+
 void GameController::createFog() {
 	//add the fog of war here
 	fogSp = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("fog"));
@@ -194,7 +197,12 @@ void GameController::updateFog() {
 }
 
 
-
+/**
+* Initialize the game state.
+*
+* This is an overridden method inherited from the super(super) class Node.
+* The Director calls this soon after start up.
+*/
 bool GameController::init() {
 	if (!Layer::init()) {
 		return false;
@@ -205,10 +213,16 @@ bool GameController::init() {
 	view = new View(winsize.width, winsize.height);
 	view->scene->addChild(this);
 
+	return true;
+}
+/**
+* Intialize the environment of the game, this is the real method that populates the game 
+* state and level
+*/
+void GameController::initEnvironment() {
 	audio = new AudioController();
 
-	curLevel = STARTING_LEVEL;
-	loadLevel(curLevel);
+	loadLevel(currentLevel);
 
 	//add the fog of war here
 	createFog();
@@ -218,9 +232,6 @@ bool GameController::init() {
 	processDirection = false;
 	currentEnvironment = NULL;
 	currentMower = NULL;
-	//createZombies();
-	//createWalls();
-	//createWeapons();
 	// Start listening to input
 	input = new InputController(_eventDispatcher);
 	input->startInput();
@@ -240,8 +251,6 @@ bool GameController::init() {
 	//---remove above later----- 
 
 	createPauseButton();
-
-	return true;
 }
 
 //helper method, create pauseButton on the upper right corner
@@ -293,7 +302,7 @@ void GameController::loadLevel(int i){
 //restart the game upon death or reset
 void GameController::restartGame() {
 	this->removeAllChildren();
-	loadLevel(curLevel);
+	loadLevel(currentLevel);
 	createFog();
 	input->clickProcessed = true;
 	destination = 0;

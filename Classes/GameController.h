@@ -91,8 +91,6 @@ public:
 
     // MODEL
     // A page-out could dispose of the view as long as it just has this.
-    /** The current coordinates of the ship */
-	int curLevel;
 	SongDecomposition*  currentSong;
 	AIController *ai;
 	AudioController *audio;
@@ -133,6 +131,12 @@ public:
 	*/
 	bool init() override;
 
+	/**
+	* Intialize the environment of the game, this is the real method that populates the game
+	* state and level
+	*/
+	void initEnvironment();
+
 	CREATE_FUNC(GameController);
     
     /**
@@ -165,6 +169,9 @@ public:
 	vector<Sprite*> musicNotes;
 
 	int musicNoteCounter;
+
+	int currentLevel;
+	void setCurrentLevel(int level);
 
 private:
 	void createZombies();
