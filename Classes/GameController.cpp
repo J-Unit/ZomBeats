@@ -595,7 +595,7 @@ void GameController::update(float deltaTime) {
 		if (destination != 0){
 			Vec2 dir = Vec2(state->level->getTileCenterX(destination) - x, state->level->getTileCenterY(destination) - y);
 			dir.normalize();
-			if (!state->ship->update(deltaTime, dir)){
+			if (!state->ship->update(deltaTime, dir, meter->getGrooviness())){
 				destination = 0;
 			}
 		}

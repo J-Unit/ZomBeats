@@ -180,7 +180,7 @@ public:
      *
      * @param deltaTime Time elapsed since last called.
      */
-    bool   update(float deltaTime, Vec2 thrust);    
+	bool   update(float deltaTime, Vec2 thrust, float grooviness);
 };
 
 #endif /* defined(__TD_SHIP_H__) */
