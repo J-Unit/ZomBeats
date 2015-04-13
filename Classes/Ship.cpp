@@ -58,7 +58,7 @@ Ship::Ship(b2World *world, float x, float y, float mx, float my) {
 	//body->SetAngularDamping(0.5f);
     sprite  = NULL;
 	//setSprite(FilmStrip::create(ResourceLoader::getInstance()->getTexture("ricky"), 1, 2, 2), mx, my);
-	setSprite(FilmStrip::create(ResourceLoader::getInstance()->getTexture("ricky"), 5, 3, 13), mx, my);
+	setSprite(FilmStrip::create(ResourceLoader::getInstance()->getTexture("ricky_gun"), 5, 3, 13), mx, my);
 	lastPosition = body->GetPosition();
 	prevFrame = 1; //initialize the initial frame number
 }

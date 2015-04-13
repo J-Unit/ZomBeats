@@ -46,6 +46,11 @@ ResourceLoader::ResourceLoader() {
         text->retain();
         textures["zombie"] = text;
     }
+	text = text = Director::getInstance()->getTextureCache()->addImage("textures/spritebasic_withshotty.png");
+	if (text) {
+		text->retain();
+		textures["ricky_gun"] = text;
+	}
 
 	//add the wall textures here
 	text = Director::getInstance()->getTextureCache()->addImage("textures/wall.png");

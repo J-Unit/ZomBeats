@@ -7,9 +7,9 @@ Shotgun::Shotgun(b2World *world, float x, float y)
 {
 	pos_x = x;
 	pos_y = y;
-	width = 150.0f;
+	width = 190.0f;
 	durability = 3;
-	range = 170.0f;
+	range = 180.0f;
 	isDesroyed = false;
 	weapon_type = 2; //TODO: Make array of different weapon types somewhere
 	bodyDef.type = b2_staticBody;
