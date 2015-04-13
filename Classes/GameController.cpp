@@ -57,6 +57,24 @@ void GameController::BeginContact(b2Contact* contact){
 		w->isDesroyed = true;
 		state->ship->hasWeapon = true;
 		state->ship->currentWeapon = w;
+
+		/*
+		//reset weapon sprites durability for new weapon in Ricky
+		int durabil = state->ship->currentWeapon->durability;
+		for (int i = 0; i < 3; ++i){
+			for (int j = 0; j < 2; ++j){
+				if (durabil < 1){
+					break;
+				}
+				//create the new sprite
+				state->ship->weaponDurabilityDisplay[i][j] = state->ship->currentWeapon->sprite;
+				state->ship->weaponDurabilityDisplay[i][j]->setAnchorPoint(Vec2(0.0f, 0.0f));
+				state->ship->weaponDurabilityDisplay[i][j]->setPosition(j*20.0f, i*20.0f);
+				view->durabilitySpriteContainer->addChild(state->ship->weaponDurabilityDisplay[i][j]);
+				durabil--;
+			}
+		}
+		*/
 		return;
 	}
 
@@ -541,7 +559,7 @@ void GameController::update(float deltaTime) {
 							if (num_zombies_killed == 1){
 								state->ship->currentWeapon->durability -= 1;
 							}
-							if (state->ship->currentWeapon->durability == 0){
+							if (state->ship->currentWeapon->durability < 1){
 								state->ship->hasWeapon = false;
 								free(state->ship->currentWeapon);
 								state->ship->currentWeapon = NULL;
@@ -721,9 +739,6 @@ void GameController::clearMusicNotePath() {
 * #param coords The current ship coordinates
 */
 void GameController::displayPosition(Label* label, const b2Vec2& coords) {
-	stringstream ss;
-	ss << "Coords: (" << (int)coords.x / 10 << "," << (int)coords.y / 10 << ")";
-	view->coordHUD->setString(ss.str());
 	stringstream s;
 	s << "Speed: " << state->ship->body->GetLinearVelocity().Length();
 	view->velHUD->setString(s.str());
@@ -762,9 +777,45 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 		view->directionUseEnvironmentWeapon->drawLine(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y), Vec2(currentFingerPos.x, currentFingerPos.y), ccColor4F(0.0f, 0.0f, 0.0f, 0.8f));
 	}
 
+	view->durability->setString("Durability");
+	view->durabilityHolder->clear();
+	view->durabilityHolder->drawRect(Vec2(0, 0), Vec2(110, -150), ccColor4F(0.5f, 0.5f, 0.5f, 1.0f));
+
 	if (state->ship->hasWeapon){
 		view->hitBox->clear();
 		view->weaponBox->drawRect(Vec2(weaponRectangle[0].x, weaponRectangle[0].y), Vec2(weaponRectangle[1].x, weaponRectangle[1].y), Vec2(weaponRectangle[3].x, weaponRectangle[3].y), Vec2(weaponRectangle[2].x, weaponRectangle[2].y),ccColor4F(2.0f, 2.0f, 2.0f, 1.0f));
+
+		//hero array for sprite pointers
+		//pickup will clear contents and then for loop that populates it with sprite pointers and sets position by index in the actual sprite position
+		/*int dura = state->ship->currentWeapon->durability;
+		for (int i = 0; i < 3; ++i){
+			for (int j = 0; j < 2; ++j){
+				if (dura < 1){
+					break;
+				}
+				//create the new sprite
+				view->durabilitySpriteContainer->addChild(state->ship->weaponDurabilityDisplay[i][j]);
+				dura--;
+			}
+		}*/
+		view->durabilitySpriteContainer->clear();
+		int dur = state->ship->currentWeapon->durability;
+		for (int i = 0; i < 3; ++i){
+			for (int j = 0; j < 2; ++j){
+				if (dur < 1){ //fix
+					break;
+				}
+				else{
+					//draw the durability circle
+					view->durabilitySpriteContainer->drawSolidCircle(Vec2(25.0f+j*50.0f,-(25.0f+i*50.0f)), 8.0f, 0.0f, 20.0f, ccColor4F(0.5f, 0, 0, 1.0f));
+					dur--;
+				}
+			}
+		}
+	}
+
+	if (!state->ship->hasWeapon){
+		view->durabilitySpriteContainer->clear();
 	}
 	//view->directionUseEnvironmentWeapon->drawLine(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y), currentFingerPos, ccColor4F(128.0f, 128.0f, 128.0f, 0.5f));
 	
@@ -813,6 +864,7 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 	view->meter->clear();
 	view->meter->drawSolidRect(Vec2(-15, 0), Vec2(+15, g*180), ccColor4F(0.0f, 1.0f, 1.0f, 1.0f));
 	view->meter->drawRect(Vec2(-15, 0), Vec2(+15, 180), ccColor4F(0.5f, 0.5f, 0.5f, 1.0f));
+
 
 	/*if (!input->clickProcessed) {
 	mouse->drawDot(input->lastClick, 2.0f, ccColor4F(0.0f, 0.0f, 0.0f, 0.0f));

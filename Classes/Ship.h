@@ -81,6 +81,9 @@ public:
 	int prevFrame; //indicate the previous animation frame
 	b2Vec2 lastPosition;
 	FilmStrip* sprite;
+
+	Sprite* weaponDurabilityDisplay[3][2];
+
     /**
      * Creates a new ship at the specified position (in world space).
      *

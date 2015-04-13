@@ -277,6 +277,36 @@ void View::buildScene(LevelMap *level, Layer* l) {
 	meter->setContentSize(allSpace->getContentSize());
 	meter->setAnchorPoint(Vec2::ZERO);
 
+	//durability
+	durability = Label::create();
+	durability->setTTFConfig(*ResourceLoader::getInstance()->getFont("MarkerFelt"));
+	durability->setPosition(Vec2(HUD_OFFSET.x, HUD_OFFSET.y * 18.5));
+	durability->setAnchorPoint(Vec2::ZERO);
+
+	durabilityBox = DrawNode::create();
+	durabilityBox->setPosition(HUD_OFFSET.x, HUD_OFFSET.y * 18);
+	durabilityBox->setContentSize(allSpace->getContentSize());
+	durabilityBox->setAnchorPoint(Vec2::ZERO);
+
+	durabilityHolder = DrawNode::create();
+	durabilityHolder->setPosition(0.0f,0.0f);
+	durabilityHolder->setContentSize(allSpace->getContentSize());
+	durabilityHolder->setAnchorPoint(Vec2::ZERO);
+
+	durabilitySpriteContainer = DrawNode::create();
+	durabilitySpriteContainer->setPosition(0.0f, 0.0f);
+	durabilitySpriteContainer->setContentSize(allSpace->getContentSize());
+	durabilitySpriteContainer->setAnchorPoint(Vec2::ZERO);
+	//durabilitySpriteContainer->setScale(0.25f);
+
+
+	//a fake pause button goes here
+	Sprite* pause = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("pause_button"));
+	Size visibleSize2 = Director::getInstance()->getVisibleSize();
+	Vec2 origin2 = Director::getInstance()->getVisibleOrigin();
+	pause->setScale(0.2f);
+	pause->setPosition(Point(visibleSize2.width*0.97 + origin2.x, visibleSize2.height*0.96 + origin2.y));
+
 	//a pause menu goes here
 	//pauseMenu->setSprite(Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("pause_menu")));
 	//pauseMenu->sprite->setScale(0.15f);
@@ -293,7 +323,11 @@ void View::buildScene(LevelMap *level, Layer* l) {
 	l->addChild(beatHUD);
 	l->addChild(mainBeatHUD);
 	l->addChild(grooviness);
+	l->addChild(durability);
 	l->addChild(meter);
+	l->addChild(durabilityBox);
+	durabilityBox->addChild(durabilityHolder);
+	durabilityBox->addChild(durabilitySpriteContainer);
 	l->addChild(detectionRadiusHUD);
 	l->addChild(zombieOneAwarenessHUD); //remove this later
 }

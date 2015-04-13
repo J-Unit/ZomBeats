@@ -54,7 +54,11 @@ public:
 	DrawNode* ai;
 	DrawNode* zombiePositions;
 	Label* grooviness;
+	Label* durability;
+	DrawNode* durabilityBox;
 	DrawNode* meter;
+	DrawNode* durabilityHolder;
+	DrawNode* durabilitySpriteContainer;
 	Vec2 shakeCenter;
 
 	Node*   enviornment;
