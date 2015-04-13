@@ -72,6 +72,7 @@ Ship::~Ship() {
         sprite->release();
     }
     sprite = NULL;
+	body->GetWorld()->DestroyBody(body);
 }
 
 /**

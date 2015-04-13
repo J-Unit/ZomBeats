@@ -14,7 +14,7 @@
 #define PLANET1_POS  Vec2(950, 1100)
 #define PLANET2_POS  Vec2(1600, 1500)
 #define HUD_OFFSET   Vec2(10.0f,10.f)
-#define SHAKE_STRENGTH 2.0f
+#define SHAKE_STRENGTH 4.0f
 
 using namespace cocos2d;
 using namespace std;
@@ -60,8 +60,10 @@ public:
 	DrawNode* durabilityHolder;
 	DrawNode* durabilitySpriteContainer;
 	Vec2 shakeCenter;
+	Label* objective;
 
 	Node*   enviornment;
+	Node* zombies;
 
 	View(int w, int h);
 
@@ -80,7 +82,7 @@ public:
 	* We factored this out of init() to allow us to page-in and page-out
 	* the scene graph at a later time.
 	*/
-	void buildScene(LevelMap *n, Layer* l);
+	void buildScene(LevelMap *n, Layer* l, int level);
 
 	void setMesh();
 
@@ -94,7 +96,7 @@ public:
 	* child. That is because a Scene anchors to the drawing window for display.
 	*/
 	cocos2d::Scene* createScene();
-
+	void releaseScene();
 	~View();
 
 private:

@@ -11,3 +11,13 @@ void Weapon::setSprite(Sprite* value)
 		sprite->setAnchorPoint(Vec2(0.5f, 0.5f));
 	}
 }
+
+Weapon::~Weapon()
+{
+	// Release the film strip if we have a reference
+	if (sprite != NULL) {
+		sprite->release();
+	}
+	sprite = NULL;
+	body->GetWorld()->DestroyBody(body);
+}

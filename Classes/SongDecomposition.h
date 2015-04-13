@@ -20,6 +20,7 @@ public:
 	bool isOnBeat(float clickTime);
 	float getBeatStart(float time);
 	float timeToClosestBeat(float time);
+	float timeToBeat(float time, int beat);
 	~SongDecomposition();
 };
 

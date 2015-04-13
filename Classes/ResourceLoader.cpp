@@ -33,6 +33,11 @@ ResourceLoader::ResourceLoader() {
         textures["tile1"] = text;
     }
 
+	text = Director::getInstance()->getTextureCache()->addImage("textures/zombie_new.png");
+	if (text) {
+		text->retain();
+		textures["zombie_single"] = text;
+	}
 
     //text = Director::getInstance()->getTextureCache()->addImage("textures/ships.png");
 	//text = Director::getInstance()->getTextureCache()->addImage("textures/chuck.png");

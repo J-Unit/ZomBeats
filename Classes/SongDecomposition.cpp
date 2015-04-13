@@ -12,10 +12,18 @@ float SongDecomposition::getBeatStart(float time){
 }
 
 float SongDecomposition::timeToClosestBeat(float time){
-	float prev = time - getBeatStart(time) + 2 * ERROR_WINDOW;
-	float next = getBeatStart(time + spb) - time;
+	float prev = (time+trackStartTime) - (getBeatStart(time) + ERROR_WINDOW);
+	float next = (getBeatStart(time + spb) + ERROR_WINDOW) - (time+trackStartTime);
+	/*if (prev <= ERROR_WINDOW || next <= ERROR_WINDOW){
+		bool onBeat = isOnBeat(time+trackStartTime);
+	}*/
 	if (prev <= next) return prev;
 	return -next;
+}
+
+float SongDecomposition::timeToBeat(float time, int beat){
+	float beatTime = trackStartTime + spb * beat;
+	return time - beatTime;
 }
 
 SongDecomposition::~SongDecomposition()

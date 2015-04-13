@@ -31,4 +31,5 @@ Sword::~Sword()
 		sprite->release();
 	}
 	sprite = NULL;
+	body->GetWorld()->DestroyBody(body);
 }

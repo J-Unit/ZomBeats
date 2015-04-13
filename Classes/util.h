@@ -4,6 +4,8 @@
 #include "Box2D/Box2D.h"
 #include <random>
 
+#define CALIBRATION_LEVEL 0
+
 static void setVecRandom(b2Vec2 *v){
 	float x = float(rand() - RAND_MAX / 2) / (RAND_MAX / 2);
 	float y = float(rand() - RAND_MAX / 2) / (RAND_MAX / 2);

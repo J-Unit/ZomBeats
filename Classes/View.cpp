@@ -8,11 +8,15 @@
 #include <iostream>
 #include "SongDecomposition.h"
 #include "Wall.h"
+#include "util.h"
 
 View::View(int w, int h){
 	screen_size_x = w;
 	screen_size_y = h;
 	ResourceLoader::loadContent();
+	meshVis = path = detectionRadiusCircle = directionUseEnvironmentWeapon = meter = durabilityBox = durabilityHolder = durabilitySpriteContainer = hitBox = weaponBox = ai = zombiePositions = NULL;
+	grooviness = durability = objective = NULL; 
+	enviornment = zombies = shipImage = NULL;
 	// Load the resources. This is NOT an asynchronous loader.
 	// We would design an asynchronous loader slightly differently.
 	scene = createScene();
@@ -27,7 +31,6 @@ View::View(int w, int h){
 Scene* View::createScene() {
 	// 'scene' is an autorelease object
 	scene = Scene::create();
-
 	// return the scene
 	return scene;
 }
@@ -91,6 +94,26 @@ void View::makeResolutionIndependent(Node *n){
 		n->setScale(size.width / width);
 	}
 }
+#define RELEASE(p) if(p!=NULL) p->release();
+void View::releaseScene(){
+	RELEASE(path);
+	RELEASE(detectionRadiusCircle);
+	RELEASE(directionUseEnvironmentWeapon);
+	RELEASE(hitBox);
+	RELEASE(weaponBox);
+	RELEASE(ai);
+	RELEASE(zombiePositions);
+	RELEASE(grooviness);
+	RELEASE(durability);
+	RELEASE(durabilityBox);
+	RELEASE(meter);
+	RELEASE(durabilityHolder);
+	RELEASE(durabilitySpriteContainer);
+	RELEASE(objective);
+	RELEASE(enviornment);
+	RELEASE(zombies);
+	RELEASE(shipImage);
+}
 
 /**
 * Builds the scene graph for the game.
@@ -98,7 +121,7 @@ void View::makeResolutionIndependent(Node *n){
 * We factored this out of init() to allow us to page-in and page-out
 * the scene graph at a later time.
 */
-void View::buildScene(LevelMap *level, Layer* l) {
+void View::buildScene(LevelMap *level, Layer* l, int levNum) {
 	Size dimen = Director::getInstance()->getVisibleSize();
 	pix_to_opengl_scale = dimen.width / screen_size_x;
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
@@ -128,10 +151,10 @@ void View::buildScene(LevelMap *level, Layer* l) {
 	enviornment->addChild(background);
 
 
-	meshVis = DrawNode::create();
+	/*meshVis = DrawNode::create();
 	meshVis->setContentSize(allSpace->getContentSize());
 	meshVis->setPosition(center);
-	meshVis->setAnchorPoint(anchor);
+	meshVis->setAnchorPoint(anchor);*/
 	/*for (int i = 0; i < BLOCKS_X; i++) for (int j = 0; j < BLOCKS_Y; j++){
 		MapNode *n = &(level->mesh[i][j]);
 		if (n->walkable){
@@ -190,7 +213,9 @@ void View::buildScene(LevelMap *level, Layer* l) {
 		}
 	}
 
-	enviornment->addChild(meshVis);
+	zombies = Node::create();
+
+	//enviornment->addChild(meshVis);
 	enviornment->addChild(path);
 	enviornment->addChild(ai, 1);
 	enviornment->addChild(zombiePositions, 4); //z-order to zombiePositions should be larger than fog's 
@@ -199,6 +224,7 @@ void View::buildScene(LevelMap *level, Layer* l) {
 	enviornment->addChild(weaponBox);
 
 	enviornment->addChild(directionUseEnvironmentWeapon);
+	enviornment->addChild(zombies);
 	// Put planets in the foreground.
 	/*nearSpace = Node::create();
 	nearSpace->setContentSize(allSpace->getContentSize());
@@ -230,7 +256,7 @@ void View::buildScene(LevelMap *level, Layer* l) {
 	}*/
 
 
-	coordHUD = Label::create();
+	/*coordHUD = Label::create();
 	coordHUD->setTTFConfig(*ResourceLoader::getInstance()->getFont("MarkerFelt"));
 	coordHUD->setPosition(HUD_OFFSET);
 	coordHUD->setAnchorPoint(Vec2::ZERO);
@@ -253,7 +279,12 @@ void View::buildScene(LevelMap *level, Layer* l) {
 	zombieOneAwarenessHUD = Label::create();
 	zombieOneAwarenessHUD->setTTFConfig(*ResourceLoader::getInstance()->getFont("MarkerFelt"));
 	zombieOneAwarenessHUD->setPosition(Vec2(HUD_OFFSET.x * 60, HUD_OFFSET.y*5));
-	zombieOneAwarenessHUD->setAnchorPoint(Vec2::ZERO);
+	zombieOneAwarenessHUD->setAnchorPoint(Vec2::ZERO);*/
+
+	objective = Label::create();
+	objective->setTTFConfig(*ResourceLoader::getInstance()->getFont("MarkerFelt"));
+	objective->setPosition(Vec2(HUD_OFFSET.x*10, HUD_OFFSET.y * 60));
+	objective->setAnchorPoint(Vec2::ZERO);
 
 	beatHUD = Label::create();
 	beatHUD->setTTFConfig(*ResourceLoader::getInstance()->getFont("MarkerFelt"));
@@ -317,9 +348,9 @@ void View::buildScene(LevelMap *level, Layer* l) {
 	//allSpace->addChild(nearSpace,0.5);
 	//allSpace->addChild(shipImage, 1);
 	l->addChild(allSpace);
-	l->addChild(coordHUD);  // On top of scene graph.
-	l->addChild(velHUD);
-	l->addChild(thrustHUD);
+	//l->addChild(coordHUD);  // On top of scene graph.
+	//l->addChild(velHUD);
+	//l->addChild(thrustHUD);
 	l->addChild(beatHUD);
 	l->addChild(mainBeatHUD);
 	l->addChild(grooviness);
@@ -328,8 +359,9 @@ void View::buildScene(LevelMap *level, Layer* l) {
 	l->addChild(durabilityBox);
 	durabilityBox->addChild(durabilityHolder);
 	durabilityBox->addChild(durabilitySpriteContainer);
-	l->addChild(detectionRadiusHUD);
-	l->addChild(zombieOneAwarenessHUD); //remove this later
+	l->addChild(objective);
+	//l->addChild(detectionRadiusHUD);
+	//l->addChild(zombieOneAwarenessHUD); //remove this later
 }
 
 void View::shake(float start, float now, Vec2 dir){

@@ -7,6 +7,7 @@
 
 class BoxObject{
 public:
+	cocos2d::Sprite* sprite;
 	b2Body *body;
 	b2BodyDef bodyDef;
 	b2FixtureDef fixture;

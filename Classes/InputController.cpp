@@ -87,9 +87,9 @@ InputController::InputController(cocos2d::EventDispatcher* dispatcher) {
 
 
     // Register the listeners
-	dispatcher->addEventListenerWithFixedPriority(mouseListener, 1);
+	dispatcher->addEventListenerWithFixedPriority(mouseListener, 2);
     //dispatcher->addEventListenerWithFixedPriority(keybdListener,1);
-    dispatcher->addEventListenerWithFixedPriority(touchListener,2);
+    dispatcher->addEventListenerWithFixedPriority(touchListener, 1);
     dispatcher->addEventListenerWithFixedPriority(accelListener,3);
 }
 
@@ -98,7 +98,7 @@ InputController::InputController(cocos2d::EventDispatcher* dispatcher) {
  */
 InputController::~InputController() {
     dispatcher->removeEventListener(touchListener);
-    dispatcher->removeEventListener(accelListener);
+    //dispatcher->removeEventListener(accelListener);
     //dispatcher->removeEventListener(keybdListener);
 	dispatcher->removeEventListener(mouseListener);
     touchListener = NULL; // Reference counting handles deletion.
@@ -156,6 +156,7 @@ bool InputController::touchBeganCB(Touch* t, Event* event) {
 	Vec2 touch = t->getLocationInView();
 	lastClick.set(touch.x, touch.y);
 	clickProcessed = false;
+	clickTime = time(0);
 	clicked = true;
 	startTouch.x = RANGE_CLAMP(startTouch.x, -INPUT_MAXIMUM_FORCE, INPUT_MAXIMUM_FORCE);
 	startTouch.y = RANGE_CLAMP(startTouch.y, -INPUT_MAXIMUM_FORCE, INPUT_MAXIMUM_FORCE);
@@ -206,7 +207,7 @@ void InputController::mousePressedCB(Event* event) {
 
 	lastClick.set(mouseTouch.x, -mouseTouch.y);
 	clickProcessed = false;
-
+	clickTime = time(0);
 	// Go ahead and apply to thrust now.
 	//inputThrust.x = mouseTouch.x / X_ADJUST_FACTOR;
 	//inputThrust.y = mouseTouch.y / Y_ADJUST_FACTOR;

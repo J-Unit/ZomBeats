@@ -8,6 +8,7 @@
 
 #include <stdio.h>
 #include "cocos2d.h"
+#include <ctime>
 
 using namespace cocos2d;
 
@@ -85,6 +86,8 @@ protected:
 public:
 	bool clickProcessed;
 	Vec2 lastClick;
+	time_t clickTime;
+	
 
 	bool clicked;
 

@@ -45,6 +45,7 @@ class AudioController;
 class EnvironmentWeapon;
 class Lawnmower;
 class GrooveMeter;
+class CalibrationController;
 
 /**
  * Class represents the root node for the game engine.
@@ -93,6 +94,7 @@ public:
     // A page-out could dispose of the view as long as it just has this.
 	SongDecomposition*  currentSong;
 	AIController *ai;
+	CalibrationController *calibration;
 	AudioController *audio;
 	GameState *state;
 	// Box2D world for physics, collisions etc.
@@ -122,7 +124,9 @@ public:
      * #param coords The current ship coordinates
      */
     void displayPosition(Label* label, const b2Vec2& coords);
-    
+	void startVideoCalibration();
+	bool hasWonLevel();
+
 	/**
 	* Initialize the game state.
 	*

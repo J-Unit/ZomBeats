@@ -216,4 +216,10 @@ void Zombie::increaseAwarness()
 
 Zombie::~Zombie()
 {
+	// Release the film strip if we have a reference
+	if (sprite != NULL) {
+		sprite->release();
+	}
+	sprite = NULL;
+	body->GetWorld()->DestroyBody(body);
 }
