@@ -1,5 +1,7 @@
-
 #include <string>
+
+#define EFFECT_VOLUME 0.30f
+
 class SongDecomposition;
 
 class AudioController

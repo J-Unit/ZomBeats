@@ -3,8 +3,11 @@
 
 #include "Box2D/Box2D.h"
 #include <random>
+#include <string>
+#include <sstream>
 
 #define CALIBRATION_LEVEL 0
+#define MAX_MUSIC_NOTES 15
 
 static void setVecRandom(b2Vec2 *v){
 	float x = float(rand() - RAND_MAX / 2) / (RAND_MAX / 2);
@@ -35,6 +38,12 @@ static bool rectanglesOverlap(float b1x1, float b1y1, float b1x2, float b1y2, fl
 
 static bool isZero(b2Vec2 v){
 	return v.x == 0.0f && v.y == 0.0f;
+}
+
+static std::string formatMs(float s){
+	std::stringstream ss;
+	ss << int(s * 1000) << " ms";
+	return ss.str();
 }
 /*
 static Vec2 cVec2(b2Vec2 v){

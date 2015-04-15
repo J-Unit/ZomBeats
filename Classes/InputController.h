@@ -88,7 +88,6 @@ public:
 	Vec2 lastClick;
 	time_t clickTime;
 	
-
 	bool clicked;
 
     /**

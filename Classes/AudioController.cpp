@@ -31,7 +31,7 @@ void AudioController::playTrack(SongDecomposition *track, bool loop){
 }
 
 void AudioController::playEffect(std::string effect){
-	AudioEngine::play2d(effect, false, 1);
+	AudioEngine::play2d(effect, false, EFFECT_VOLUME);
 }
 
 void AudioController::setFrameOnBeat(float deltaTime){

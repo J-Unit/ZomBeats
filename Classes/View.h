@@ -16,6 +16,8 @@
 #define HUD_OFFSET   Vec2(10.0f,10.0f)
 #define SHAKE_STRENGTH 4.0f
 
+#define MUSIC_NOTE_SCALE 0.065f
+
 using namespace cocos2d;
 using namespace std;
 
@@ -88,6 +90,10 @@ public:
 	void setMesh();
 
 	void shake(float start, float now, Vec2 dir);
+
+	void redrawDurability(int dur);
+
+	void createMusicNotePath(Sprite **mem);
 
 	/**
 	* Creates a new game with an instance of this controller class.

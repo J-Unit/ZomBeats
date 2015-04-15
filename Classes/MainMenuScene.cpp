@@ -30,6 +30,7 @@ bool MainMenuScene::init()
 	}
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+	this->setScale(visibleSize.height / VIEW_HEIGHT);
 
 	auto backgroundSprite = Sprite::create("textures/start_screen_bg.png");
 	backgroundSprite->setPosition(Point(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));

@@ -31,7 +31,7 @@ bool LevelSelectScene::init()
 	}
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
-
+	this->setScale(visibleSize.height / VIEW_HEIGHT);
 	auto backgroundSprite = Sprite::create("textures/level_selection_bg.png");
 	backgroundSprite->setPosition(Point(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
 	backgroundSprite->setScale(LEVEL_BACKGROUND_SCALE);
@@ -58,7 +58,7 @@ bool LevelSelectScene::init()
 	startButton4->setScale(LEVEL_BUTTON_SCALE);
 
 	auto backButton = MenuItemImage::create("textures/back_button.png", "textures/back_button_clicked.png", CC_CALLBACK_1(LevelSelectScene::GoToMainMenuScene, this));
-	backButton->setPosition(Point(visibleSize.width / 2 + origin.x + LEVEL_BUTTON_HORIZONTAL_OFFSET*1.8, visibleSize.height / 2 + origin.y + LEVEL_BUTTON_VERTICAL_OFFSET*1.4));
+	backButton->setPosition(Point(visibleSize.width / 2 + origin.x + LEVEL_BUTTON_HORIZONTAL_OFFSET*1.7, visibleSize.height / 2 + origin.y + LEVEL_BUTTON_VERTICAL_OFFSET*1.25));
 	backButton->setScale(BACK_BUTTON_SCALE);
 
 	auto menu = Menu::create(startButton0, startButton1, startButton2, startButton3, startButton4, backButton, NULL);

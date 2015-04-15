@@ -64,6 +64,7 @@ void GameController::BeginContact(b2Contact* contact){
 		w->isDesroyed = true;
 		state->ship->hasWeapon = true;
 		state->ship->currentWeapon = w;
+		view->redrawDurability(w->durability);
 
 		/*
 		//reset weapon sprites durability for new weapon in Ricky
@@ -243,6 +244,7 @@ bool GameController::init() {
 	view = new View(winsize.width, winsize.height);
 	view->scene->addChild(this);
 	state = NULL;
+	audio = new AudioController();
 	return true;
 }
 /**
@@ -254,7 +256,6 @@ void GameController::initEnvironment() {
 	input = new InputController(_eventDispatcher);
 	input->startInput();
 	calibration = new CalibrationController();
-	audio = new AudioController();
 	loadLevel(currentLevel);
 
 	ai = new AIController();
@@ -287,7 +288,7 @@ void GameController::createPauseButton() {
 	auto pauseButton = MenuItemImage::create("textures/pause_button.png", "textures/pause_button_clicked.png", CC_CALLBACK_0(GameController::pauseGame, this));
 	Size visibleSize2 = Director::getInstance()->getVisibleSize();
 	Vec2 origin2 = Director::getInstance()->getVisibleOrigin();
-	pauseButton->setPosition(Point(visibleSize2.width*0.94 + origin2.x, visibleSize2.height*0.92 + origin2.y));
+	pauseButton->setPosition(Point(visibleSize2.width*0.97 + origin2.x, visibleSize2.height*0.96 + origin2.y));
 	pauseButton->setScale(0.2f);
 
 	auto pauseButtonMenu = Menu::create(pauseButton, NULL);
@@ -329,6 +330,7 @@ void GameController::loadLevel(int i){
 	//view->releaseScene();
 	this->removeAllChildrenWithCleanup(true);
 	view->buildScene(state->level, this, i);
+	view->createMusicNotePath(musicNotes);
 	createPauseButton();
 	view->allSpace->addChild(state->ship->getSprite());
 	createFog();
@@ -341,6 +343,8 @@ void GameController::loadLevel(int i){
 	currAwareness = 0.0f;
 	currentFingerPos = Vec2(0.0f, 0.0f);
 	if (currentLevel == CALIBRATION_LEVEL){
+		view->durabilityBox->setVisible(false);
+		view->durability->setVisible(false);
 		calibration->init();
 		view->objective->setString("Audio Calibration: Tap anywhere to the beat after the first four, don't miss any!");
 	}
@@ -430,7 +434,7 @@ void GameController::removeDeadEWeapons(){
 			eweap->isUsed = false;
 			state->world->DestroyBody(eweap->body);
 			toDelete = e_weapon;
-			//view->enviornment->removeChild(eweap->sprite);
+			view->enviornment->removeChild(eweap->sprite);
 		}
 	}
 	if (toDelete != NULL){
@@ -640,6 +644,7 @@ void GameController::update(float deltaTime) {
 						if (num_zombies_killed > 0){
 							audio->playEffect("sound_effects/shotgun.mp3");
 							state->ship->currentWeapon->durability -= 1;
+							view->redrawDurability(state->ship->currentWeapon->durability);
 						}
 						if (state->ship->currentWeapon->durability == 0){
 							state->ship->hasWeapon = false;
@@ -654,7 +659,7 @@ void GameController::update(float deltaTime) {
 				if (currentLevel == CALIBRATION_LEVEL){
 					if (calibration->acceptClicks){
 						calibration->totalOffset += audio->timeToBeat(4 + calibration->clicks);
-						st << "OFFSET: " << audio->timeToBeat(4 + calibration->clicks);
+						st << "OFFSET: " << formatMs(audio->timeToBeat(4 + calibration->clicks));
 						calibration->clicks++;
 						view->beatHUD->setString(st.str());
 						if (calibration->clicks >= 32) calibration->acceptClicks = false;
@@ -665,7 +670,7 @@ void GameController::update(float deltaTime) {
 						st << "HIT";
 					}
 					else{
-						st << "MISS BY: " << audio->timeToClosestBeat();
+						st << "MISS BY: " << formatMs(audio->timeToClosestBeat());
 					}
 					view->beatHUD->setString(st.str());
 				}
@@ -706,7 +711,7 @@ void GameController::update(float deltaTime) {
 						 calibration->acceptClicks = false;
 						 audio->videoDelay = calibration->videoDelay();
 						 stringstream ss;
-						 ss << "Ok, great.  Video Delay: " << int(audio->videoDelay * 1000) << " ms.";
+						 ss << "Ok, great.  Video Delay: " << formatMs(audio->videoDelay);
 						 view->objective->setString(ss.str());
 					 }
 				 }
@@ -748,7 +753,7 @@ void GameController::update(float deltaTime) {
 					}
 					else{
 						audio->audioDelay = calibration->audioDelay();
-						ss << "Ok, great! Now stop tapping! Audio delay: " << int(audio->audioDelay * 1000) << " ms.";
+						ss << "Ok, great! Now stop tapping! Audio delay: " << formatMs(audio->audioDelay);
 						calibration->acceptClicks = false;
 					}
 					view->objective->setString(ss.str());
@@ -850,38 +855,38 @@ void GameController::update(float deltaTime) {
 	}
 }
 
-//draw a new music note path
-void GameController::drawMusicNotePath(Vec2 origin) {
-	Sprite* singleMusicNote;
-	if (musicNoteCounter == 0) {
-		singleMusicNote = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("music_note"));
-	}
-	else if (musicNoteCounter == 1) {
-		singleMusicNote = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("music_note"));
-	}
-	else {
-		singleMusicNote = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("music_note"));
-	}
-	singleMusicNote->setScale(MUSIC_NOTE_SCALE);
-	singleMusicNote->setPosition(Point(origin.x, origin.y));
-	view->enviornment->addChild(singleMusicNote, 1);
-	musicNotes.push_back(singleMusicNote);
-	if (musicNoteCounter == 2) {
-		musicNoteCounter = 0;
-	}
-	else {
-		musicNoteCounter++;
-	}
-}
 
-//clear the old path for every iteration
-void GameController::clearMusicNotePath() {
-	for (int i = 0; i < musicNotes.size(); i++) {
-		Sprite* aMusicNote = musicNotes[i];
-		view->enviornment->removeChild(aMusicNote);
-		//aMusicNote->release();
+void GameController::drawMusicNotePath() {
+	if (destination != 0){
+		MapNode* cur = destination;
+		for (int i = 0; i < MAX_MUSIC_NOTES; i++){
+			if (cur != NULL){
+				musicNotes[i]->setPosition(state->level->getTileCenterX(cur), state->level->getTileCenterY(cur));
+				musicNotes[i]->setVisible(true);
+				cur = cur->next;
+			}
+			else{
+				musicNotes[i]->setVisible(false);
+			}
+		}
+		/*do {
+			float x1 = state->level->getTileCenterX(last);
+			float y1 = state->level->getTileCenterY(last);
+			float x2 = state->level->getTileCenterX(cur);
+			float y2 = state->level->getTileCenterY(cur);
+			//draw main character's path
+			//view->path->drawLine(Vec2(x1, y1), Vec2(x2, y2), ccColor4F(1.0f, 1.0f, 1.0f, 1.0f));
+			drawMusicNotePath(Vec2(x1, y1));
+			drawMusicNotePath(Vec2(x2, y2));
+			last = cur;
+			cur = cur->next;
+		} while (cur != 0);*/
 	}
-	musicNotes.clear();
+	else{
+		for (int i = 0; i < MAX_MUSIC_NOTES; i++){
+			musicNotes[i]->setVisible(false);
+		}
+	}
 }
 
 /**
@@ -903,8 +908,8 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 	//view->path->clear();
 
 	//clear the old music notes path
-	clearMusicNotePath();
 	view->directionUseEnvironmentWeapon->clear();
+	drawMusicNotePath();
 	//clear the old detection circle
 	//view->detectionRadiusCircle->clear();
 	//clear the old hitbox
@@ -932,11 +937,6 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 		view->directionUseEnvironmentWeapon->drawLine(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y), Vec2(currentFingerPos.x, currentFingerPos.y), ccColor4F(0.0f, 0.0f, 0.0f, 0.8f));
 	}
 
-	view->durability->setString("Durability");
-	view->durabilityHolder->clear();
-	view->durabilityHolder->drawSolidRect(Vec2(0, 0), Vec2(110, -150), ccColor4F(0.0f, 0.0f, 0.0f, 1.0f));
-	view->durabilityHolder->drawRect(Vec2(0, 0), Vec2(110, -150), ccColor4F(0.5f, 0.5f, 0.5f, 1.0f));
-
 	if (state->ship->hasWeapon){
 		
 		//hero array for sprite pointers
@@ -952,20 +952,6 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 				dura--;
 			}
 		}*/
-		view->durabilitySpriteContainer->clear();
-		int dur = state->ship->currentWeapon->durability;
-		for (int i = 0; i < 3; ++i){
-			for (int j = 0; j < 2; ++j){
-				if (dur < 1){ //fix
-					break;
-				}
-				else{
-					//draw the durability circle
-					view->durabilitySpriteContainer->drawSolidCircle(Vec2(25.0f+j*50.0f,-(25.0f+i*50.0f)), 8.0f, 0.0f, 20.0f, ccColor4F(0.5f, 0, 0, 1.0f));
-					dur--;
-				}
-			}
-		}
 	}
 
 	if (!state->ship->hasWeapon){
@@ -973,23 +959,6 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 		//view->weaponBox->drawRect(Vec2(weaponRectangle[0].x, weaponRectangle[0].y), Vec2(weaponRectangle[1].x, weaponRectangle[1].y), Vec2(weaponRectangle[3].x, weaponRectangle[3].y), Vec2(weaponRectangle[2].x, weaponRectangle[2].y), ccColor4F(2.0f, 2.0f, 2.0f, 1.0f));
 	}
 	//view->directionUseEnvironmentWeapon->drawLine(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y), currentFingerPos, ccColor4F(128.0f, 128.0f, 128.0f, 0.5f));
-
-	if (destination != 0){
-		MapNode *last = state->level->locateCharacter(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y);
-		MapNode *cur = destination;
-		do {
-			float x1 = state->level->getTileCenterX(last);
-			float y1 = state->level->getTileCenterY(last);
-			float x2 = state->level->getTileCenterX(cur);
-			float y2 = state->level->getTileCenterY(cur);
-			//draw main character's path
-			//view->path->drawLine(Vec2(x1, y1), Vec2(x2, y2), ccColor4F(1.0f, 1.0f, 1.0f, 1.0f));
-			drawMusicNotePath(Vec2(x1, y1));
-			drawMusicNotePath(Vec2(x2, y2));
-			last = cur;
-			cur = cur->next;
-		} while (cur != 0);
-	}
 	/*view->ai->clear();
 	for (CTypedPtrDblElement<Zombie> *z = state->zombies.GetHeadPtr(); !state->zombies.IsSentinel(z); z = z->Next()){
 	Zombie *zom = z->Data();

@@ -13,6 +13,7 @@
 #include "Box2D/Box2D.h"
 #include "LevelSerializer.h"
 #include <vector>
+#include "util.h"
 
 //fog scale
 #define FOG_SCALE 1.25f
@@ -22,7 +23,6 @@
 #define GAME_MENU_SCALE 0.2f
 #define GAME_MENU_BUTTON_SCALE 0.75f
 #define GAME_MENU_BUTTON_OFFSET 160
-#define MUSIC_NOTE_SCALE 0.065f
 
 
 //delays
@@ -168,11 +168,8 @@ public:
 
 	Vec2 mouseToWorld(Vec2 click);
 
-	void drawMusicNotePath(Vec2 origin);
-
-	void clearMusicNotePath();
-
-	vector<Sprite*> musicNotes;
+	void drawMusicNotePath();
+	Sprite *musicNotes[MAX_MUSIC_NOTES];
 
 	int musicNoteCounter;
 

@@ -317,16 +317,21 @@ void View::buildScene(LevelMap *level, Layer* l, int levNum) {
 	durability->setTTFConfig(*ResourceLoader::getInstance()->getFont("MarkerFelt"));
 	durability->setPosition(Vec2(HUD_OFFSET.x, HUD_OFFSET.y * 18.5));
 	durability->setAnchorPoint(Vec2::ZERO);
+	durability->setString("Durability");
 
 	durabilityBox = DrawNode::create();
 	durabilityBox->setPosition(HUD_OFFSET.x, HUD_OFFSET.y * 18);
 	durabilityBox->setContentSize(allSpace->getContentSize());
 	durabilityBox->setAnchorPoint(Vec2::ZERO);
+	durabilityBox->setScale(0.8f);
 
 	durabilityHolder = DrawNode::create();
 	durabilityHolder->setPosition(0.0f,0.0f);
 	durabilityHolder->setContentSize(allSpace->getContentSize());
 	durabilityHolder->setAnchorPoint(Vec2::ZERO);
+	durabilityHolder->drawSolidRect(Vec2(0, 0), Vec2(110, -150), ccColor4F(0.0f, 0.0f, 0.0f, 1.0f));
+	durabilityHolder->drawRect(Vec2(0, 0), Vec2(110, -150), ccColor4F(0.5f, 0.5f, 0.5f, 1.0f));
+
 
 	durabilitySpriteContainer = DrawNode::create();
 	durabilitySpriteContainer->setPosition(0.0f, 0.0f);
@@ -371,9 +376,29 @@ void View::buildScene(LevelMap *level, Layer* l, int levNum) {
 	//l->addChild(zombieOneAwarenessHUD); //remove this later
 }
 
+void View::redrawDurability(int dur){
+	durabilitySpriteContainer->clear();
+	for (int i = 0; i < 3 && dur>0; ++i){
+		for (int j = 0; j < 2 && dur>0; ++j, dur--){
+			//draw the durability circle
+			durabilitySpriteContainer->drawSolidCircle(Vec2(25.0f + j*50.0f, -(25.0f + i*50.0f)), 8.0f, 0.0f, 20.0f, ccColor4F(0.5f, 0, 0, 1.0f));
+		}
+	}
+}
+
 void View::shake(float start, float now, Vec2 dir){
 	float v = sin((now - start) * 2 * M_PI / ERROR_WINDOW);
 	allSpace->setPosition(shakeCenter + v * SHAKE_STRENGTH * dir);
+}
+
+void View::createMusicNotePath(Sprite **mem){
+	Sprite* singleMusicNote;
+	for (int i = 0; i < MAX_MUSIC_NOTES; i++){
+		singleMusicNote = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("music_note"));
+		singleMusicNote->setScale(MUSIC_NOTE_SCALE);
+		enviornment->addChild(singleMusicNote, 1);
+		mem[i] = singleMusicNote;
+	}
 }
 
 
