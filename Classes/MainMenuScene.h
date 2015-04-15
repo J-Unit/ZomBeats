@@ -16,9 +16,6 @@ public:
 	virtual bool init();
 
 	CREATE_FUNC(MainMenuScene);
-	void GoToGameScene0(cocos2d::Ref* sender);
-	void GoToGameScene1(cocos2d::Ref* sender);
-	void GoToGameScene2(cocos2d::Ref* sender);
-	void GoToGameScene3(cocos2d::Ref* sender);
+	void GoToGameScene(cocos2d::Ref* sender, int level);
 };
 
