@@ -298,7 +298,7 @@ Vec2 GameController::mouseToWorld(Vec2 click){
 bool GameController::hasWonLevel(){
 	if (currentLevel != CALIBRATION_LEVEL) return state->zombies.GetCount() == 0;
 	else {
-		if (calibration->audioCalibration) return audio->songIsOver();
+		if (calibration->audioCalibration) return audio->songIsOver() && calibration->phaseDelay > 5.0f;
 		else return elapsedTime - calibration->zombieTimes[15] > 5.0f;
 	}
 }
@@ -336,7 +336,7 @@ void GameController::loadLevel(int i){
 	currentFingerPos = Vec2(0.0f, 0.0f);
 	if (currentLevel == CALIBRATION_LEVEL){
 		calibration->init();
-		view->objective->setString("Audio Calibration: Tap anywhere to the beat, try to get at least half of them!");
+		view->objective->setString("Audio Calibration: Tap anywhere to the beat after the first four, don't miss any!");
 	}
 	audio->playTrack(ls.getLevelTrack(), currentLevel != CALIBRATION_LEVEL);
 }
@@ -725,7 +725,7 @@ void GameController::update(float deltaTime) {
 				}
 			}
 			else{
-				if (audio->songTime>20.0f){
+				if (audio->songTime>20.0f || calibration->clicks == 32){
 					audio->stop();
 					stringstream ss;
 					if (calibration->clicks < 32){
@@ -737,6 +737,9 @@ void GameController::update(float deltaTime) {
 						calibration->acceptClicks = false;
 					}
 					view->objective->setString(ss.str());
+				}
+				if (audio->songIsOver()){
+					calibration->phaseDelay += deltaTime;
 				}
 			}
 		}
