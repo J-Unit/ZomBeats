@@ -803,20 +803,26 @@ void GameController::update(float deltaTime) {
 		//state->ship->getSprite()->setRotation(state->ship->body->GetAngle());
 		CTypedPtrDblElement<Zombie> *z = state->zombies.GetHeadPtr();
 		while (!state->zombies.IsSentinel(z)){
+			pos = z->Data()->body->GetPosition();
 			if ((z->Data()->body->GetPosition() - state->ship->body->GetPosition()).Length() <= meter->detectionRadius + 40){
-				pos = z->Data()->body->GetPosition();
 				z->Data()->sprite->setVisible(true);
+				z->Data()->sprite->setOpacity(255);
 				z->Data()->sprite->setPosition(pos.x, pos.y);
 				z->Data()->advanceFrame();
 			}
 			else{
+				z->Data()->sprite->setVisible(true);
+				z->Data()->sprite->setOpacity(200);
+				z->Data()->sprite->setPosition(pos.x, pos.y);
+				z->Data()->advanceFrame();
+				/*
 				z->Data()->sprite->setVisible(false);
 				if (!audio->frameOnBeat){
 					view->zombiePositions->clear();
 				}else if (!audio->prevOnBeat){
 					pos = z->Data()->body->GetPosition();
 					view->zombiePositions->drawSolidCircle(Vec2(pos.x, pos.y), 8.0f, 0.0f, 20.0f, ccColor4F(0.5f, 0, 0, 1.0f));
-				}
+				}*/
 
 			}
 			z = z->Next();
@@ -920,6 +926,7 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 
 	view->durability->setString("Durability");
 	view->durabilityHolder->clear();
+	view->durabilityHolder->drawSolidRect(Vec2(0, 0), Vec2(110, -150), ccColor4F(0.0f, 0.0f, 0.0f, 1.0f));
 	view->durabilityHolder->drawRect(Vec2(0, 0), Vec2(110, -150), ccColor4F(0.5f, 0.5f, 0.5f, 1.0f));
 
 	if (state->ship->hasWeapon){
