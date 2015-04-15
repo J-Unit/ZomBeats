@@ -75,3 +75,8 @@ float AudioController::timeToBeat(int i){
 bool AudioController::songIsOver(){
 	return trackLoops > 0;
 }
+
+void AudioController::stop(){
+	trackLoops++;
+	AudioEngine::stopAll();
+}

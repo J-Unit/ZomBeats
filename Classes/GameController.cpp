@@ -281,7 +281,7 @@ void GameController::createPauseButton() {
 	auto pauseButton = MenuItemImage::create("textures/pause_button.png", "textures/pause_button_clicked.png", CC_CALLBACK_0(GameController::pauseGame, this));
 	Size visibleSize2 = Director::getInstance()->getVisibleSize();
 	Vec2 origin2 = Director::getInstance()->getVisibleOrigin();
-	pauseButton->setPosition(Point(visibleSize2.width*0.97 + origin2.x, visibleSize2.height*0.96 + origin2.y));
+	pauseButton->setPosition(Point(visibleSize2.width*0.94 + origin2.x, visibleSize2.height*0.92 + origin2.y));
 	pauseButton->setScale(0.2f);
 
 	auto pauseButtonMenu = Menu::create(pauseButton, NULL);
@@ -291,14 +291,14 @@ void GameController::createPauseButton() {
 
 Vec2 GameController::mouseToWorld(Vec2 click){
 	b2Vec2 pos = state->ship->body->GetPosition();
-	return Vec2((input->lastClick.x - view->screen_size_x / 2.0) / view->allSpace->getScale() + pos.x, 
-		-(input->lastClick.y - view->screen_size_y / 2.0) / view->allSpace->getScale() + pos.y);
+	return Vec2((input->lastClick.x - view->screen_size_x / 2.0) / view->resIndepScreen->getScale() + pos.x, 
+		-(input->lastClick.y - view->screen_size_y / 2.0) / view->resIndepScreen->getScale() + pos.y);
 }
 
 bool GameController::hasWonLevel(){
 	if (currentLevel != CALIBRATION_LEVEL) return state->zombies.GetCount() == 0;
 	else {
-		if (calibration->audioCalibration) return audio->songIsOver() && audio->songTime > 5.0f;
+		if (calibration->audioCalibration) return audio->songIsOver();
 		else return elapsedTime - calibration->zombieTimes[15] > 5.0f;
 	}
 }
@@ -558,7 +558,7 @@ void GameController::update(float deltaTime) {
 		float y = state->ship->body->GetPosition().y;
 		MapNode *from = state->level->locateCharacter(x, y);
 		if (!input->clickProcessed && !activated){
-			if (currentLevel != CALIBRATION_LEVEL || calibration->audioCalibration){
+			if (currentLevel != CALIBRATION_LEVEL || (calibration->audioCalibration && calibration->acceptClicks)){
 				//cout << "PBF: " << elapsedTime << "\n";
 				stringstream st;
 				//char* tempstr = "kgkgk";
@@ -642,6 +642,7 @@ void GameController::update(float deltaTime) {
 						st << "OFFSET: " << audio->timeToBeat(4 + calibration->clicks);
 						calibration->clicks++;
 						view->beatHUD->setString(st.str());
+						if (calibration->clicks >= 32) calibration->acceptClicks = false;
 					}
 				}
 				else{
@@ -724,10 +725,11 @@ void GameController::update(float deltaTime) {
 				}
 			}
 			else{
-				if (audio->songIsOver()){
+				if (audio->songTime>20.0f){
+					audio->stop();
 					stringstream ss;
 					if (calibration->clicks < 32){
-						ss << "You missed more than half the beats, try again.";  
+						ss << "You missed some of the the beats, try again.";  
 					}
 					else{
 						audio->audioDelay = calibration->audioDelay();

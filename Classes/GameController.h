@@ -22,7 +22,7 @@
 #define GAME_MENU_SCALE 0.15f
 #define GAME_MENU_BUTTON_SCALE 0.75f
 #define GAME_MENU_BUTTON_OFFSET 130
-#define MUSIC_NOTE_SCALE 0.1f
+#define MUSIC_NOTE_SCALE 0.065f
 
 
 //delays

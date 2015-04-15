@@ -128,13 +128,16 @@ void View::buildScene(LevelMap *level, Layer* l, int levNum) {
 	shakeCenter = Vec2(origin.x + dimen.width / 2.0f, origin.y + dimen.height / 2.0f);
 	Vec2 anchor(0.5f, 0.5f);
 
+	resIndepScreen = Node::create();
+	resIndepScreen->setPosition(Vec2::ZERO);
+	makeResolutionIndependent(resIndepScreen);
+	shakeCenter = shakeCenter / resIndepScreen->getScale();
 	// Create the master node.  This, unlike the layer, is resolution independent.
 	// If we do not do this, the children will not all line up correctly on different devices.
 	allSpace = Node::create();
 	allSpace->setContentSize(Size(SPACE_TILE*level->bkgTilesX, SPACE_TILE*level->bkgTilesY));
 	allSpace->setPosition(shakeCenter);
 	allSpace->setAnchorPoint(anchor);
-	makeResolutionIndependent(allSpace);
 
 
 	// Everything else is relative to all space, not the screen!
@@ -283,28 +286,28 @@ void View::buildScene(LevelMap *level, Layer* l, int levNum) {
 
 	objective = Label::create();
 	objective->setTTFConfig(*ResourceLoader::getInstance()->getFont("MarkerFelt"));
-	objective->setPosition(Vec2(HUD_OFFSET.x*10, HUD_OFFSET.y * 60));
-	objective->setAnchorPoint(Vec2::ZERO);
+	objective->setPosition(Vec2(HUD_OFFSET.x*13, HUD_OFFSET.y * 57));
+	objective->setAnchorPoint(anchor);
 
 	beatHUD = Label::create();
 	beatHUD->setTTFConfig(*ResourceLoader::getInstance()->getFont("MarkerFelt"));
-	beatHUD->setPosition(Vec2(HUD_OFFSET.x, HUD_OFFSET.y * 50));
-	beatHUD->setScale(2.0f);
+	beatHUD->setPosition(Vec2(HUD_OFFSET.x, HUD_OFFSET.y * 52));
+	beatHUD->setScale(1.8f);
 	beatHUD->setAnchorPoint(Vec2::ZERO);
 
 	mainBeatHUD = Label::create();
 	mainBeatHUD->setTTFConfig(*ResourceLoader::getInstance()->getFont("MarkerFelt"));
-	mainBeatHUD->setPosition(Vec2(HUD_OFFSET.x, HUD_OFFSET.y * 60));
-	mainBeatHUD->setScale(1.6f);
+	mainBeatHUD->setPosition(Vec2(HUD_OFFSET.x, HUD_OFFSET.y * 57));
+	mainBeatHUD->setScale(1.4f);
 	mainBeatHUD->setAnchorPoint(Vec2::ZERO);
 
 	grooviness = Label::create();
 	grooviness->setTTFConfig(*ResourceLoader::getInstance()->getFont("MarkerFelt"));
-	grooviness->setPosition(Vec2(HUD_OFFSET.x, HUD_OFFSET.y * 40));
+	grooviness->setPosition(Vec2(HUD_OFFSET.x, HUD_OFFSET.y * 42));
 	grooviness->setAnchorPoint(Vec2::ZERO);
 	
 	meter = DrawNode::create();
-	meter->setPosition(HUD_OFFSET.x * 3.5f, HUD_OFFSET.y * 21);
+	meter->setPosition(HUD_OFFSET.x * 2.0f, HUD_OFFSET.y * 23);
 	meter->setContentSize(allSpace->getContentSize());
 	meter->setAnchorPoint(Vec2::ZERO);
 
@@ -336,7 +339,7 @@ void View::buildScene(LevelMap *level, Layer* l, int levNum) {
 	Size visibleSize2 = Director::getInstance()->getVisibleSize();
 	Vec2 origin2 = Director::getInstance()->getVisibleOrigin();
 	pause->setScale(0.2f);
-	pause->setPosition(Point(visibleSize2.width*0.97 + origin2.x, visibleSize2.height*0.96 + origin2.y));
+	pause->setPosition(Point(visibleSize2.width*0.8 + origin2.x, visibleSize2.height*0.94 + origin2.y));
 
 	//a pause menu goes here
 	//pauseMenu->setSprite(Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("pause_menu")));
@@ -344,22 +347,25 @@ void View::buildScene(LevelMap *level, Layer* l, int levNum) {
 	//pauseMenu->sprite->setPosition(Vec2(HUD_OFFSET.x * 50, HUD_OFFSET.y * 35));
 
 	// Remove the welcome screen and display the game.
+	l->addChild(resIndepScreen);
+	resIndepScreen->addChild(allSpace);
 	allSpace->addChild(enviornment, 0);
 	//allSpace->addChild(nearSpace,0.5);
 	//allSpace->addChild(shipImage, 1);
-	l->addChild(allSpace);
+	resIndepScreen->addChild(objective);
+
 	//l->addChild(coordHUD);  // On top of scene graph.
 	//l->addChild(velHUD);
 	//l->addChild(thrustHUD);
-	l->addChild(beatHUD);
-	l->addChild(mainBeatHUD);
-	l->addChild(grooviness);
-	l->addChild(durability);
-	l->addChild(meter);
-	l->addChild(durabilityBox);
+	resIndepScreen->addChild(beatHUD);
+	resIndepScreen->addChild(mainBeatHUD);
+	resIndepScreen->addChild(grooviness);
+	resIndepScreen->addChild(durability);
+	resIndepScreen->addChild(meter);
+	resIndepScreen->addChild(durabilityBox);
 	durabilityBox->addChild(durabilityHolder);
 	durabilityBox->addChild(durabilitySpriteContainer);
-	l->addChild(objective);
+
 	//l->addChild(detectionRadiusHUD);
 	//l->addChild(zombieOneAwarenessHUD); //remove this later
 }

@@ -13,7 +13,7 @@
 #define PARALLAX_AMT 0.0f
 #define PLANET1_POS  Vec2(950, 1100)
 #define PLANET2_POS  Vec2(1600, 1500)
-#define HUD_OFFSET   Vec2(10.0f,10.f)
+#define HUD_OFFSET   Vec2(35.0f,10.0f)
 #define SHAKE_STRENGTH 4.0f
 
 using namespace cocos2d;
@@ -31,6 +31,7 @@ public:
 	Scene* scene;
 	
 	/** Label for on-screen coordinate HUD */
+	Node* resIndepScreen;
 	Label*  coordHUD;
 	Label*	velHUD;
 	Label*	thrustHUD;

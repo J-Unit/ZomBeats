@@ -33,5 +33,6 @@ public:
 	int trackLoops;
 	float audioDelay;
 	float videoDelay;
+	void stop();
 };
 
