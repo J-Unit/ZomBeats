@@ -46,6 +46,7 @@ Ship::Ship(b2World *world, float x, float y, float mx, float my) {
 	bodyDef.type = b2_dynamicBody;
 	bodyDef.position.Set(x, y);
 	bodyDef.fixedRotation = true;
+	hasEnvironmentWeapon = false;
 	body = world->CreateBody(&bodyDef);
 	type = Type(this);
 	body->SetUserData(&type);
@@ -58,7 +59,7 @@ Ship::Ship(b2World *world, float x, float y, float mx, float my) {
 	//body->SetAngularDamping(0.5f);
     sprite  = NULL;
 	//setSprite(FilmStrip::create(ResourceLoader::getInstance()->getTexture("ricky"), 1, 2, 2), mx, my);
-	setSprite(FilmStrip::create(ResourceLoader::getInstance()->getTexture("ricky_gun"), 5, 3, 13), mx, my);
+	setSprite(FilmStrip::create(ResourceLoader::getInstance()->getTexture("ricky_gun"), 5, 3, 14), mx, my);
 	lastPosition = body->GetPosition();
 	prevFrame = 1; //initialize the initial frame number
 }
@@ -122,7 +123,10 @@ bool Ship::update(float deltaTime, Vec2 dir, float grooviness) {
     // Adjust the active forces.
    // forward = RANGE_CLAMP(forward, -SHIP_MAX_SPEED, SHIP_MAX_SPEED);
    // turning = RANGE_CLAMP(turning, -SHIP_MAX_TURN, SHIP_MAX_TURN);
-    if (sprite != NULL && hasWeapon) {
+	if (sprite != NULL && hasEnvironmentWeapon){
+		sprite->setFrame(13);
+	}
+    else if (sprite != NULL && hasWeapon) {
 		sprite->setFrame(12);
     }
 	else if(sprite!=NULL && !hasWeapon) {

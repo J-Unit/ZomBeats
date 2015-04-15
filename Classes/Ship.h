@@ -73,6 +73,7 @@ public:
     Ship(b2World *world);
 	bool isDestroyed;
 	bool hasWeapon;
+	bool hasEnvironmentWeapon;
 	bool isActivatingEnvironment;
 	Weapon *currentWeapon;
 	b2PolygonShape dynamicBox; 

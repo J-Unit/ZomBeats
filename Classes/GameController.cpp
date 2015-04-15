@@ -91,6 +91,7 @@ void GameController::BeginContact(b2Contact* contact){
 		//ew->isUsed = true; //right now, no activation sequence
 		
 		state->ship->isActivatingEnvironment = true; //right now, no activation sequence
+		state->ship->hasEnvironmentWeapon = true;
 		//state->ship->isActivatingEnvironment = false; 
 		return;
 	}
@@ -428,7 +429,7 @@ void GameController::removeDeadEWeapons(){
 			eweap->isUsed = false;
 			state->world->DestroyBody(eweap->body);
 			toDelete = e_weapon;
-			view->enviornment->removeChild(eweap->sprite);
+			//view->enviornment->removeChild(eweap->sprite);
 		}
 	}
 	if (toDelete != NULL){
@@ -538,6 +539,7 @@ void GameController::update(float deltaTime) {
 			//TODO: Process moving the mower, etc. make mower variable that says in use..might have and make sure it is still active. Iterate thru mower list and point to the correct one, then switch position of ricky to it and it to slightly towards new direction
 
 			currentEnvironment->isUsed = true;
+			state->ship->hasEnvironmentWeapon = false;
 
 		}
 
@@ -761,6 +763,10 @@ void GameController::update(float deltaTime) {
 		if (state->ship->isActivatingEnvironment){
 			state->ship->body->SetLinearVelocity(b2Vec2_zero);
 			destination = 0;
+		}
+
+		if (state->ship->hasEnvironmentWeapon && currentEnvironment!=NULL && currentEnvironment->sprite!=NULL){
+			view->enviornment->removeChild(currentEnvironment->sprite);
 		}
 
 		if (currentMower != NULL && currentMower->hasMoved){
