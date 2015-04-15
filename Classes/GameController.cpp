@@ -28,6 +28,7 @@
 #include "Box2d/Box2d.h"
 #include <ctime>
 #include <stdlib.h>
+#include "MainMenuScene.h"
 
 #define STARTING_LEVEL 0
 #define MAX_LEVELS 2
@@ -194,10 +195,14 @@ void GameController::createGameMenu() {
 	resumeButton->setScale(GAME_MENU_BUTTON_SCALE);
 
 	auto restartButton = MenuItemImage::create("textures/restart_button.png", "textures/restart_button_clicked.png", CC_CALLBACK_0(GameController::restartGame, this));
-	restartButton->setPosition(Point(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y - GAME_MENU_BUTTON_OFFSET/2));
+	restartButton->setPosition(Point(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
 	restartButton->setScale(GAME_MENU_BUTTON_SCALE);
 
-	menu = Menu::create(resumeButton, restartButton, NULL);
+	auto homeButton = MenuItemImage::create("textures/home_button.png", "textures/home_button_clicked.png", CC_CALLBACK_0(GameController::goBackToMainMenu, this));
+	homeButton->setPosition(Point(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y - GAME_MENU_BUTTON_OFFSET));
+	homeButton->setScale(GAME_MENU_BUTTON_SCALE);
+
+	menu = Menu::create(resumeButton, restartButton, homeButton, NULL);
 	menu->setPosition(Point::ZERO);
 	this->addChild(menu);
 	
@@ -345,6 +350,12 @@ void GameController::loadLevel(int i){
 void GameController::restartGame() {
 	loadLevel(currentLevel);
 	removeGameMenu();
+}
+
+void GameController::goBackToMainMenu() {
+	audio->stop();
+	auto scene = MainMenuScene::createScene();
+	Director::getInstance()->replaceScene(TransitionFade::create(LEVEL_MENU_TRANSITION_TIME, scene));
 }
 
 void GameController::pauseGame() {

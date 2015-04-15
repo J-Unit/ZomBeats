@@ -1,5 +1,4 @@
 #include "MainMenuScene.h"
-#include "GameController.h"
 #include "LevelSelectScene.h"
 #include "View.h"
 USING_NS_CC;

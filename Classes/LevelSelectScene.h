@@ -7,6 +7,7 @@
 #define LEVEL_BUTTON_HORIZONTAL_OFFSET 200
 #define LEVEL_BACKGROUND_SCALE 1.5f
 #define LEVEL_BUTTON_SCALE 1.2f
+#define BACK_BUTTON_SCALE 2.2f
 #define LEVEL_MENU_TRANSITION_TIME 0.3f
 
 class LevelSelectScene : public cocos2d::Layer
@@ -20,5 +21,6 @@ public:
 
 	CREATE_FUNC(LevelSelectScene);
 	void GoToGameScene(cocos2d::Ref* sender, int level);
+	void GoToMainMenuScene(cocos2d::Ref* sender);
 };
 

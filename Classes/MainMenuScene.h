@@ -1,4 +1,3 @@
-#include "GameController.h"
 #include "View.h"
 #include "LevelSelectScene.h"
 #include "cocos2d.h"
