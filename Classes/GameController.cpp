@@ -638,6 +638,7 @@ void GameController::update(float deltaTime) {
 							zambie = zambie->Next();
 						}
 						if (num_zombies_killed > 0){
+							audio->playEffect("sound_effects/shotgun.mp3");
 							state->ship->currentWeapon->durability -= 1;
 						}
 						if (state->ship->currentWeapon->durability == 0){
