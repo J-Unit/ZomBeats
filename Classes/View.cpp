@@ -286,18 +286,18 @@ void View::buildScene(LevelMap *level, Layer* l, int levNum) {
 
 	objective = Label::create();
 	objective->setTTFConfig(*ResourceLoader::getInstance()->getFont("MarkerFelt"));
-	objective->setPosition(Vec2(HUD_OFFSET.x*13, HUD_OFFSET.y * 57));
+	objective->setPosition(Vec2(HUD_OFFSET.x*44.5f, HUD_OFFSET.y * 57));
 	objective->setAnchorPoint(anchor);
 
 	beatHUD = Label::create();
 	beatHUD->setTTFConfig(*ResourceLoader::getInstance()->getFont("MarkerFelt"));
-	beatHUD->setPosition(Vec2(HUD_OFFSET.x, HUD_OFFSET.y * 52));
+	beatHUD->setPosition(Vec2(HUD_OFFSET.x, HUD_OFFSET.y * 50));
 	beatHUD->setScale(1.8f);
 	beatHUD->setAnchorPoint(Vec2::ZERO);
 
 	mainBeatHUD = Label::create();
 	mainBeatHUD->setTTFConfig(*ResourceLoader::getInstance()->getFont("MarkerFelt"));
-	mainBeatHUD->setPosition(Vec2(HUD_OFFSET.x, HUD_OFFSET.y * 57));
+	mainBeatHUD->setPosition(Vec2(HUD_OFFSET.x, HUD_OFFSET.y * 56));
 	mainBeatHUD->setScale(1.4f);
 	mainBeatHUD->setAnchorPoint(Vec2::ZERO);
 
@@ -307,7 +307,7 @@ void View::buildScene(LevelMap *level, Layer* l, int levNum) {
 	grooviness->setAnchorPoint(Vec2::ZERO);
 	
 	meter = DrawNode::create();
-	meter->setPosition(HUD_OFFSET.x * 2.0f, HUD_OFFSET.y * 23);
+	meter->setPosition(HUD_OFFSET.x * 4.0f, HUD_OFFSET.y * 23);
 	meter->setContentSize(allSpace->getContentSize());
 	meter->setAnchorPoint(Vec2::ZERO);
 

@@ -18,5 +18,6 @@ public:
 
 	cocos2d::Sprite *zombies[16];
 	float zombieTimes[16];
+	float phaseDelay;
 };
 
