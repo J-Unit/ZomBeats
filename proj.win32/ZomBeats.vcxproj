@@ -154,6 +154,7 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
     <ClCompile Include="..\Classes\InputController.cpp" />
     <ClCompile Include="..\Classes\Lawnmower.cpp" />
     <ClCompile Include="..\Classes\LevelMap.cpp" />
+    <ClCompile Include="..\Classes\LevelSelectScene.cpp" />
     <ClCompile Include="..\Classes\LevelSerializer.cpp" />
     <ClCompile Include="..\Classes\MainMenuScene.cpp" />
     <ClCompile Include="..\Classes\ResourceLoader.cpp" />
@@ -182,6 +183,7 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
     <ClInclude Include="..\Classes\InputController.h" />
     <ClInclude Include="..\Classes\Lawnmower.h" />
     <ClInclude Include="..\Classes\LevelMap.h" />
+    <ClInclude Include="..\Classes\LevelSelectScene.h" />
     <ClInclude Include="..\Classes\LevelSerializer.h" />
     <ClInclude Include="..\Classes\MainMenuScene.h" />
     <ClInclude Include="..\Classes\Node.h" />

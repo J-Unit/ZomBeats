@@ -87,6 +87,9 @@
     <ClCompile Include="..\Classes\CalibrationController.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\LevelSelectScene.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -177,6 +180,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\CalibrationController.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\LevelSelectScene.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
