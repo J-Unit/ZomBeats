@@ -96,7 +96,7 @@ void View::makeResolutionIndependent(Node *n){
 }
 #define RELEASE(p) if(p!=NULL) p->release();
 void View::releaseScene(){
-	RELEASE(path);
+	/*RELEASE(path);
 	RELEASE(detectionRadiusCircle);
 	RELEASE(directionUseEnvironmentWeapon);
 	RELEASE(hitBox);
@@ -113,6 +113,7 @@ void View::releaseScene(){
 	RELEASE(enviornment);
 	RELEASE(zombies);
 	RELEASE(shipImage);
+	RELEASE(hitBox);*/
 }
 
 /**

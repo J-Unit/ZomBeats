@@ -326,8 +326,8 @@ void GameController::loadLevel(int i){
 	// Build the scene graph and create the ship model.
 
 	ls.addObjects(state);
-	this->removeAllChildren();
 	//view->releaseScene();
+	this->removeAllChildrenWithCleanup(true);
 	view->buildScene(state->level, this, i);
 	createPauseButton();
 	view->allSpace->addChild(state->ship->getSprite());
@@ -387,7 +387,8 @@ void GameController::createWeaponRanges(float weapWidth, float weapRange, b2Vec2
 		weaponRectangle[i] = weaponRectangle[i] + rickPos + ((weapRange / 2.0f + SHIP_HEIGHT)*dir);
 
 	}
-	
+	view->weaponBox->clear();
+	view->weaponBox->drawRect(Vec2(weaponRectangle[0].x, weaponRectangle[0].y), Vec2(weaponRectangle[1].x, weaponRectangle[1].y), Vec2(weaponRectangle[3].x, weaponRectangle[3].y), Vec2(weaponRectangle[2].x, weaponRectangle[2].y), ccColor4F(2.0f, 2.0f, 2.0f, 1.0f));
 }
 
 bool GameController::isZombieHit(b2Vec2 az, b2Vec2 bz, b2Vec2 ab, b2Vec2 bc){
@@ -617,7 +618,6 @@ void GameController::update(float deltaTime) {
 						theta = round(theta / (M_PI / 4.0f)) * (M_PI / 4.0f);
 
 						createWeaponRanges(state->ship->currentWeapon->width, state->ship->currentWeapon->range, b2Vec2(cos(theta), sin(theta)));
-
 						//detect if zombies are inside rectangle of weapon
 						CTypedPtrDblElement<Zombie> *zambie = state->zombies.GetHeadPtr();
 						int num_zombies_killed = 0;
@@ -645,6 +645,7 @@ void GameController::update(float deltaTime) {
 							state->ship->hasWeapon = false;
 							free(state->ship->currentWeapon);
 							state->ship->currentWeapon = NULL;
+							view->weaponBox->clear();
 						}
 
 					}
@@ -905,10 +906,10 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 	clearMusicNotePath();
 	view->directionUseEnvironmentWeapon->clear();
 	//clear the old detection circle
-	view->detectionRadiusCircle->clear();
+	//view->detectionRadiusCircle->clear();
 	//clear the old hitbox
-	view->hitBox->clear();
-	view->weaponBox->clear();
+	//view->hitBox->clear();
+	//view->weaponBox->clear();
 
 	/*stringstream d;
 	//d << "Detection Radius: " << detectionRadius;
@@ -937,9 +938,7 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 	view->durabilityHolder->drawRect(Vec2(0, 0), Vec2(110, -150), ccColor4F(0.5f, 0.5f, 0.5f, 1.0f));
 
 	if (state->ship->hasWeapon){
-		view->hitBox->clear();
-		view->weaponBox->drawRect(Vec2(weaponRectangle[0].x, weaponRectangle[0].y), Vec2(weaponRectangle[1].x, weaponRectangle[1].y), Vec2(weaponRectangle[3].x, weaponRectangle[3].y), Vec2(weaponRectangle[2].x, weaponRectangle[2].y),ccColor4F(2.0f, 2.0f, 2.0f, 1.0f));
-
+		
 		//hero array for sprite pointers
 		//pickup will clear contents and then for loop that populates it with sprite pointers and sets position by index in the actual sprite position
 		/*int dura = state->ship->currentWeapon->durability;
@@ -971,7 +970,7 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 
 	if (!state->ship->hasWeapon){
 		view->durabilitySpriteContainer->clear();
-		view->weaponBox->drawRect(Vec2(weaponRectangle[0].x, weaponRectangle[0].y), Vec2(weaponRectangle[1].x, weaponRectangle[1].y), Vec2(weaponRectangle[3].x, weaponRectangle[3].y), Vec2(weaponRectangle[2].x, weaponRectangle[2].y), ccColor4F(2.0f, 2.0f, 2.0f, 1.0f));
+		//view->weaponBox->drawRect(Vec2(weaponRectangle[0].x, weaponRectangle[0].y), Vec2(weaponRectangle[1].x, weaponRectangle[1].y), Vec2(weaponRectangle[3].x, weaponRectangle[3].y), Vec2(weaponRectangle[2].x, weaponRectangle[2].y), ccColor4F(2.0f, 2.0f, 2.0f, 1.0f));
 	}
 	//view->directionUseEnvironmentWeapon->drawLine(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y), currentFingerPos, ccColor4F(128.0f, 128.0f, 128.0f, 0.5f));
 
