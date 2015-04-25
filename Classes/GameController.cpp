@@ -346,7 +346,10 @@ void GameController::loadLevel(int i){
 		view->durabilityBox->setVisible(false);
 		view->durability->setVisible(false);
 		calibration->init();
-		view->objective->setString("Audio Calibration: Tap anywhere to the beat after the first four, don't miss any!");
+		//Sprite* popup = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("dialogue_popup"));
+		//popup->setPosition(250, 250);
+		//this->addChild(popup, 10);
+		view->objective->setString("Audio Calibration: Tap anywhere to the beat after\nthe first four, don't miss any!");
 	}
 	audio->playTrack(ls.getLevelTrack(), currentLevel != CALIBRATION_LEVEL);
 }
@@ -462,7 +465,7 @@ void GameController::removeDeadZombies(){
 
 #define VIDEO_CALIBRATION_OFFSET 150
 void GameController::startVideoCalibration(){
-	view->objective->setString("Now tap just as the center of each zombie lines up with Ricky, don't miss any!");
+	view->objective->setString("Now tap just as the center of each zombie lines up\nwith Ricky, don't miss any!");
 	calibration->totalOffset = 0.0;
 	calibration->clicks = 0;
 	calibration->acceptClicks = true;

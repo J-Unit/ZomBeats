@@ -24,6 +24,15 @@ ResourceLoader::ResourceLoader() {
     } else {
         fontdata["MarkerFelt"] = font;
     }
+	
+	font = new TTFConfig("fonts/NewFont.ttf", 24, GlyphCollection::DYNAMIC);
+	if (!FontAtlasCache::getFontAtlasTTF(*font)) {
+		// Failed to load font.
+		delete font;
+	}
+	else {
+		fontdata["NewFont"] = font;
+	}
 
     // Load the textures (Autorelease objects)
     Texture2D* text;
@@ -167,6 +176,12 @@ ResourceLoader::ResourceLoader() {
 		text->retain();
 		textures["music_note"] = text;
 	}
+	/*
+	text = Director::getInstance()->getTextureCache()->addImage("textures/dialogue_popup.png");
+	if (text) {
+		text->retain();
+		textures["dialogue_popup"] = text;
+	}*/
 }
 
 /**
