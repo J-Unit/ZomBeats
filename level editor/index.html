@@ -1,9 +1,12 @@
 <html>
+
+
 <body>
 Tiles X: <input id="inX" type="number" value="10" min="1" max="100" style="width:50"/>
 Tiles Y: <input id="inY" type="number" value="10" min="1" max="100" style="width:50"/>
 <button id="update">Update</button>
-Item: <select id = "ItemAdd">
+<!-- Grid:<input id="grid" type="checkbox" checked onchange="flipGrid()"> -->
+ Item: <select id = "ItemAdd">
 	<option value="wall">Wall</option>
 	<option value="zombie">Zombie</option>
 	<option value="start location">Start Location</option>
@@ -11,276 +14,26 @@ Item: <select id = "ItemAdd">
 	<option value="enviweapon">Environment Weapon</option>
 </select>
 Type: <select id = "ItemType"> </select>
+Track: <select id = "Track" onchange="changeTrack()">
+	<option value="songs/SimpleBeat.mp3">SimpleBeat</option>
+	<option value="songs/01 OverDrive.mp3">OverDrive</option>
+	<option value="songs/01 Looking For.mp3">Looking For</option>
+	<option value="songs/ChillDeepHouse.mp3">Chill Deep House</option>
+</select>
+<audio id="audio" controls>
+	<source id="audiosrc" src="../Resources/songs/SimpleBeat.mp3">
+</audio>
 Import: <input type="file" id="import"/>
 <button id="export">Export</button>: <span id="download"></span>
 <br/>
 <br/>
 <div id="display"></div>
-
-
-<script>
-HERO_IMAGE = "../Resources/textures/ricky_pause.png"
-ZOMBIE_IMAGE = "../Resources/textures/zombie_new.png"
-WEAPON_SWORD_IMAGE = "../Resources/textures/sword.png"
-ENVI_LAWNMOWER_IMAGE = "../Resources/textures/mower.png"
-WALL_PYRAMID_IMAGE = "../Resources/textures/wall.png"
-WALL_FENCE_IMAGE = "../Resources/textures/fence.png"
-WALL_HOUSE_IMAGE = "../Resources/textures/house.png"
-WALL_ROCK_IMAGE = "../Resources/textures/rock.png"
-WALL_TREE_IMAGE = "../Resources/textures/tree.png"
-TILE_IMAGE = "../Resources/textures/tile_new.png"
-
-TILE_SIZE = 256;
-NODES_PER_TILE = 4;
-WALL_SIZE = 64;
-ZOMBIE_SIZE = 128;
-HERO_HEIGHT = 128;
-HERO_WIDTH = 85;
-SWORD_WIDTH = 60;
-SWORD_HEIGHT = 35;
-objId = 0;
-level = new function(){
-	this.bkgX = 1 * 10;
-	this.bkgY = 1 * 10;
-	this.nodesX = this.bkgX * NODES_PER_TILE;
-	this.nodesY = this.bkgY * NODES_PER_TILE;
-	this.nodeWidth = this.bkgX * TILE_SIZE / this.nodesX;
-	this.nodeHeight = this.bkgY * TILE_SIZE / this.nodesY;
-	//this.nWalls = 0;
-	//this.nZombies = 0;
-	//this.nWeapons = 0;
-	this.walls = {};
-	this.zombies = {};
-	this.weapons = {};
-	this.environment_weapons = {};
-	this.startX = 0;
-	this.startY = 0;
-};
-ia = document.getElementById("ItemAdd");
-it = document.getElementById("ItemType");
-ia.onchange = function(){
-	switch(ia.options[ia.selectedIndex].value){
-		case "start location":
-			it.innerHTML = "<option value='none'>Default</option>";
-		case "zombie":
-			it.innerHTML = "<option value='cop'>Police</option>";
-			break;
-		case "weapon":
-			it.innerHTML = "<option value='sword'>Sword</option>";
-			break;
-		case "enviweapon":
-			it.innerHTML = "<option value='mower'>Lawn Mower</option>";
-			break;
-		case "wall":
-			it.innerHTML = "<option value='pyramid'>Pyramid</option> <option value='rock'>Rock</option> <option value='fence'>Fence</option> <option value='tree'>Tree</option> <option value='house'>House</option>";
-			break;
-	}
-	it.selectedIndex = 0;
-};
-ia.onchange();
-function generateBackground(){
-	document.getElementById('display').innerHTML = "";
-	level.bkgX = 1* document.getElementById("inX").value;
-	level.bkgY = 1* document.getElementById("inY").value;
-	level.walls = {};
-	level.zombies = {};
-	level.weapons = {};
-	level.environment_weapons = {};
-	level.startX = 0;
-	level.startY = 0;
-	level.nodesX = level.bkgX * NODES_PER_TILE;
-	level.nodesY = level.bkgY * NODES_PER_TILE;
-	level.nodeWidth = level.bkgX * TILE_SIZE / level.nodesX;
-	level.nodeHeight = level.bkgY * TILE_SIZE / level.nodesY;
-	document.getElementById('display').style.width = level.bkgX * TILE_SIZE;
-	document.getElementById('display').style.height = level.bkgY * TILE_SIZE;
-	for (i=0;i<level.bkgX;i++){
-		for (j=0;j<level.bkgY;j++){
-			img = document.createElement("img");
-			img.className = "bkg";
-			img.src = TILE_IMAGE;
-			img.style.left = i*TILE_SIZE;
-			img.style.top = j*TILE_SIZE;
-			document.getElementById('display').appendChild(img);
-		}
-	}
-}
-loadedLevel = "";
-function importLevel(){
-	f = document.getElementById('import').files[0];
-	r = new FileReader();
-	r.readAsText(f, 'UTF-8');
-	r.onload = function(e){
-		level = JSON.parse(e.target.result);
-		document.getElementById('display').innerHTML = "";
-		generateBackground();
-		objId = 0;
-		for(i = 0; i<level.walls.length; i++) addImage(level.walls[i], "wall");
-		for(i = 0; i<level.zombies.length; i++) addImage(level.zombies[i], "zombie");
-		for(i = 0; i<level.weapons.length; i++) addImage(level.weapons[i], "weapon");
-		for(i = 0; i<level.environment_weapons.length; i++) addImage(level.environment_weapons[i], "enviweapon");
-		addImage({"x":level.startX, "y":level.startY}, "start location");
-	};
-}
-document.getElementById('import').onchange = importLevel;
-/*window.requestFileSystem  = window.requestFileSystem || window.webkitRequestFileSystem;
-
-window.requestFileSystem(window.PERSISTENT, 1024*1024, function(fs){
-	fs.root.getFile('level.zbl', {create: true, exclusive: true}, function(fileEntry) {
-		fileEntry.createWriter(function(fileWriter) {
-
-      fileWriter.seek(fileWriter.length); // Start write position at EOF.
-
-      // Create a new Blob and write it to log.txt.
-      var blob = new Blob(['Hello World'], {type: 'text/plain'});
-      fileWriter.write(blob);
-  	});
-  });
-});*/
-function exportLevel() {
-	l = document.getElementById("link");
-    if(l) document.getElementById("download").removeChild(l);
-    link = document.createElement("a");
-    link.innerHTML = "level.zbl";
-    link.id = "link";
-    link.download = "level.zbl";
-    link.onclick = function(){
-    	document.getElementById("download").removeChild(link);
-    }
-    exp = level;
-    exp.walls = Object.keys(level.walls).map(function(k){return level.walls[k];});
-    exp.zombies = Object.keys(level.zombies).map(function(k){return level.zombies[k];});
-    exp.weapons = Object.keys(level.weapons).map(function(k){return level.weapons[k];});
-    exp.environment_weapons = Object.keys(level.environment_weapons).map(function(k){return level.environment_weapons[k];});
-    link.href = 'data:text/csv;charset=utf-8,' + escape(JSON.stringify(exp));
-    document.getElementById("download").appendChild(link);
-}
-document.getElementById('export').onclick = exportLevel;
-function createObject(event){
-	if(event.target.className == "obj"){
-		delete level.walls[event.target.id];
-		delete level.zombies[event.target.id];
-		delete level.weapons[event.target.id];
-		delete level.environment_weapons[event.target.id];
-		document.getElementById("display").removeChild(event.target);
-		return;
-	}
-	size_x = size_y = 0;
-	switch(ia.options[ia.selectedIndex].value){
-		case "wall": 
-			switch(it.options[it.selectedIndex].value){
-				case "pyramid": case "fence": case "rock": size_x = size_y = WALL_SIZE / 2; break;
-				case "tree": size_x = size_y = WALL_SIZE; break;
-				case "house": size_x = size_y = WALL_SIZE * 2; break;
-			} break;
-		case "zombie": size_x = size_y = ZOMBIE_SIZE / 2; break;
-		case "start location": size_x = HERO_WIDTH / 2; size_y = HERO_HEIGHT/2; break;
-		case "weapon": size_x = SWORD_WIDTH / 2; size_y = SWORD_HEIGHT / 2; break;
-		case "enviweapon": size_x = SWORD_WIDTH / 2; size_y = SWORD_HEIGHT / 2; break;
-	}
-	pos_x = event.pageX - document.getElementById("display").offsetLeft;
-	pos_y = event.pageY - document.getElementById("display").offsetTop;
-	nx = Math.floor(pos_x/level.nodeWidth);//*level.nodeWidth;
-	ny = Math.floor(pos_y/level.nodeHeight);//*level.nodeHeight;
-	ix = nx * level.nodeWidth;
-	iy = ny * level.nodeHeight;
-	img = document.createElement("img");
-	img.className = "obj";
-	img.style.left = ix;// + size_x;
-	img.style.top = iy; //+ size_y;
-	obj = {x: nx, y: ny};
-	switch(ia.options[ia.selectedIndex].value){
-		case "wall":
-			obj.type = it.options[it.selectedIndex].value;
-			switch(obj.type){
-				case "pyramid": img.src = WALL_PYRAMID_IMAGE; break;
-				case "tree"   : img.src = WALL_TREE_IMAGE; break;
-				case "fence"  : img.src = WALL_FENCE_IMAGE; break;
-				case "rock"   : img.src = WALL_ROCK_IMAGE; break;
-				case "house"  : img.src = WALL_HOUSE_IMAGE; break;
-			}
-			level.walls[objId] = obj;
-			break;
-		case "zombie":
-			level.zombies[objId] = obj;
-			img.src = ZOMBIE_IMAGE;
-			break;
-		case "start location":
-			start = document.getElementsByClassName("start")[0]
-			if(start) document.getElementById("display").removeChild(start);
-			img.className += " start";
-			img.src = HERO_IMAGE;
-			level.startX = nx;
-			level.startY = ny;
-			break;
-		case "weapon":
-			img.src = WEAPON_SWORD_IMAGE;
-			level.weapons[objId] = obj; 
-			break;
-		case "enviweapon":
-			img.src = ENVI_LAWNMOWER_IMAGE;
-			level.environment_weapons[objId] = obj;
-			break;
-	}
-	img.id = objId++;
-	document.getElementById("display").appendChild(img);
-}
-
-function addImage(obj, type){
-	ix = obj.x * level.nodeWidth;
-	iy = obj.y * level.nodeHeight;
-	img = document.createElement("img");
-	img.className = "obj";
-	img.style.left = ix;
-	img.style.top = iy;
-	switch(type){
-		case "wall":
-			switch(obj.type){
-				case "pyramid": img.src = WALL_PYRAMID_IMAGE; break;
-				case "tree"   : img.src = WALL_TREE_IMAGE; break;
-				case "fence"  : img.src = WALL_FENCE_IMAGE; break;
-				case "rock"   : img.src = WALL_ROCK_IMAGE; break;
-				case "house"  : img.src = WALL_HOUSE_IMAGE; break;
-			}
-		break;
-		case "zombie":
-			img.src = ZOMBIE_IMAGE;
-		break;
-		case "start location":
-			img.className += " start";
-			img.src = HERO_IMAGE;
-		break;
-		case "weapon":
-			img.src = WEAPON_SWORD_IMAGE;
-		case "enviweapon":
-			img.src = ENVI_LAWN_IMAGE;
-	}
-	img.id = objId++;
-	document.getElementById("display").appendChild(img);
-}
-
-
-generateBackground();
-document.getElementById("update").onclick = function(){
-	level.bkgX = 1* document.getElementById("inX").value;
-	level.bkgY = 1* document.getElementById("inY").value;
-	level.nodesX = level.bkgX * NODES_PER_TILE;
-	level.nodesY = level.bkgY * NODES_PER_TILE;
-	level.nodeWidth = level.bkgX * TILE_SIZE / level.nodesX;
-	level.nodeHeight = level.bkgY * TILE_SIZE / level.nodesY;
-	document.getElementById("display").style.width = level.bkgX * TILE_SIZE;
-	document.getElementById("display").style.height = level.bkgY * TILE_SIZE;
-	generateBackground();
-};
-document.getElementById("display").onclick = createObject;
-
-
-</script>
+<script src="editor.js"></script>
 
 </body>
 <style>
 
-div{
+#display{
 	width: TILE_SIZE0px;
 	height: TILE_SIZE0px;
 	position: relative;
@@ -291,7 +44,21 @@ img{
 
 img.obj{
 	offset: -50%;
-	z-index: 100;
+	z-index: 1;
+}
+
+.line {
+  position: absolute;
+  background-color: #000000;
+  z-index: 200;
+}
+
+.vertical { 
+   width: 1px;
+}
+
+.horizontal {
+   height: 1px;
 }
 
 </style>

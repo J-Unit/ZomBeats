@@ -35,11 +35,23 @@ void LevelSerializer::addObjects(GameState *s){
 	}
 	s->level->markWallTiles();
 	for (unsigned int i = 0; i < d["weapons"].Size(); i++){
-		//TODO: Change back to sword and add typing for pistols and other weapons
-		s->weapons.AddTail(new Shotgun(s->world, s->level->tileWidth*(d["weapons"][i]["x"].GetInt()+0.5f), top-s->level->tileHeight*(d["weapons"][i]["y"].GetInt()+0.5f)));
+		Weapon *w;
+		std::string type = d["weapons"][i]["type"].GetString();
+		if (type == "shotgun"){
+			w = new Shotgun(s->world, s->level->tileWidth*(d["weapons"][i]["x"].GetInt() + 0.5f), top - s->level->tileHeight*(d["weapons"][i]["y"].GetInt() + 0.5f));
+		}
+		else{
+			w = new Sword(s->world, s->level->tileWidth*(d["weapons"][i]["x"].GetInt() + 0.5f), top - s->level->tileHeight*(d["weapons"][i]["y"].GetInt() + 0.5f));
+		}
+		s->weapons.AddTail(w);
 	}
 	for (unsigned int i = 0; i < d["environment_weapons"].Size(); i++){
-		s->environment_weapons.AddTail(new Lawnmower(s->world, s->level->tileWidth*(d["environment_weapons"][i]["x"].GetInt() + 0.5f), top - s->level->tileHeight*(d["environment_weapons"][i]["y"].GetInt() + 0.5f)));
+		EnvironmentWeapon *ew;
+		std::string type = d["environment_weapons"][i]["type"].GetString();
+		if (type == "lawnmower"){
+			ew = new Lawnmower(s->world, s->level->tileWidth*(d["environment_weapons"][i]["x"].GetInt() + 0.5f), top - s->level->tileHeight*(d["environment_weapons"][i]["y"].GetInt() + 0.5f));
+		}
+		s->environment_weapons.AddTail(ew);
 	}
 	for (unsigned int i = 0; i < d["zombies"].Size(); i++){
 		s->zombies.AddTail(new Zombie(s->level->tileWidth*(d["zombies"][i]["x"].GetInt()+0.5f), top-s->level->tileHeight*(d["zombies"][i]["y"].GetInt()+0.5f), s->world));
