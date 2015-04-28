@@ -1,10 +1,17 @@
 #include "SongDecomposition.h"
 #include <math.h>
 
-bool SongDecomposition::isOnBeat(float clickTime){
+int SongDecomposition::isOnBeat(float clickTime){
 	float offset_clicktime = clickTime + trackStartTime;
 	float clicked = fmod(offset_clicktime, spb);
-	return (clicked <= ERROR_WINDOW || clicked >= spb - ERROR_WINDOW);
+	float clickedhalf = fmod(offset_clicktime, spb / 2.0);
+	if (clicked <= ERROR_WINDOW || clicked >= (spb - ERROR_WINDOW)){
+		return 1;
+	}
+	else if (clickedhalf <= EIGHTH_NOTE_WINDOW || clickedhalf >= (spb / 2.0 - EIGHTH_NOTE_WINDOW)){
+		return 2;
+	}
+	else return 0;
 }
 
 float SongDecomposition::getBeatStart(float time){

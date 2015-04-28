@@ -20,7 +20,7 @@ public:
 	bool prevOnBeat;
 	void setFrameOnBeat(float elpasedTime);
 	float getBeatStart();
-	bool wasOnBeat(float timeAgo);
+	int wasOnBeat(float timeAgo);
 	float songTime;
 	float lastReportedSongTime;
 	float lastbeat = 0;

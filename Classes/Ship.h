@@ -18,8 +18,12 @@ using namespace cocos2d;
 #define SHIP_IMG_LEFT   0
 #define SHIP_IMG_FLAT   9
 #define SHIP_IMG_RIGHT 17
-#define MAX_BOOST_FRAMES 45
+#define MAX_BOOST_FRAMES 44
+#define MAX_EIGHTH_NOTE_FRAMES (MAX_BOOST_FRAMES / 2)
+#define EIGHTH_NOTE_THRUST_FACTOR 2.0f
 #define FRAME_INTERVAL 5
+#define EIGHTH_NOTE_DAMPENING 0.0
+#define NORMAL_DAMPENING 3.0
 
 #define SHIP_WIDTH 29.5f
 #define SHIP_HEIGHT 55.0f
@@ -84,6 +88,8 @@ public:
 	FilmStrip* sprite;
 
 	Sprite* weaponDurabilityDisplay[3][2];
+
+	float thrustFactor;
 
     /**
      * Creates a new ship at the specified position (in world space).

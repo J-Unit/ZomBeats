@@ -17,7 +17,8 @@
 #define SHIP_MAX_SPEED    10.0f
 #define SHIP_THRUST_FACTOR 0.4f
 #define IMPULSE 2500 //was 2875, slightly decreased it to see how it works with grooviness
-#define GROOVY_BONUS 2000
+#define GROOVY_BONUS 1000
+
 
 #define DCOS_90(a)  (cos(M_PI*(a+90.0f)/180.0f))
 #define DSIN_90(a)  (sin(M_PI*(a+90.0f)/180.0f))
@@ -108,14 +109,17 @@ void Ship::setSprite(FilmStrip* value, float mx, float my) {
  * @param deltaTime Time elapsed since last called.
  */
 bool Ship::update(float deltaTime, Vec2 dir, float grooviness) {
-	if (boostFrames <= 0) return false;
+	if (boostFrames <= 0) {
+		body->SetLinearDamping(NORMAL_DAMPENING);
+		return false;
+	}
 	boostFrames--;
 	frameRate++;
 	if (frameRate > 10000) {
 		frameRate = 0;
 	}
 	//float32 angle = body->GetAngle();
-	body->ApplyLinearImpulse(b2Vec2(dir.x * (IMPULSE + GROOVY_BONUS*grooviness), dir.y * (IMPULSE + GROOVY_BONUS*grooviness)), body->GetPosition(), true);
+	body->ApplyLinearImpulse(thrustFactor * b2Vec2(dir.x * (IMPULSE + GROOVY_BONUS*grooviness), dir.y * (IMPULSE + GROOVY_BONUS*grooviness)), body->GetPosition(), true);
 	//body->ApplyForceToCenter(b2Vec2(thrust.y * 1000 * DCOS_90(angle)  * SHIP_THRUST_FACTOR, thrust.y * 1000 * (-DSIN_90(angle)) * SHIP_THRUST_FACTOR), true);
 	//body->ApplyTorque(10*thrust.x, true);
 	//body->ApplyAngularImpulse(4000.0f * thrust.x, true);

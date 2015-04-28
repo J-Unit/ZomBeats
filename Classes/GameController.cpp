@@ -51,6 +51,9 @@ void GameController::BeginContact(b2Contact* contact){
 	if ((b1->type == EnvironmentWeaponType && b2->type == WallType) || (b1->type == WallType && b2->type == EnvironmentWeaponType)){
 		ewep = (b1->type == EnvironmentWeaponType) ? b1->getEnvironmentWeapon() : b2->getEnvironmentWeapon();
 		ewep->hitWall = true;
+		if (ewep == currentMower) {
+			currentMower = NULL;
+		}
 		return;
 	}
 
@@ -589,16 +592,28 @@ void GameController::update(float deltaTime) {
 
 				//view->beatHUD->setString("Actual time: " + std::to_string(elapsedTime) + " song time: " + std::to_string(AudioEngine::getCurrentTime(audioid)));
 				time_t now = time(0);
-				bool userOnBeat = audio->wasOnBeat(now - input->clickTime);
-				if (!userOnBeat && currentLevel != CALIBRATION_LEVEL) {
-					state->ship->body->SetLinearVelocity(b2Vec2_zero);
-					destination = 0;
+				int userOnBeat = audio->wasOnBeat(now - input->clickTime);
+				if (userOnBeat == 0 && currentLevel != CALIBRATION_LEVEL) {
+					b2Vec2 halfVel = state->ship->body->GetLinearVelocity();
+					halfVel *= 0.25;
+					state->ship->body->SetLinearVelocity(halfVel);
+					//destination = 0;
 
 					//if it is not on beat, increase the detection radius slightly
 					meter->increaseRadius();
 				}
 				else{
-					state->ship->boostFrames = MAX_BOOST_FRAMES;
+					if (userOnBeat == 2){
+						state->ship->boostFrames = MAX_EIGHTH_NOTE_FRAMES;
+						state->ship->thrustFactor = EIGHTH_NOTE_THRUST_FACTOR;
+						state->ship->body->SetLinearDamping(EIGHTH_NOTE_DAMPENING);
+					}
+					else{
+						state->ship->boostFrames = MAX_BOOST_FRAMES;
+						state->ship->thrustFactor = 1.0f;
+						state->ship->body->SetLinearDamping(NORMAL_DAMPENING);
+					}
+
 					Vec2 click = mouseToWorld(input->lastClick);
 					MapNode *dest = state->level->locateCharacter(click.x, click.y);
 					state->level->shortestPath(from, dest);
@@ -691,7 +706,7 @@ void GameController::update(float deltaTime) {
 					//if this zombie is within our detection radius and we messed up the beat
 					float dis;
 					dis = sqrt(tmp.x*tmp.x + tmp.y*tmp.y);
-					if (!audio->frameOnBeat && dis < meter->detectionRadius) {
+					if (!userOnBeat && dis < meter->detectionRadius) {
 						audio->playEffect("sound_effects/ZombieHiss.mp3");
 						curZ->increaseAwarness();
 					}

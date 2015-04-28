@@ -52,10 +52,10 @@ void AudioController::setFrameOnBeat(float deltaTime){
 		lastReportedSongTime = curTime;
 	}
 	prevOnBeat = frameOnBeat;
-	frameOnBeat = currentSong->isOnBeat(songTime - audioDelay - videoDelay);
+	frameOnBeat = currentSong->isOnBeat(songTime - audioDelay - videoDelay) == 1;
 }
 
-bool AudioController::wasOnBeat(float timeAgo){
+int AudioController::wasOnBeat(float timeAgo){
 	lastClickTime = songTime - timeAgo;
 	return currentSong->isOnBeat(lastClickTime - audioDelay);
 }

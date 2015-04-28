@@ -1,12 +1,13 @@
 #include <string>
 
 #define ERROR_WINDOW 0.08 //in seconds
+#define EIGHTH_NOTE_WINDOW 0.075
 
 class SongDecomposition
 {
 public:
-	float bpm; //beats per minute
-	float spb; //
+	double bpm; //beats per minute
+	double spb; //sec per beat
 	std::string trackName;
 	float trackStartTime;
 
@@ -17,7 +18,7 @@ public:
 		trackStartTime = start;
 	}
 
-	bool isOnBeat(float clickTime);
+	int isOnBeat(float clickTime);
 	float getBeatStart(float time);
 	float timeToClosestBeat(float time);
 	float timeToBeat(float time, int beat);
