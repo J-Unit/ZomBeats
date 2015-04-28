@@ -14,6 +14,7 @@
 #include "LevelSerializer.h"
 #include <vector>
 #include "util.h"
+#include "SaveSerializer.h"
 
 //fog scale
 #define FOG_SCALE 1.25f
@@ -24,6 +25,7 @@
 #define GAME_MENU_BUTTON_SCALE 0.75f
 #define GAME_MENU_BUTTON_OFFSET 160
 
+#define SAVE_FILE "saves/save.zbs"
 
 //delays
 #define ENVIRONMENTAL_WEAPON_DELAY 1.0f
@@ -193,6 +195,7 @@ private:
 	void removeDeadZombies();
 
 	LevelSerializer ls;
+	SaveSerializer save;
 
 };
 

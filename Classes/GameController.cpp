@@ -245,6 +245,7 @@ bool GameController::init() {
 	view->scene->addChild(this);
 	state = NULL;
 	audio = new AudioController();
+	save.parseSave(this, SAVE_FILE);
 	return true;
 }
 /**
@@ -562,6 +563,7 @@ void GameController::update(float deltaTime) {
 			Lawnmower *lm = new Lawnmower(state->world, mowerDir.x, mowerDir.y, dir);
 			state->environment_weapons.AddTail(lm);
 			view->enviornment->addChild(lm->sprite, 2); //lawnmower's z-order needs to be changed the same as envrionment weapon 
+			//lm->addParticles();
 			currentMower = lm;
 			currentEnvironment = lm;
 
@@ -716,6 +718,7 @@ void GameController::update(float deltaTime) {
 						 stringstream ss;
 						 ss << "Ok, great.  Video Delay: " << formatMs(audio->videoDelay);
 						 view->objective->setString(ss.str());
+						 save.exportSave(this);
 					 }
 				 }
 			 }
