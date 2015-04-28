@@ -99,6 +99,16 @@ ResourceLoader::ResourceLoader() {
 		text->retain();
 		textures["rock"] = text;
 	}
+	text = Director::getInstance()->getTextureCache()->addImage("textures/trash.png");
+	if (text) {
+		text->retain();
+		textures["trash"] = text;
+	}
+	text = Director::getInstance()->getTextureCache()->addImage("textures/trashcan.png");
+	if (text) {
+		text->retain();
+		textures["trashcan"] = text;
+	}
 	text = Director::getInstance()->getTextureCache()->addImage("textures/tree.png");
 	if (text) {
 		text->retain();

@@ -5,6 +5,7 @@
 #include "Sword.h"
 #include "Zombie.h"
 #include "View.h"
+#include "Trashcan.h"
 #include "Lawnmower.h"
 #include "Pistol.h"
 #include "Shotgun.h"
@@ -50,6 +51,9 @@ void LevelSerializer::addObjects(GameState *s){
 		std::string type = d["environment_weapons"][i]["type"].GetString();
 		if (type == "lawnmower"){
 			ew = new Lawnmower(s->world, s->level->tileWidth*(d["environment_weapons"][i]["x"].GetInt() + 0.5f), top - s->level->tileHeight*(d["environment_weapons"][i]["y"].GetInt() + 0.5f));
+		}
+		else{
+			ew = new Trashcan(s->world, s->level->tileWidth*(d["environment_weapons"][i]["x"].GetInt() + 0.5f), top - s->level->tileHeight*(d["environment_weapons"][i]["y"].GetInt() + 0.5f));
 		}
 		s->environment_weapons.AddTail(ew);
 	}

@@ -1,3 +1,6 @@
+#ifndef EWEAPON_H
+#define EWEAPON_H
+
 #include <stdio.h>
 #include <cocos2d.h>
 #include "Box2D/Box2D.h"
@@ -15,7 +18,11 @@ public:
 	b2PolygonShape box;
 	float pos_x;
 	float pos_y;
+	bool onCooldown;
+	float cdTimer;
 	bool isUsed;
 	bool hitWall;
 	void setSprite(Sprite* value);
 };
+
+#endif

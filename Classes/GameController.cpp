@@ -17,6 +17,8 @@
 #include "Sword.h"
 #include "Ship.h"
 #include "Lawnmower.h"
+#include "Trashcan.h"
+#include "Trash.h"
 #include "Zombie.h"
 #include <math.h>
 #include <vector>
@@ -54,6 +56,7 @@ void GameController::BeginContact(b2Contact* contact){
 		if (ewep == currentMower) {
 			currentMower = NULL;
 		}
+		currentEnvironment = NULL;
 		return;
 	}
 
@@ -91,11 +94,13 @@ void GameController::BeginContact(b2Contact* contact){
 
 	//trigger environment weapon activation
 	if ((b1->type == EnvironmentWeaponType && b2->type == ShipType) || (b1->type == ShipType && b2->type == EnvironmentWeaponType)){
-		currentEnvironment = (b1->type == EnvironmentWeaponType) ? b1->getEnvironmentWeapon() : b2->getEnvironmentWeapon();
+		EnvironmentWeapon *cew = (b1->type == EnvironmentWeaponType) ? b1->getEnvironmentWeapon() : b2->getEnvironmentWeapon();
 		//ew->isUsed = true; //right now, no activation sequence
-		
-		state->ship->isActivatingEnvironment = true; //right now, no activation sequence
-		state->ship->hasEnvironmentWeapon = true;
+		if (!cew->onCooldown){
+			currentEnvironment = (b1->type == EnvironmentWeaponType) ? b1->getEnvironmentWeapon() : b2->getEnvironmentWeapon();
+			state->ship->isActivatingEnvironment = true; //right now, no activation sequence
+			state->ship->hasEnvironmentWeapon = true;
+		}
 		//state->ship->isActivatingEnvironment = false; 
 		return;
 	}
@@ -108,6 +113,10 @@ void GameController::BeginContact(b2Contact* contact){
 		if (envwep->hasMoved){
 			zb = (b1->type == ZombieType) ? b1->getZombie() : b2->getZombie();
 			zb->isDestroyed = true;
+			if (envwep->e_weapon_type == 2){
+				//if its trash then it dies too
+				envwep->hitWall = true;
+			}
 			return;
 		}
 		return;
@@ -264,9 +273,11 @@ void GameController::initEnvironment() {
 
 	ai = new AIController();
 	environmentalTimer = 0.0f;
+	trashTimer = 0.0f;
 	processDirection = false;
 	currentEnvironment = NULL;
 	currentMower = NULL;
+	currentTrash = NULL;
 
 	//add the fog of war here
 	musicNoteCounter = 0; //initialize the sequence of music note path
@@ -437,7 +448,11 @@ void GameController::removeDeadEWeapons(){
 	for (CTypedPtrDblElement<EnvironmentWeapon> *e_weapon = state->environment_weapons.GetHeadPtr(); !state->environment_weapons.IsSentinel(e_weapon); e_weapon = e_weapon->Next())
 	{
 		eweap = e_weapon->Data();
-		if (eweap->isUsed || eweap->hitWall){
+		if ((eweap->e_weapon_type == 1) && (eweap->isUsed)){
+			eweap->onCooldown = true;
+			eweap->isUsed = false;
+		}
+		if ((eweap->e_weapon_type!=1) && (eweap->isUsed || eweap->hitWall)){
 			eweap->isUsed = false;
 			state->world->DestroyBody(eweap->body);
 			toDelete = e_weapon;
@@ -531,13 +546,26 @@ void GameController::update(float deltaTime) {
 			environmentalTimer += deltaTime; //just ran into environmental object so start delay count before it registers next click
 		}
 
+		EnvironmentWeapon *eweap = NULL;
+		for (CTypedPtrDblElement<EnvironmentWeapon> *e_weapon = state->environment_weapons.GetHeadPtr(); !state->environment_weapons.IsSentinel(e_weapon); e_weapon = e_weapon->Next())
+		{
+			eweap = e_weapon->Data();
+			if (eweap->onCooldown){
+				eweap->cdTimer += deltaTime;
+			}
+			if (eweap->cdTimer >= TRASHCAN_CD){
+				eweap->onCooldown = false;
+				eweap->cdTimer = 0.0f;
+			}
+		}
+
 		//delay is up so now 
 		if (input->clicked &&  environmentalTimer >= ENVIRONMENTAL_WEAPON_DELAY){
 			processDirection = true;
 			currentFingerPos = Vec2((input->lastClick.x - view->screen_size_x / 2.0) + state->ship->body->GetPosition().x, -1.0f*(input->lastClick.y - view->screen_size_y / 2.0) + state->ship->body->GetPosition().y);
 			currentFingerPos.subtract(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y));
 			currentFingerPos.normalize();
-			currentFingerPos.scale(225.0f);
+			currentFingerPos.scale(TDISTANCE);
 			currentFingerPos.add(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y));
 		}
 
@@ -563,12 +591,22 @@ void GameController::update(float deltaTime) {
 			mowerDir.add(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y));
 
 			b2Vec2 dir = b2Vec2(mowerDir.x, mowerDir.y);
-			Lawnmower *lm = new Lawnmower(state->world, mowerDir.x, mowerDir.y, dir);
-			state->environment_weapons.AddTail(lm);
-			view->enviornment->addChild(lm->sprite, 2); //lawnmower's z-order needs to be changed the same as envrionment weapon 
-			lm->addParticles();
-			currentMower = lm;
-			currentEnvironment = lm;
+			
+			if (currentEnvironment->e_weapon_type == 0){
+				Lawnmower *lm = new Lawnmower(state->world, mowerDir.x, mowerDir.y, dir);
+				state->environment_weapons.AddTail(lm);
+				view->enviornment->addChild(lm->sprite, 2); //lawnmower's z-order needs to be changed the same as envrionment weapon 
+				lm->addParticles();
+				currentMower = lm;
+				currentEnvironment = lm;
+			}
+			else if (currentEnvironment->e_weapon_type == 1){
+				Trash *tr = new Trash(state->world, mowerDir.x, mowerDir.y);
+				state->environment_weapons.AddTail(tr);
+				view->enviornment->addChild(tr->sprite, 2);
+				currentTrash = tr;
+				currentEnvironment = tr;
+			}
 
 			/*
 			b2Vec2 dir = b2Vec2(mowerDir.x,mowerDir.y);
@@ -793,7 +831,7 @@ void GameController::update(float deltaTime) {
 			destination = 0;
 		}
 
-		if (state->ship->hasEnvironmentWeapon && currentEnvironment!=NULL && currentEnvironment->sprite!=NULL){
+		if (state->ship->hasEnvironmentWeapon && currentEnvironment!=NULL && currentEnvironment->e_weapon_type!=1 && !currentEnvironment->hasMoved && currentEnvironment->sprite!=NULL){
 			view->enviornment->removeChild(currentEnvironment->sprite);
 		}
 
@@ -803,6 +841,14 @@ void GameController::update(float deltaTime) {
 			mowerDir.normalize();
 
 			currentMower->update(deltaTime, mowerDir);
+		}
+
+		if (currentTrash != NULL && currentTrash->hasMoved){
+			Vec2 mowerDir = currentFingerPos;
+			mowerDir.subtract(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y));
+			mowerDir.normalize();
+
+			currentTrash->update(deltaTime, mowerDir);
 		}
 
 		// Move the ship (MODEL ONLY)

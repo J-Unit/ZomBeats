@@ -29,6 +29,7 @@
 
 //delays
 #define ENVIRONMENTAL_WEAPON_DELAY 1.0f
+#define TRASHCAN_CD 8.0f
 #define ENVIRONMENTAL_WEAPON_DELAY_MAX 5.0f
 
 using namespace cocos2d;
@@ -46,6 +47,8 @@ class AIController;
 class AudioController;
 class EnvironmentWeapon;
 class Lawnmower;
+class Trashcan;
+class Trash;
 class GrooveMeter;
 class CalibrationController;
 
@@ -113,11 +116,14 @@ public:
 
 	//timer used to signal if safe to choose environmental object direction
 	float environmentalTimer;
+	float trashTimer;
 
 	bool processDirection;
+	bool trashOnCD;
 
 	EnvironmentWeapon *currentEnvironment;
 	Lawnmower *currentMower;
+	Trash *currentTrash;
 
     /** 
      * Writes the current ship position to the HUD.

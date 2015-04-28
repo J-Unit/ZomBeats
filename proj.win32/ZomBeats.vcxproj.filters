@@ -93,6 +93,12 @@
     <ClCompile Include="..\Classes\SaveSerializer.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\Trashcan.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Trash.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -189,6 +195,12 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\SaveSerializer.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Trashcan.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Trash.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
