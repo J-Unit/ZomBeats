@@ -563,7 +563,7 @@ void GameController::update(float deltaTime) {
 			Lawnmower *lm = new Lawnmower(state->world, mowerDir.x, mowerDir.y, dir);
 			state->environment_weapons.AddTail(lm);
 			view->enviornment->addChild(lm->sprite, 2); //lawnmower's z-order needs to be changed the same as envrionment weapon 
-			//lm->addParticles();
+			lm->addParticles();
 			currentMower = lm;
 			currentEnvironment = lm;
 

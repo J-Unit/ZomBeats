@@ -48,6 +48,12 @@ ResourceLoader::ResourceLoader() {
 		textures["zombie_single"] = text;
 	}
 
+	text = Director::getInstance()->getTextureCache()->addImage("textures/grass1.png");
+	if (text) {
+		text->retain();
+		textures["grass1"] = text;
+	}
+
     //text = Director::getInstance()->getTextureCache()->addImage("textures/ships.png");
 	//text = Director::getInstance()->getTextureCache()->addImage("textures/chuck.png");
 	text = Director::getInstance()->getTextureCache()->addImage("textures/spritebasic_withsword.png");

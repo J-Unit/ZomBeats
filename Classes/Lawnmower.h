@@ -15,4 +15,6 @@ public:
 	Lawnmower(b2World *world, float x, float y, b2Vec2 dir);
 	bool   update(float deltaTime, Vec2 thrust);
 	~Lawnmower();
+	CCParticleSystemQuad *emitter;
+	void addParticles();
 };
