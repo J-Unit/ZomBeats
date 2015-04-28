@@ -158,6 +158,7 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
     <ClCompile Include="..\Classes\LevelSerializer.cpp" />
     <ClCompile Include="..\Classes\MainMenuScene.cpp" />
     <ClCompile Include="..\Classes\ResourceLoader.cpp" />
+    <ClCompile Include="..\Classes\SaveSerializer.cpp" />
     <ClCompile Include="..\Classes\Ship.cpp" />
     <ClCompile Include="..\Classes\Shotgun.cpp" />
     <ClCompile Include="..\Classes\SongDecomposition.cpp" />
@@ -189,6 +190,7 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
     <ClInclude Include="..\Classes\Node.h" />
     <ClInclude Include="..\Classes\PriorityQueue.h" />
     <ClInclude Include="..\Classes\ResourceLoader.h" />
+    <ClInclude Include="..\Classes\SaveSerializer.h" />
     <ClInclude Include="..\Classes\Ship.h" />
     <ClInclude Include="..\Classes\Shotgun.h" />
     <ClInclude Include="..\Classes\SongDecomposition.h" />

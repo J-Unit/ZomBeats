@@ -90,6 +90,9 @@
     <ClCompile Include="..\Classes\LevelSelectScene.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\SaveSerializer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -183,6 +186,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\LevelSelectScene.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\SaveSerializer.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
