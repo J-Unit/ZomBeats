@@ -23,6 +23,7 @@ Trashcan::Trashcan(b2World *world, float x, float y)
 	fixture.shape = &box;
 	body->CreateFixture(&fixture);
 	setSprite(FilmStrip::create(ResourceLoader::getInstance()->getTexture("trashcan"), 1, 6, 6)); //might have to use setSpriteSh() below instead
+	sprite->setFrame(1);
 }
 
 //TODO: WONT NEED BUT MAKE TRASH CLASS INSTEAD WHICH JUST DOES WHAT MOWER DOES BUT CERTAIN DISTANCE OR JUST CREATE PROJECTILE

@@ -14,6 +14,7 @@ void EnvironmentWeapon::setSprite(FilmStrip* value)
 }
 
 void EnvironmentWeapon::update(){
+	/*
 	frameRate++;
 	if (frameRate > 10000) {
 		frameRate = 0;
@@ -29,6 +30,15 @@ void EnvironmentWeapon::update(){
 		}
 		sprite->setFrame(frame);
 	}
+	*/
+	unsigned int frame = sprite->getFrame();
+	if (frame == 0) {
+		frame = 1;
+	}
+	else {
+		frame = 0;
+	}
+	sprite->setFrame(frame);
 }
 
 void EnvironmentWeapon::update2(){
