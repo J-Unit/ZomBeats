@@ -469,6 +469,7 @@ void GameController::removeDeadEWeapons(){
 		eweap = e_weapon->Data();
 		if ((eweap->e_weapon_type == 1) && (eweap->isUsed)){
 			eweap->onCooldown = true;
+			eweap->update();
 			eweap->isUsed = false;
 		}
 		if ((eweap->e_weapon_type != 1) && (eweap->isUsed || eweap->hitWall)){
@@ -578,9 +579,9 @@ void GameController::update(float deltaTime) {
 			if (eweap->cdTimer >= TRASHCAN_CD){
 				eweap->onCooldown = false;
 				eweap->cdTimer = 0.0f;
+				eweap->update();
 			}
 			if (!(currentEnvironment != NULL && currentEnvironment->e_weapon_type == 1)){
-				eweap->update();
 				if (removed == true) {
 					removed = false;
 					view->allSpace->addChild(state->ship->getSprite());
