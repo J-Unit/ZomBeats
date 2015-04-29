@@ -34,8 +34,10 @@ void SaveSerializer::exportSave(GameController *gc){
 	rapidjson::Writer<StringBuffer> writer(buf, &allocator);
 	d.Accept(writer);
 	std::string json(buf.GetString(), buf.Size());
-	std::ofstream of(SAVE_FILE);
-	of << json;
-	if (!of.good()) throw std::runtime_error("Can't write the JSON string to the file!");
-
+	FILE *fp = fopen(SAVE_FILE, "w");
+	//std::ofstream of(SAVE_FILE);
+	//of << json;
+	//if (!of.good()) throw std::runtime_error("Can't write the JSON string to the file!");
+	fputs(json.c_str(), fp);
+	fclose(fp);
 }

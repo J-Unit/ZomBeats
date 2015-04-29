@@ -54,6 +54,12 @@ ResourceLoader::ResourceLoader() {
 		textures["zombie_single"] = text;
 	}
 
+	text = Director::getInstance()->getTextureCache()->addImage("textures/dust.png");
+	if (text) {
+		text->retain();
+		textures["dust"] = text;
+	}
+
 	text = Director::getInstance()->getTextureCache()->addImage("textures/grass1.png");
 	if (text) {
 		text->retain();
@@ -70,6 +76,11 @@ ResourceLoader::ResourceLoader() {
 	if (text) {
 		text->retain();
 		textures["grass3"] = text;
+	}
+	text = Director::getInstance()->getTextureCache()->addImage("textures/gun2.png");
+	if (text) {
+		text->retain();
+		textures["shrapnel"] = text;
 	}
 
     //text = Director::getInstance()->getTextureCache()->addImage("textures/ships.png");

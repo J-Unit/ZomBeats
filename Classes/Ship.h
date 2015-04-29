@@ -95,6 +95,11 @@ public:
 
 	float thrustFactor;
 
+	void addShotgunParticles(float angle);
+	void addShrapnelParticles(float angle);
+	void addSmokeParticles(float angle);
+	void addDustParticles();
+
     /**
      * Creates a new ship at the specified position (in world space).
      *

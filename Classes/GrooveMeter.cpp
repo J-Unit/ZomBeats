@@ -14,6 +14,10 @@ void GrooveMeter::decreaseRadius(){
 	detectionRadius = std::max(detectionRadius - DETECTION_RADIUS_DECREASE, MIN_DETECTION_RADIUS);
 }
 
+void GrooveMeter::drain(){
+	detectionRadius = std::min(detectionRadius + 0.04f, MAX_DETECTION_RADIUS);
+}
+
 std::string GrooveMeter::getGroovinessDisplay(float v){
 	if (v < 0.2) return "Pitiful!";
 	else if (v < 0.4) return "Awkward!";

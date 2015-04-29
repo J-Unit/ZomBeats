@@ -480,4 +480,88 @@ void Ship::advanceFrameShotty(Vec2* dir) {
 	sprite->setFrame(frame);
 }
 
+void Ship::addShrapnelParticles(float a){
+	ParticleSystemQuad *emitter = ParticleSystemQuad::create();
+	emitter->setDuration(0.17f);
+	emitter->setLife(0.16f);
+	emitter->setLifeVar(0.05f);
+	emitter->setSpeed(1000.0f);
+	emitter->setSpeedVar(80.0f);
+	emitter->setAngle(a);
+	emitter->setAngleVar(35.0f);
+	emitter->setPosVar(Vec2(5, 5));
+	//emitter->setSpeed(0.0f);
+	//emitter->setSpeedVar(0.0f);
+	emitter->setEmissionRate(10000.0f);
+	emitter->setAutoRemoveOnFinish(true);
+	emitter->setGravity(ccp(0, 0));
+	emitter->setTangentialAccelVar(0);
+	emitter->setRadialAccelVar(0);
+	/*emitter->setSpeed(1000.0f);
 
+	emitter->setEmissionRate(5.0f);
+
+
+	emitter->setRadialAccelVar(200.0f);*/
+	emitter->setRadialAccel(0);
+	emitter->setTangentialAccel(0);
+	emitter->setAnchorPoint(Vec2(0.5f, 0.5f));
+	emitter->setPosition(sprite->getContentSize() / 2);
+	emitter->setStartSize(3.0);
+	emitter->setEndSize(5.0);
+	emitter->setStartSizeVar(1.0);
+	emitter->setEndSizeVar(2);
+	emitter->setBlendAdditive(true);
+	//emitter->setBlendAdditive(false);
+	//emitter->setBlendFunc(BlendFunc::ALPHA_NON_PREMULTIPLIED);
+
+	emitter->setTexture(ResourceLoader::getInstance()->getTexture("shrapnel"));
+	emitter->setStartColorVar(ccColor4F(1.0f, 1.0f, 1.0f, 0));
+	emitter->setEndColorVar(ccColor4F(0.7f, 0.7f, 0.7f, 0));
+	emitter->setStartColor(ccColor4F(0.5f, 0.5, 0.5f, 0.5f));
+	emitter->setEndColor(ccColor4F(0.5f, 0.5f, 0.5f, 0.0f));
+	sprite->addChild(emitter, 1);
+}
+
+void Ship::addDustParticles(){
+	CCParticleSun *emitter = CCParticleSun::createWithTotalParticles(100);
+	emitter->setAutoRemoveOnFinish(true);
+	emitter->setDuration(0.06f);
+	emitter->setLife(0.7);
+	emitter->setLifeVar(0.1);
+	emitter->setSpeed(20.0f);
+	emitter->setSpeedVar(7.0f);
+	emitter->setPosVar(Vec2(15, 15));
+	//emitter->setSpeed(0.0f);
+	//emitter->setSpeedVar(0.0f);
+	emitter->setEmissionRate(90.0f);
+
+	emitter->setGravity(ccp(0, -3));
+	//emitter->setTangentialAccelVar(10.0f);
+	//emitter->setRadialAccelVar(10.0f);
+	/*emitter->setSpeed(1000.0f);
+
+	emitter->setEmissionRate(5.0f);
+
+
+	emitter->setRadialAccelVar(200.0f);*/
+	//emitter->setRadialAccel(2.0f);
+	//emitter->setTangentialAccelVar(200.0f);
+	emitter->setAnchorPoint(Vec2(0.5f, 0.5f));
+	float w = sprite->getContentSize().width / 2;
+	float h = 4;
+	emitter->setPosition(w, h);
+	emitter->setStartSize(7.0);
+	emitter->setEndSize(6.5);
+	emitter->setStartSizeVar(2.0);
+	emitter->setEndSizeVar(1);
+	emitter->setBlendAdditive(false);
+	emitter->setBlendFunc(BlendFunc::ALPHA_NON_PREMULTIPLIED);
+
+	emitter->setTexture(ResourceLoader::getInstance()->getTexture("dust"));
+	emitter->setStartColorVar(ccColor4F(0.25f, 0.25f, 0.25f, 0.2f));
+	emitter->setEndColorVar(ccColor4F(0.2f, 0.2f, 0.2f, 0.2f));
+	emitter->setStartColor(ccColor4F(1.0f, 1.0f, 1.0f, 0.5f));
+	emitter->setEndColor(ccColor4F(0.8f, 0.8f, 0.8f, 0.5f));
+	sprite->addChild(emitter, 1);
+}

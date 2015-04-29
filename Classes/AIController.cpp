@@ -105,6 +105,7 @@ void AIController::update(GameState *state){
 		curZ->attraction.Normalize();
 		curZ->attraction *= ATTRACTION * curZ->awareness;
 		dir += curZ->attraction;
+		curZ->awareness = std::max(0.0, curZ->awareness - 0.002);
 		//apply
 		dir.Normalize();
 		dir *= IMPULSE;

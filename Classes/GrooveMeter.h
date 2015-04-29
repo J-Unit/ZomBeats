@@ -21,6 +21,7 @@ public:
 
 	void increaseRadius();
 	void decreaseRadius();
+	void drain();
 
 	//Returns grooviness in range [0,1]
 	float getGrooviness(){

@@ -210,7 +210,6 @@ void Zombie::advanceFrame() {
 
 void Zombie::addParticles(){
 	emitter = ParticleSystemQuad::create();
-
 	emitter->setDuration(2.0f);
 	emitter->setLife(1.6f);
 	emitter->setLifeVar(0.2f);
