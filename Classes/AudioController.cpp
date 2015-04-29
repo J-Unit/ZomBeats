@@ -25,13 +25,13 @@ AudioController::~AudioController()
 void AudioController::playTrack(SongDecomposition *track, bool loop){
 	AudioEngine::stopAll();
 	currentSong = track;
-	curSongId = AudioEngine::play2d(currentSong->trackName, loop, 1);
+	curSongId = AudioEngine::play2d(currentSong->trackName, loop, MUSIC_VOLUME);
 	songTime = lastReportedSongTime = 0.0f;
 	trackLoops = 0;
 }
 
-void AudioController::playEffect(std::string effect){
-	AudioEngine::play2d(effect, false, EFFECT_VOLUME);
+void AudioController::playEffect(std::string effect, float vol){
+	AudioEngine::play2d(effect, false, vol);
 }
 
 void AudioController::setFrameOnBeat(float deltaTime){

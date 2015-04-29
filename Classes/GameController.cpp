@@ -98,6 +98,9 @@ void GameController::BeginContact(b2Contact* contact){
 		//ew->isUsed = true; //right now, no activation sequence
 		if (!cew->onCooldown){
 			currentEnvironment = (b1->type == EnvironmentWeaponType) ? b1->getEnvironmentWeapon() : b2->getEnvironmentWeapon();
+			if (currentEnvironment->e_weapon_type == 1){
+				audio->playEffect("sound_effects/RummagingThroughTrash.mp3",2.0f);
+			}
 			state->ship->isActivatingEnvironment = true; //right now, no activation sequence
 			state->ship->hasEnvironmentWeapon = true;
 		}
@@ -468,6 +471,9 @@ void GameController::removeDeadEWeapons(){
 		}
 		if ((eweap->e_weapon_type != 1) && (eweap->isUsed || eweap->hitWall)){
 			eweap->isUsed = false;
+			if (eweap->e_weapon_type == 2){
+				audio->playEffect("sound_effects/BottleSmash.mp3",2.0f);
+			}
 			state->world->DestroyBody(eweap->body);
 			toDelete = e_weapon;
 			view->enviornment->removeChild(eweap->sprite);
@@ -611,6 +617,7 @@ void GameController::update(float deltaTime) {
 				Lawnmower *lm = new Lawnmower(state->world, mowerDir.x, mowerDir.y, dir);
 				state->environment_weapons.AddTail(lm);
 				view->enviornment->addChild(lm->sprite, 2); //lawnmower's z-order needs to be changed the same as envrionment weapon 
+				audio->playEffect("sound_effects/LawnMower.mp3", 1.2f);
 				lm->addParticles();
 				currentMower = lm;
 				currentEnvironment = lm;
@@ -723,7 +730,7 @@ void GameController::update(float deltaTime) {
 							zambie = zambie->Next();
 						}
 						if (num_zombies_killed > 0){
-							audio->playEffect("sound_effects/shotgun.mp3");
+							audio->playEffect("sound_effects/shotgun.mp3", 0.4f);
 							state->ship->currentWeapon->durability -= 1;
 							view->redrawDurability(state->ship->currentWeapon->durability);
 						}
@@ -768,7 +775,7 @@ void GameController::update(float deltaTime) {
 					float dis;
 					dis = sqrt(tmp.x*tmp.x + tmp.y*tmp.y);
 					if (!userOnBeat && dis < meter->detectionRadius) {
-						audio->playEffect("sound_effects/ZombieHiss.mp3");
+						audio->playEffect("sound_effects/ZombieHiss.mp3", 0.5f);
 						curZ->increaseAwarness();
 					}
 					if (count == 0) {

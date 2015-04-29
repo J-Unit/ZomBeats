@@ -1,6 +1,7 @@
 #include <string>
 
-#define EFFECT_VOLUME 0.30f
+#define EFFECT_VOLUME 0.60f
+#define MUSIC_VOLUME 0.70f
 
 class SongDecomposition;
 
@@ -15,7 +16,7 @@ public:
 	~AudioController();
 
 	void playTrack(SongDecomposition *s, bool loop=true);
-	void playEffect(std::string e);
+	void playEffect(std::string e, float vol);
 	bool frameOnBeat;
 	bool prevOnBeat;
 	void setFrameOnBeat(float elpasedTime);
