@@ -577,6 +577,7 @@ void GameController::update(float deltaTime) {
 				eweap->onCooldown = false;
 				eweap->cdTimer = 0.0f;
 			}
+			eweap->update();
 
 		}
 
@@ -603,6 +604,7 @@ void GameController::update(float deltaTime) {
 			state->ship->hasEnvironmentWeapon = false;
 
 		}
+
 
 		if (currentEnvironment != NULL && currentEnvironment->isUsed && !currentEnvironment->hasMoved){
 			Vec2 mowerDir = currentFingerPos;

@@ -30,7 +30,7 @@ Trash::Trash(b2World *world, float x, float y)
 	body->SetLinearDamping(1.0f);
 
 	//body->SetAngularDamping(0.5f);
-	setSprite(Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("trash")));
+	setSprite(FilmStrip::create(ResourceLoader::getInstance()->getTexture("trash"), 1, 1, 1));
 }
 
 bool Trash::update(float deltaTime, Vec2 dir) {

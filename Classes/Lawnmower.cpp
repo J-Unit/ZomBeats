@@ -21,7 +21,7 @@ Lawnmower::Lawnmower(b2World *world, float x, float y)
 	box.SetAsBox(35.0f, 35.0f);
 	fixture.shape = &box;
 	body->CreateFixture(&fixture);
-	setSprite(Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("mower")));
+	setSprite(FilmStrip::create(ResourceLoader::getInstance()->getTexture("mower"), 1, 1, 1));
 }
 
 void Lawnmower::addParticles(){
@@ -89,7 +89,7 @@ Lawnmower::Lawnmower(b2World *world, float x, float y, b2Vec2 dir)
 	body->SetLinearDamping(1.0f);
 
 	//body->SetAngularDamping(0.5f);
-	setSprite(Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("mower")));
+	setSprite(FilmStrip::create(ResourceLoader::getInstance()->getTexture("mower"), 1, 1, 1));
 }
 
 bool Lawnmower::update(float deltaTime, Vec2 dir) {

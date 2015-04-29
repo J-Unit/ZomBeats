@@ -48,58 +48,14 @@ Trashcan::Trashcan(b2World *world, float x, float y, b2Vec2 dir)
 	body->SetLinearDamping(1.0f);
 
 	//body->SetAngularDamping(0.5f);
-	setSpriteSh(FilmStrip::create(ResourceLoader::getInstance()->getTexture("trashcan"), 1, 2, 2));
+	setSprite(FilmStrip::create(ResourceLoader::getInstance()->getTexture("trashcan"), 1, 2, 2));
 }
-
-bool Trashcan::update(float deltaTime, Vec2 dir) {
-	frameRate++;
-	if (frameRate > 100000) {
-		frameRate = 0;
-	}
-	if (frameRate % TRASHCAN_FRAME_INTERVAL == 0) {
-		advanFrame();
-	}
-
-	return true;
-}
-
-void Trashcan::advanFrame(){
-	unsigned int frame = sheet->getFrame();
-	if (frame == 0) {
-		frame++;
-	}
-	else {
-		frame = 0;
-	}
-	sheet->setFrame(frame);
-}
-
-
-void Trashcan::flipFrame(){
-	
-}
-
-void Trashcan::setSpriteSh(FilmStrip* value) {
-	// Release the current sprite if we have a reference
-	if (sheet != NULL) {
-		sheet->release();
-	}
-	sheet = value;
-	value->setPhysicsBody(0);
-	if (sheet != NULL) {
-		sheet->retain(); // Do not delete it until we are done.
-		sheet->setFrame(1);
-		sheet->setPosition(pos_x, pos_y);
-		sheet->setAnchorPoint(Vec2(0.5f, 0.5f));
-	}
-}
-
 
 Trashcan::~Trashcan()
 {
 	// Release the film strip if we have a reference
-	if (sheet != NULL) {
-		sheet->release();
+	if (sprite != NULL) {
+		sprite->release();
 	}
-	sheet = NULL;
+	sprite = NULL;
 }

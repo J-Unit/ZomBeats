@@ -5,7 +5,8 @@
 #include <cocos2d.h>
 #include "Box2D/Box2D.h"
 #include "BoxObject.h"
-
+#include "FilmStrip.h"
+#define EW_FRAME_INTERVAL 20
 using namespace cocos2d;
 
 class EnvironmentWeapon : public BoxObject
@@ -14,7 +15,7 @@ public:
 	b2PolygonShape dynamicBox;
 	int e_weapon_type;
 	bool hasMoved;
-	Sprite* sprite;
+	FilmStrip* sprite;
 	b2PolygonShape box;
 	float pos_x;
 	float pos_y;
@@ -22,7 +23,9 @@ public:
 	float cdTimer;
 	bool isUsed;
 	bool hitWall;
-	void setSprite(Sprite* value);
+	void setSprite(FilmStrip* value);
+	void update();
+	int frameRate;
 };
 
 #endif
