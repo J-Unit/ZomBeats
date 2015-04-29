@@ -21,6 +21,7 @@ public:
 	void setSprite(Sprite* value);
 	float range;//how far out the weapon reaches away from ricky
 	float width; //how wide the weapon hits side to side
+	float detectionRange;
 	~Weapon();
 };
 

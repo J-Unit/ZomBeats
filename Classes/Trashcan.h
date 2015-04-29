@@ -1,6 +1,7 @@
 #include "EnvironmentWeapon.h"
 
 #define IMPULSE 2800000
+class FilmStrip;
 
 class Trashcan : public EnvironmentWeapon
 {
@@ -14,6 +15,10 @@ public:
 	Trashcan(b2World *world, float x, float y);
 	Trashcan(b2World *world, float x, float y, b2Vec2 dir);
 	bool   update(float deltaTime, Vec2 thrust);
+	void flipFrame();
+	unsigned int prevFrame;
+	FilmStrip *sheet;
+	void    setSpriteSh(FilmStrip* value);
 	~Trashcan();
 };
 

@@ -55,7 +55,7 @@ ResourceLoader::ResourceLoader() {
 	}
 
 	
-	text = Director::getInstance()->getTextureCache()->addImage("textures/ricky_lawnmower.png.png");
+	text = Director::getInstance()->getTextureCache()->addImage("textures/ricky_lawnmower.png");
 	if (text) {
 		text->retain();
 		textures["ricky_mower"] = text;

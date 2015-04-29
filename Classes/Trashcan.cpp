@@ -1,5 +1,6 @@
 #include "Trashcan.h"
 #include "ResourceLoader.h"
+#include "FilmStrip.h"
 #include "Box2D/Box2D.h"
 
 
@@ -21,7 +22,7 @@ Trashcan::Trashcan(b2World *world, float x, float y)
 	box.SetAsBox(35.0f, 35.0f);
 	fixture.shape = &box;
 	body->CreateFixture(&fixture);
-	setSprite(Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("trashcan")));
+	setSprite(FilmStrip::create(ResourceLoader::getInstance()->getTexture("trashcan"), 1, 2, 2)); //might have to use setSpriteSh() below instead
 }
 
 //TODO: WONT NEED BUT MAKE TRASH CLASS INSTEAD WHICH JUST DOES WHAT MOWER DOES BUT CERTAIN DISTANCE OR JUST CREATE PROJECTILE
@@ -47,7 +48,7 @@ Trashcan::Trashcan(b2World *world, float x, float y, b2Vec2 dir)
 	body->SetLinearDamping(1.0f);
 
 	//body->SetAngularDamping(0.5f);
-	setSprite(Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("mower")));
+	setSpriteSh(FilmStrip::create(ResourceLoader::getInstance()->getTexture("trashcan"), 1, 2, 2));
 }
 
 bool Trashcan::update(float deltaTime, Vec2 dir) {
@@ -69,12 +70,31 @@ bool Trashcan::update(float deltaTime, Vec2 dir) {
 	return true;
 }
 
+void Trashcan::flipFrame(){
+	
+}
+
+void Trashcan::setSpriteSh(FilmStrip* value) {
+	// Release the current sprite if we have a reference
+	if (sheet != NULL) {
+		sheet->release();
+	}
+	sheet = value;
+	value->setPhysicsBody(0);
+	if (sheet != NULL) {
+		sheet->retain(); // Do not delete it until we are done.
+		sheet->setFrame(1);
+		sheet->setPosition(pos_x, pos_y);
+		sheet->setAnchorPoint(Vec2(0.5f, 0.5f));
+	}
+}
+
 
 Trashcan::~Trashcan()
 {
 	// Release the film strip if we have a reference
-	if (sprite != NULL) {
-		sprite->release();
+	if (sheet != NULL) {
+		sheet->release();
 	}
-	sprite = NULL;
+	sheet = NULL;
 }
