@@ -205,6 +205,7 @@ private:
 
 	LevelSerializer ls;
 	SaveSerializer save;
+	bool removed;
 
 };
 

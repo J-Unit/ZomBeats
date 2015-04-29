@@ -25,6 +25,7 @@ public:
 	bool hitWall;
 	void setSprite(FilmStrip* value);
 	void update();
+	void update2();
 	int frameRate;
 };
 

@@ -284,6 +284,7 @@ void GameController::initEnvironment() {
 	// Tell the director we are ready for animation.
 	this->scheduleUpdate();
 	isPaused = false;
+	removed = false;
 
 	//create the pause button on the upper right corner
 	//---remove these later, these don't really do anything, just to make sure yall have all the textures -----
@@ -379,6 +380,7 @@ void GameController::loadLevel(int i){
 void GameController::restartGame() {
 	loadLevel(currentLevel);
 	removeGameMenu();
+	removed = false;
 }
 
 void GameController::goBackToMainMenu() {
@@ -577,7 +579,18 @@ void GameController::update(float deltaTime) {
 				eweap->onCooldown = false;
 				eweap->cdTimer = 0.0f;
 			}
-			eweap->update();
+			if (!(currentEnvironment != NULL && currentEnvironment->e_weapon_type == 1)){
+				eweap->update();
+				if (removed == true) {
+					removed = false;
+					view->allSpace->addChild(state->ship->getSprite());
+				}
+			}
+			else {
+				eweap->update2();
+				view->allSpace->removeChild(state->ship->getSprite());
+				removed = true;
+			}
 
 		}
 

@@ -22,7 +22,7 @@ Trashcan::Trashcan(b2World *world, float x, float y)
 	box.SetAsBox(35.0f, 35.0f);
 	fixture.shape = &box;
 	body->CreateFixture(&fixture);
-	setSprite(FilmStrip::create(ResourceLoader::getInstance()->getTexture("trashcan"), 1, 2, 2)); //might have to use setSpriteSh() below instead
+	setSprite(FilmStrip::create(ResourceLoader::getInstance()->getTexture("trashcan"), 1, 6, 6)); //might have to use setSpriteSh() below instead
 }
 
 //TODO: WONT NEED BUT MAKE TRASH CLASS INSTEAD WHICH JUST DOES WHAT MOWER DOES BUT CERTAIN DISTANCE OR JUST CREATE PROJECTILE
@@ -48,7 +48,7 @@ Trashcan::Trashcan(b2World *world, float x, float y, b2Vec2 dir)
 	body->SetLinearDamping(1.0f);
 
 	//body->SetAngularDamping(0.5f);
-	setSprite(FilmStrip::create(ResourceLoader::getInstance()->getTexture("trashcan"), 1, 2, 2));
+	setSprite(FilmStrip::create(ResourceLoader::getInstance()->getTexture("trashcan"), 1, 6, 6));
 }
 
 Trashcan::~Trashcan()

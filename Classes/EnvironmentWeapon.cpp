@@ -31,3 +31,24 @@ void EnvironmentWeapon::update(){
 	}
 }
 
+void EnvironmentWeapon::update2(){
+	frameRate++;
+	if (frameRate > 10000) {
+		frameRate = 0;
+	}
+
+	if (frameRate % EW_FRAME_INTERVAL == 0) {
+		
+		unsigned int frame = sprite->getFrame();
+		if (!(frame >= 2 && frame <= 5)) {
+			frame = 2;
+		}
+		else if (frame == 5){
+			frame = 2;
+		}
+		else {
+			frame++;
+		}
+		sprite->setFrame(2);
+	}
+}
