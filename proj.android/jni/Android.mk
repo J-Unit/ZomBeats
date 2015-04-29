@@ -35,7 +35,10 @@ LOCAL_SRC_FILES := hellocpp/main.cpp \
                    ../../Classes/Shotgun.cpp \
                    ../../Classes/CalibrationController.cpp \
                    ../../Classes/MainMenuScene.cpp \
-                   ../../Classes/LevelSelectScene.cpp
+                   ../../Classes/LevelSelectScene.cpp \
+                   ../../Classes/SaveSerializer.cpp \
+                   ../../Classes/Trash.cpp \
+                   ../../Classes/Trashcan.cpp
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../Classes
 
