@@ -361,11 +361,17 @@ void GameController::loadLevel(int i){
 		view->durabilityBox->setVisible(false);
 		view->durability->setVisible(false);
 		calibration->init();
-		//Sprite* popup = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("dialogue_popup"));
-		//popup->setPosition(250, 250);
-		//this->addChild(popup, 10);
-		view->objective->setString("Audio Calibration: Tap anywhere to the beat after\nthe first four, don't miss any!");
+
+		Size visibleSizeDialogue = Director::getInstance()->getVisibleSize();
+		Vec2 originDialogue = Director::getInstance()->getVisibleOrigin();
+
+		Sprite* popup = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("dialogue_popup"));
+		popup->setScale(DIALOGUE_POPUP_SCALE);
+		popup->setPosition(Point(visibleSizeDialogue.width / 2, visibleSizeDialogue.height / 7));
+		view->resIndepScreen->addChild(popup, 4);
+		view->objective->setString("Audio Calibration: Tap anywhere to the beat\nafter the first four, don't miss any!");
 	}
+
 	audio->playTrack(ls.getLevelTrack(), currentLevel != CALIBRATION_LEVEL);
 }
 

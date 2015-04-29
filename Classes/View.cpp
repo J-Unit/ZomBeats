@@ -290,7 +290,7 @@ void View::buildScene(LevelMap *level, Layer* l, int levNum) {
 	objective->setTTFConfig(*ResourceLoader::getInstance()->getFont("NewFont"));
 	Size visibleSizeLabel = Director::getInstance()->getVisibleSize();
 	Vec2 originLabel = Director::getInstance()->getVisibleOrigin();
-	objective->setPosition(Point(visibleSizeLabel.width/2, visibleSizeLabel.height / 7));
+	objective->setPosition(Point(visibleSizeLabel.width/2 - 20, visibleSizeLabel.height / 7));
 	//objective->setPosition(Vec2(HUD_OFFSET.x*44.5f, HUD_OFFSET.y * 57));
 	objective->setAnchorPoint(anchor);
 
@@ -362,7 +362,7 @@ void View::buildScene(LevelMap *level, Layer* l, int levNum) {
 	allSpace->addChild(enviornment, 0);
 	//allSpace->addChild(nearSpace,0.5);
 	//allSpace->addChild(shipImage, 1);
-	resIndepScreen->addChild(objective);
+	resIndepScreen->addChild(objective, 5);
 
 	//l->addChild(coordHUD);  // On top of scene graph.
 	//l->addChild(velHUD);

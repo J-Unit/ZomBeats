@@ -192,12 +192,12 @@ ResourceLoader::ResourceLoader() {
 		text->retain();
 		textures["music_note"] = text;
 	}
-	/*
-	text = Director::getInstance()->getTextureCache()->addImage("textures/dialogue_popup.png");
+	
+	text = Director::getInstance()->getTextureCache()->addImage("textures/dialogue_box.png");
 	if (text) {
 		text->retain();
 		textures["dialogue_popup"] = text;
-	}*/
+	}
 }
 
 /**
