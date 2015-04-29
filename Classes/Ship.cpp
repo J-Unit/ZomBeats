@@ -62,7 +62,7 @@ Ship::Ship(b2World *world, float x, float y, float mx, float my) {
 
 	setSprite(FilmStrip::create(ResourceLoader::getInstance()->getTexture("ricky_gun"), 8, 6, 48), mx, my);
 	lastPosition = body->GetPosition();
-	prevFrame = 1; //initialize the initial frame number
+	prevFrame = 0; //initialize the initial frame number
 }
 
 /**
@@ -98,6 +98,7 @@ void Ship::setSprite(FilmStrip* value, float mx, float my) {
         sprite->setPosition(Vec2(mx, my));
         sprite->setAnchorPoint(Vec2(0.5f,0.5f));
     }
+	sprite->setFrame(0);
 }
 
 /**

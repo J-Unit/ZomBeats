@@ -52,23 +52,28 @@ Trashcan::Trashcan(b2World *world, float x, float y, b2Vec2 dir)
 }
 
 bool Trashcan::update(float deltaTime, Vec2 dir) {
-	/*
-	if (boostFrames <= 0) return false;
-	boostFrames--;*/
-	if (!hasMoved) return false;
-	//float32 angle = body->GetAngle();
-	if (body->GetLinearVelocity().Length() < 0.001f){
-		body->ApplyLinearImpulse(b2Vec2(dir.x * IMPULSE, dir.y * IMPULSE), body->GetPosition(), true);
+	frameRate++;
+	if (frameRate > 100000) {
+		frameRate = 0;
 	}
-	else{
-		b2Vec2 temp = body->GetLinearVelocity();
-		temp.Normalize();
-		body->ApplyLinearImpulse(b2Vec2(temp.x * IMPULSE, temp.y * IMPULSE), body->GetPosition(), true);
+	if (frameRate % TRASHCAN_FRAME_INTERVAL == 0) {
+		advanFrame();
 	}
-
 
 	return true;
 }
+
+void Trashcan::advanFrame(){
+	unsigned int frame = sheet->getFrame();
+	if (frame == 0) {
+		frame++;
+	}
+	else {
+		frame = 0;
+	}
+	sheet->setFrame(frame);
+}
+
 
 void Trashcan::flipFrame(){
 	

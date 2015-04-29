@@ -11,3 +11,4 @@ void EnvironmentWeapon::setSprite(Sprite* value)
 		sprite->setAnchorPoint(Vec2(0.5f, 0.5f));
 	}
 }
+

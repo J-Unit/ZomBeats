@@ -46,7 +46,7 @@ void GameController::BeginContact(b2Contact* contact){
 	Type *b1, *b2;
 	b1 = (Type *)contact->GetFixtureA()->GetBody()->GetUserData();
 	b2 = (Type *)contact->GetFixtureB()->GetBody()->GetUserData();
-	
+
 
 	//trigger environment weapon activation
 	EnvironmentWeapon *ewep;
@@ -76,17 +76,17 @@ void GameController::BeginContact(b2Contact* contact){
 		//reset weapon sprites durability for new weapon in Ricky
 		int durabil = state->ship->currentWeapon->durability;
 		for (int i = 0; i < 3; ++i){
-			for (int j = 0; j < 2; ++j){
-				if (durabil < 1){
-					break;
-				}
-				//create the new sprite
-				state->ship->weaponDurabilityDisplay[i][j] = state->ship->currentWeapon->sprite;
-				state->ship->weaponDurabilityDisplay[i][j]->setAnchorPoint(Vec2(0.0f, 0.0f));
-				state->ship->weaponDurabilityDisplay[i][j]->setPosition(j*20.0f, i*20.0f);
-				view->durabilitySpriteContainer->addChild(state->ship->weaponDurabilityDisplay[i][j]);
-				durabil--;
-			}
+		for (int j = 0; j < 2; ++j){
+		if (durabil < 1){
+		break;
+		}
+		//create the new sprite
+		state->ship->weaponDurabilityDisplay[i][j] = state->ship->currentWeapon->sprite;
+		state->ship->weaponDurabilityDisplay[i][j]->setAnchorPoint(Vec2(0.0f, 0.0f));
+		state->ship->weaponDurabilityDisplay[i][j]->setPosition(j*20.0f, i*20.0f);
+		view->durabilitySpriteContainer->addChild(state->ship->weaponDurabilityDisplay[i][j]);
+		durabil--;
+		}
 		}
 		*/
 		return;
@@ -125,7 +125,7 @@ void GameController::BeginContact(b2Contact* contact){
 	//fucking up zombies
 	Zombie *z;
 	if ((b1->type == ZombieType && b2->type == ShipType) || (b1->type == ShipType && b2->type == ZombieType)){
-			state->ship->isDestroyed = true;
+		state->ship->isDestroyed = true;
 	}
 
 }
@@ -135,42 +135,39 @@ void GameController::EndContact(b2Contact* contact){
 }
 /*
 void GameController::createZombies(){
-	Zombie *z1 = new Zombie(PLANET1_POS.x, PLANET1_POS.y, state->world);
-	Zombie *z2 = new Zombie(PLANET2_POS.x, PLANET2_POS.y, state->world);
-	state->zombies.AddTail(z1);
-	state->zombies.AddTail(z2);
-	view->enviornment->addChild(z1->sprite);
-	view->enviornment->addChild(z2->sprite);
+Zombie *z1 = new Zombie(PLANET1_POS.x, PLANET1_POS.y, state->world);
+Zombie *z2 = new Zombie(PLANET2_POS.x, PLANET2_POS.y, state->world);
+state->zombies.AddTail(z1);
+state->zombies.AddTail(z2);
+view->enviornment->addChild(z1->sprite);
+view->enviornment->addChild(z2->sprite);
 }
-
 void GameController::createWalls(){
-	state->level->walls = new Wall[30];
-	state->level->nWalls = 30;
-	int j = 0;
-	// set up the walls here
-	//we can move the below code to level editor later so it looks clean
-	//-------------------------------f------------------------------------------------------
-	// a vertical wall here
-	for (int i = 0; i < 20; i++, j++) {
-		state->level->walls[j].init(state->world, SPACE_TILE*5.5f, SPACE_TILE*(5.125f + i*0.25f));
-		view->enviornment->addChild(state->level->walls[j].sprite);
-		//new_wall->setSprite(view->walls[i]);
-	}
-
-	// a horizontal wall here
-	for (int i = 20; i < 30; i++, j++) {
-		state->level->walls[j].init(state->world, SPACE_TILE*(5.5f + (i - 19)*0.25f), SPACE_TILE*5.125f);
-		view->enviornment->addChild(state->level->walls[j].sprite);
-		//new_wall->setSprite(view->walls[i]);
-	}
-	state->level->markWallTiles();
+state->level->walls = new Wall[30];
+state->level->nWalls = 30;
+int j = 0;
+// set up the walls here
+//we can move the below code to level editor later so it looks clean
+//-------------------------------f------------------------------------------------------
+// a vertical wall here
+for (int i = 0; i < 20; i++, j++) {
+state->level->walls[j].init(state->world, SPACE_TILE*5.5f, SPACE_TILE*(5.125f + i*0.25f));
+view->enviornment->addChild(state->level->walls[j].sprite);
+//new_wall->setSprite(view->walls[i]);
 }
-
+// a horizontal wall here
+for (int i = 20; i < 30; i++, j++) {
+state->level->walls[j].init(state->world, SPACE_TILE*(5.5f + (i - 19)*0.25f), SPACE_TILE*5.125f);
+view->enviornment->addChild(state->level->walls[j].sprite);
+//new_wall->setSprite(view->walls[i]);
+}
+state->level->markWallTiles();
+}
 void GameController::createWeapons(){
-	//Sword *s1 = new Sword(state->world, SPACE_TILE*5.9f, SPACE_TILE*(5.5f + 1*0.25f)); //this makes it corner inside of wall
-	Sword *s1 = new Sword(state->world, SPACE_TILE*9.0f, SPACE_TILE*(5.5f + 1 * 0.25f));
-	state->weapons.AddTail(s1);
-	view->enviornment->addChild(s1->sprite);
+//Sword *s1 = new Sword(state->world, SPACE_TILE*5.9f, SPACE_TILE*(5.5f + 1*0.25f)); //this makes it corner inside of wall
+Sword *s1 = new Sword(state->world, SPACE_TILE*9.0f, SPACE_TILE*(5.5f + 1 * 0.25f));
+state->weapons.AddTail(s1);
+view->enviornment->addChild(s1->sprite);
 }*/
 
 //purpose of this function is to set a level when choosing from start menu
@@ -191,7 +188,7 @@ void GameController::createFog() {
 }
 
 void GameController::createGameMenu() {
-	
+
 	/*pauseMenu = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("pause_menu"));
 	pauseMenu->setScale(0.15f);
 	pauseMenu->setPosition(Vec2(HUD_OFFSET.x * 50, HUD_OFFSET.y * 35));
@@ -219,7 +216,7 @@ void GameController::createGameMenu() {
 	menu = Menu::create(resumeButton, restartButton, homeButton, NULL);
 	menu->setPosition(Point::ZERO);
 	this->addChild(menu);
-	
+
 }
 
 void GameController::removeGameMenu() {
@@ -230,7 +227,7 @@ void GameController::removeGameMenu() {
 void GameController::updateFog() {
 	if (fogSp != NULL) {
 		//if (INITIAL_DETECTION_RADIUS / detectionRadius > 0.65f) {
-			fogSp->setScale(FOG_SCALE + (meter->detectionRadius - MIN_DETECTION_RADIUS)/120.0f, FOG_SCALE + (meter->detectionRadius - MIN_DETECTION_RADIUS)/120.0f);
+		fogSp->setScale(FOG_SCALE + (meter->detectionRadius - MIN_DETECTION_RADIUS) / 120.0f, FOG_SCALE + (meter->detectionRadius - MIN_DETECTION_RADIUS) / 120.0f);
 
 		//}
 
@@ -261,7 +258,7 @@ bool GameController::init() {
 	return true;
 }
 /**
-* Intialize the environment of the game, this is the real method that populates the game 
+* Intialize the environment of the game, this is the real method that populates the game
 * state and level
 */
 void GameController::initEnvironment() {
@@ -313,7 +310,7 @@ void GameController::createPauseButton() {
 
 Vec2 GameController::mouseToWorld(Vec2 click){
 	b2Vec2 pos = state->ship->body->GetPosition();
-	return Vec2((input->lastClick.x - view->screen_size_x / 2.0) / view->resIndepScreen->getScale() + pos.x, 
+	return Vec2((input->lastClick.x - view->screen_size_x / 2.0) / view->resIndepScreen->getScale() + pos.x,
 		-(input->lastClick.y - view->screen_size_y / 2.0) / view->resIndepScreen->getScale() + pos.y);
 }
 
@@ -330,7 +327,7 @@ void GameController::loadLevel(int i){
 	destination = 0;
 	isPaused = false;
 	input->clickProcessed = true;
-	dRickyTap = new Vec2(1.0f,0.0f);
+	dRickyTap = new Vec2(1.0f, 0.0f);
 	dRickyTap->normalize();
 	elapsedTime = 0.0;
 	stringstream ss;
@@ -399,9 +396,9 @@ void GameController::resumeGame() {
 
 void GameController::createWeaponRanges(float weapWidth, float weapRange, float weapDetectionRange, b2Vec2 dir){
 	weaponRectangle[0] = b2Vec2(-weapRange / 2.0f, weapWidth / 2.0f); //top left
-	weaponRectangle[1] = b2Vec2(weapRange / 2.0f,weapWidth / 2.0f); //top right
-	weaponRectangle[2] = b2Vec2(-weapRange / 2.0f ,- weapWidth / 2.0f); //bottom left
-	weaponRectangle[3] = b2Vec2(weapRange / 2.0f,-weapWidth / 2.0f); //bottom right 
+	weaponRectangle[1] = b2Vec2(weapRange / 2.0f, weapWidth / 2.0f); //top right
+	weaponRectangle[2] = b2Vec2(-weapRange / 2.0f, -weapWidth / 2.0f); //bottom left
+	weaponRectangle[3] = b2Vec2(weapRange / 2.0f, -weapWidth / 2.0f); //bottom right 
 
 	weaponDetectionRectangle[0] = b2Vec2(-weapRange / 2.0f, weapWidth / 2.0f); //top left
 	weaponDetectionRectangle[1] = b2Vec2(weapDetectionRange / 2.0f, weapWidth / 2.0f); //top right
@@ -412,10 +409,10 @@ void GameController::createWeaponRanges(float weapWidth, float weapRange, float 
 	b2Rot rotationM = b2Rot(theta);
 
 	//add ricky pos to each point and translate box in front by mult dir facing * half range weap
-	for (int i = 0; i < sizeof(weaponRectangle)/sizeof(b2Vec2); i++){
+	for (int i = 0; i < sizeof(weaponRectangle) / sizeof(b2Vec2); i++){
 		b2Vec2 rickPos = state->ship->body->GetPosition();
 		weaponRectangle[i] = b2Vec2(weaponRectangle[i].y, weaponRectangle[i].x);
-		weaponRectangle[i] = b2MulT(rotationM,weaponRectangle[i]);
+		weaponRectangle[i] = b2MulT(rotationM, weaponRectangle[i]);
 		weaponRectangle[i] = b2Vec2(weaponRectangle[i].y, weaponRectangle[i].x);
 		weaponRectangle[i] = weaponRectangle[i] + rickPos + ((weapRange / 2.0f + SHIP_HEIGHT)*dir);
 
@@ -441,7 +438,7 @@ bool GameController::isZombieHit(b2Vec2 az, b2Vec2 bz, b2Vec2 ab, b2Vec2 bc){
 
 
 void GameController::removeDeadWeapons(){
-	
+
 	CTypedPtrDblElement<Weapon> *toDelete = NULL;
 	for (CTypedPtrDblElement<Weapon> *weapon = state->weapons.GetHeadPtr(); !state->weapons.IsSentinel(weapon); weapon = weapon->Next())
 	{
@@ -459,7 +456,7 @@ void GameController::removeDeadWeapons(){
 }
 
 void GameController::removeDeadEWeapons(){
-	
+
 	CTypedPtrDblElement<EnvironmentWeapon> *toDelete = NULL;
 	EnvironmentWeapon *eweap = NULL;
 	for (CTypedPtrDblElement<EnvironmentWeapon> *e_weapon = state->environment_weapons.GetHeadPtr(); !state->environment_weapons.IsSentinel(e_weapon); e_weapon = e_weapon->Next())
@@ -469,7 +466,7 @@ void GameController::removeDeadEWeapons(){
 			eweap->onCooldown = true;
 			eweap->isUsed = false;
 		}
-		if ((eweap->e_weapon_type!=1) && (eweap->isUsed || eweap->hitWall)){
+		if ((eweap->e_weapon_type != 1) && (eweap->isUsed || eweap->hitWall)){
 			eweap->isUsed = false;
 			state->world->DestroyBody(eweap->body);
 			toDelete = e_weapon;
@@ -483,7 +480,7 @@ void GameController::removeDeadEWeapons(){
 
 void GameController::removeDeadZombies(){
 	CTypedPtrDblList<CTypedPtrDblElement<Zombie>> zombsToDel;
-	for (CTypedPtrDblElement<Zombie> *zombie = state->zombies.GetHeadPtr(); !state->zombies.IsSentinel(zombie);  zombie = zombie->Next())
+	for (CTypedPtrDblElement<Zombie> *zombie = state->zombies.GetHeadPtr(); !state->zombies.IsSentinel(zombie); zombie = zombie->Next())
 	{
 		Zombie *zomb = zombie->Data();
 		if (zomb->isDestroyed){
@@ -491,9 +488,9 @@ void GameController::removeDeadZombies(){
 			zombsToDel.AddTail(zombie);
 			view->zombies->removeChild(zomb->sprite);
 		}
-		
+
 	}
-	for (CTypedPtrDblElement<CTypedPtrDblElement<Zombie>> *z = zombsToDel.GetHeadPtr(); !zombsToDel.IsSentinel(z);  z = z->Next()){
+	for (CTypedPtrDblElement<CTypedPtrDblElement<Zombie>> *z = zombsToDel.GetHeadPtr(); !zombsToDel.IsSentinel(z); z = z->Next()){
 		delete z->Data()->Data();
 		state->zombies.Remove(z->Data());
 	}
@@ -514,7 +511,7 @@ void GameController::startVideoCalibration(){
 	for (int i = 0; i < 16; i++){
 		calibration->zombies[i] = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("zombie_single"));
 		calibration->zombies[i]->setAnchorPoint(anchor);
-		calibration->zombies[i]->setPosition(p.x + VIDEO_CALIBRATION_OFFSET*i + 2 * VIDEO_CALIBRATION_OFFSET, p.y+80);
+		calibration->zombies[i]->setPosition(p.x + VIDEO_CALIBRATION_OFFSET*i + 2 * VIDEO_CALIBRATION_OFFSET, p.y + 80);
 		calibration->zombieTimes[i] = elapsedTime * 2;
 		view->zombies->addChild(calibration->zombies[i]);
 	}
@@ -574,6 +571,7 @@ void GameController::update(float deltaTime) {
 				eweap->onCooldown = false;
 				eweap->cdTimer = 0.0f;
 			}
+
 		}
 
 		//delay is up so now 
@@ -608,7 +606,7 @@ void GameController::update(float deltaTime) {
 			mowerDir.add(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y));
 
 			b2Vec2 dir = b2Vec2(mowerDir.x, mowerDir.y);
-			
+
 			if (currentEnvironment->e_weapon_type == 0){
 				Lawnmower *lm = new Lawnmower(state->world, mowerDir.x, mowerDir.y, dir);
 				state->environment_weapons.AddTail(lm);
@@ -682,16 +680,16 @@ void GameController::update(float deltaTime) {
 						//if you have a weapon and click on the beat, check if you kill any zombies in that direction
 						//mouseclick to world coords subtract rickies pos from that...normalize it...snap it to nearest rotation: round nearest int(arctan2(normalized) /. pi/2) * pi/4
 						/*if ((destination != 0 && destPrev != 0) && (destination == destPrev)){
-							dRickyTap = dRickyTap;
-							}
-							if (state->ship->currentWeapon->durability < 1){
-								state->ship->hasWeapon = false;
-								free(state->ship->currentWeapon);
-								state->ship->currentWeapon = NULL;
-							else{
-							dRickyTap = new Vec2(destination->x - destPrev->x, destination->y - destPrev->y);
-							dRickyTap->normalize();
-							}*/
+						dRickyTap = dRickyTap;
+						}
+						if (state->ship->currentWeapon->durability < 1){
+						state->ship->hasWeapon = false;
+						free(state->ship->currentWeapon);
+						state->ship->currentWeapon = NULL;
+						else{
+						dRickyTap = new Vec2(destination->x - destPrev->x, destination->y - destPrev->y);
+						dRickyTap->normalize();
+						}*/
 						dRickyTap->set(click.x - state->ship->body->GetPosition().x, click.y - state->ship->body->GetPosition().y);
 						float theta = atan2(dRickyTap->y, dRickyTap->x);
 						theta = round(theta / (M_PI / 4.0f)) * (M_PI / 4.0f);
@@ -707,7 +705,7 @@ void GameController::update(float deltaTime) {
 							b2Vec2 az = b2Vec2(zombb->body->GetPosition().x - weaponRectangle[0].x, zombb->body->GetPosition().y - weaponRectangle[0].y);
 							b2Vec2 bz = b2Vec2(zombb->body->GetPosition().x - weaponRectangle[1].x, zombb->body->GetPosition().y - weaponRectangle[1].y);
 							b2Vec2 ab = b2Vec2(weaponRectangle[1].x - weaponRectangle[0].x, weaponRectangle[1].y - weaponRectangle[0].y);
-							b2Vec2 bc = b2Vec2(weaponRectangle[3].x - weaponRectangle[1].x, weaponRectangle[3].y - weaponRectangle[1].y); 
+							b2Vec2 bc = b2Vec2(weaponRectangle[3].x - weaponRectangle[1].x, weaponRectangle[3].y - weaponRectangle[1].y);
 
 							b2Vec2 az2 = b2Vec2(zombb->body->GetPosition().x - weaponDetectionRectangle[0].x, zombb->body->GetPosition().y - weaponDetectionRectangle[0].y);
 							b2Vec2 bz2 = b2Vec2(zombb->body->GetPosition().x - weaponDetectionRectangle[1].x, zombb->body->GetPosition().y - weaponDetectionRectangle[1].y);
@@ -721,7 +719,7 @@ void GameController::update(float deltaTime) {
 									zombb->isDestroyed = true;
 								}
 							}
-					
+
 							zambie = zambie->Next();
 						}
 						if (num_zombies_killed > 0){
@@ -783,23 +781,23 @@ void GameController::update(float deltaTime) {
 
 
 			}
-			 else{
-				 if (calibration->acceptClicks){
-					 time_t now = time(0);
-					 calibration->totalOffset += (((elapsedTime - (now - input->clickTime)) - audio->audioDelay) - calibration->zombieTimes[calibration->clicks]);
-					 view->zombies->removeChild(calibration->zombies[calibration->clicks]);
-					 calibration->clicks++;
-					 input->clickProcessed = true;
-					 if (calibration->clicks == 16){
-						 calibration->acceptClicks = false;
-						 audio->videoDelay = calibration->videoDelay();
-						 stringstream ss;
-						 ss << "Ok, great.  Video Delay: " << formatMs(audio->videoDelay);
-						 view->objective->setString(ss.str());
-						 save.exportSave(this);
-					 }
-				 }
-			 }
+			else{
+				if (calibration->acceptClicks){
+					time_t now = time(0);
+					calibration->totalOffset += (((elapsedTime - (now - input->clickTime)) - audio->audioDelay) - calibration->zombieTimes[calibration->clicks]);
+					view->zombies->removeChild(calibration->zombies[calibration->clicks]);
+					calibration->clicks++;
+					input->clickProcessed = true;
+					if (calibration->clicks == 16){
+						calibration->acceptClicks = false;
+						audio->videoDelay = calibration->videoDelay();
+						stringstream ss;
+						ss << "Ok, great.  Video Delay: " << formatMs(audio->videoDelay);
+						view->objective->setString(ss.str());
+						save.exportSave(this);
+					}
+				}
+			}
 		}
 
 		if (destination != 0 && from == destination){
@@ -833,7 +831,7 @@ void GameController::update(float deltaTime) {
 					audio->stop();
 					stringstream ss;
 					if (calibration->clicks < 32){
-						ss << "You missed some of the the beats, try again.";  
+						ss << "You missed some of the the beats, try again.";
 					}
 					else{
 						audio->audioDelay = calibration->audioDelay();
@@ -856,7 +854,7 @@ void GameController::update(float deltaTime) {
 			destination = 0;
 		}
 
-		if (state->ship->hasEnvironmentWeapon && currentEnvironment!=NULL && currentEnvironment->e_weapon_type!=1 && !currentEnvironment->hasMoved && currentEnvironment->sprite!=NULL){
+		if (state->ship->hasEnvironmentWeapon && currentEnvironment != NULL && currentEnvironment->e_weapon_type != 1 && !currentEnvironment->hasMoved && currentEnvironment->sprite != NULL){
 			view->enviornment->removeChild(currentEnvironment->sprite);
 		}
 
@@ -923,10 +921,10 @@ void GameController::update(float deltaTime) {
 				/*
 				z->Data()->sprite->setVisible(false);
 				if (!audio->frameOnBeat){
-					view->zombiePositions->clear();
+				view->zombiePositions->clear();
 				}else if (!audio->prevOnBeat){
-					pos = z->Data()->body->GetPosition();
-					view->zombiePositions->drawSolidCircle(Vec2(pos.x, pos.y), 8.0f, 0.0f, 20.0f, ccColor4F(0.5f, 0, 0, 1.0f));
+				pos = z->Data()->body->GetPosition();
+				view->zombiePositions->drawSolidCircle(Vec2(pos.x, pos.y), 8.0f, 0.0f, 20.0f, ccColor4F(0.5f, 0, 0, 1.0f));
 				}*/
 
 			}
@@ -962,16 +960,16 @@ void GameController::drawMusicNotePath() {
 			}
 		}
 		/*do {
-			float x1 = state->level->getTileCenterX(last);
-			float y1 = state->level->getTileCenterY(last);
-			float x2 = state->level->getTileCenterX(cur);
-			float y2 = state->level->getTileCenterY(cur);
-			//draw main character's path
-			//view->path->drawLine(Vec2(x1, y1), Vec2(x2, y2), ccColor4F(1.0f, 1.0f, 1.0f, 1.0f));
-			drawMusicNotePath(Vec2(x1, y1));
-			drawMusicNotePath(Vec2(x2, y2));
-			last = cur;
-			cur = cur->next;
+		float x1 = state->level->getTileCenterX(last);
+		float y1 = state->level->getTileCenterY(last);
+		float x2 = state->level->getTileCenterX(cur);
+		float y2 = state->level->getTileCenterY(cur);
+		//draw main character's path
+		//view->path->drawLine(Vec2(x1, y1), Vec2(x2, y2), ccColor4F(1.0f, 1.0f, 1.0f, 1.0f));
+		drawMusicNotePath(Vec2(x1, y1));
+		drawMusicNotePath(Vec2(x2, y2));
+		last = cur;
+		cur = cur->next;
 		} while (cur != 0);*/
 	}
 	else{
@@ -1012,7 +1010,6 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 	//d << "Detection Radius: " << detectionRadius;
 	d << "Ricky Pos: " << state->ship->body->GetPosition().x << "," << state->ship->body->GetPosition().y;
 	view->detectionRadiusHUD->setString(d.str());
-
 	stringstream awr;
 	//awr << "Zombie 1 Awarness: " << currAwareness;
 	awr << "endpt: " << currentFingerPos.x << "," << currentFingerPos.y;
@@ -1030,19 +1027,19 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 	}
 
 	if (state->ship->hasWeapon){
-		
+
 		//hero array for sprite pointers
 		//pickup will clear contents and then for loop that populates it with sprite pointers and sets position by index in the actual sprite position
 		/*int dura = state->ship->currentWeapon->durability;
 		for (int i = 0; i < 3; ++i){
-			for (int j = 0; j < 2; ++j){
-				if (dura < 1){
-					break;
-				}
-				//create the new sprite
-				view->durabilitySpriteContainer->addChild(state->ship->weaponDurabilityDisplay[i][j]);
-				dura--;
-			}
+		for (int j = 0; j < 2; ++j){
+		if (dura < 1){
+		break;
+		}
+		//create the new sprite
+		view->durabilitySpriteContainer->addChild(state->ship->weaponDurabilityDisplay[i][j]);
+		dura--;
+		}
 		}*/
 	}
 
@@ -1090,10 +1087,10 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 	}*/
 	/*stringstream st;
 	if (onBeat){
-		st << "HIT";
+	st << "HIT";
 	}
 	else{
-		st << "MISS";
+	st << "MISS";
 	}
 	view->beatHUD->setString(st.str());*/
 	//TODO: Add new HUD for BPM

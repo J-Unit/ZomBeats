@@ -1,6 +1,7 @@
 #include "EnvironmentWeapon.h"
 
 #define IMPULSE 2800000
+#define TRASHCAN_FRAME_INTERVAL 10
 class FilmStrip;
 
 class Trashcan : public EnvironmentWeapon
@@ -18,7 +19,9 @@ public:
 	void flipFrame();
 	unsigned int prevFrame;
 	FilmStrip *sheet;
-	void    setSpriteSh(FilmStrip* value);
+	void setSpriteSh(FilmStrip* value);
+	void advanFrame();
+	int frameRate;
 	~Trashcan();
 };
 
