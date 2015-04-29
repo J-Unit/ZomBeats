@@ -28,6 +28,7 @@ using namespace cocos2d;
 #define SHIP_WIDTH 29.5f
 #define SHIP_HEIGHT 55.0f
 #define SHIP_DIAGONAL sqrt(WIDTH*WIDTH+HEIGHT*HEIGHT) / 2
+#define RICKY_SCALE 1.5f
 
 
 // Forward declaration to minimize imports in header
@@ -52,7 +53,8 @@ private:
      * This method includes some dampening of the turn, and should be called before
      * moving the ship.
      */
-    void advanceFrame(Vec2* dir);
+    void advanceFrameShotty(Vec2* dir);
+	void advanceFrameEmpty(Vec2* dir);
 
 protected:
 

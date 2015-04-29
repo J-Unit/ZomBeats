@@ -59,8 +59,8 @@ Ship::Ship(b2World *world, float x, float y, float mx, float my) {
 	body->SetLinearDamping(3.0f);
 	//body->SetAngularDamping(0.5f);
     sprite  = NULL;
-	//setSprite(FilmStrip::create(ResourceLoader::getInstance()->getTexture("ricky"), 1, 2, 2), mx, my);
-	setSprite(FilmStrip::create(ResourceLoader::getInstance()->getTexture("ricky_gun"), 5, 3, 14), mx, my);
+
+	setSprite(FilmStrip::create(ResourceLoader::getInstance()->getTexture("ricky_gun"), 8, 6, 48), mx, my);
 	lastPosition = body->GetPosition();
 	prevFrame = 1; //initialize the initial frame number
 }
@@ -91,7 +91,7 @@ void Ship::setSprite(FilmStrip* value, float mx, float my) {
     }
     sprite = value;
 	value->setPhysicsBody(0);
-	sprite->setScale(0.8f);
+	sprite->setScale(RICKY_SCALE);
     if (sprite != NULL) {
         sprite->retain(); // Do not delete it until we are done.
         sprite->setFrame(SHIP_IMG_FLAT);
@@ -128,15 +128,19 @@ bool Ship::update(float deltaTime, Vec2 dir, float grooviness) {
    // forward = RANGE_CLAMP(forward, -SHIP_MAX_SPEED, SHIP_MAX_SPEED);
    // turning = RANGE_CLAMP(turning, -SHIP_MAX_TURN, SHIP_MAX_TURN);
 	if (sprite != NULL && hasEnvironmentWeapon){
-		sprite->setFrame(13);
+		//sprite->setFrame(13);
+		sprite->setFrame(0);
 	}
     else if (sprite != NULL && hasWeapon) {
-		sprite->setFrame(12);
+		if (frameRate % FRAME_INTERVAL == 0) {
+			Vec2* moveDir = new Vec2(round(body->GetPosition().x - lastPosition.x), round(body->GetPosition().y - lastPosition.y));
+			advanceFrameShotty(moveDir);
+		}
     }
 	else if(sprite!=NULL && !hasWeapon) {
 		if (frameRate % FRAME_INTERVAL == 0) {
 			Vec2* moveDir = new Vec2(round(body->GetPosition().x - lastPosition.x), round(body->GetPosition().y - lastPosition.y));
-			advanceFrame(moveDir);
+			advanceFrameEmpty(moveDir);
 		}
 	}
     
@@ -165,80 +169,152 @@ bool Ship::update(float deltaTime, Vec2 dir, float grooviness) {
  * This method includes some dampening of the turn, and should be called before
  * moving the ship.
  */
-void Ship::advanceFrame(Vec2* dir) {
+void Ship::advanceFrameEmpty(Vec2* dir) {
     // Our animation depends on the current frame.
     unsigned int frame = sprite->getFrame();
     
 	//if ricky's moving up
-	if (dir->y > 0) {
+	if (dir->y > 0 && dir->x == 0) {
 		//if it is not the current up frame
-		if (!(frame >= 0 && frame <= 2)) {
-			frame = 1;
-		}
-		//go back to sequence 0
-		else if (frame == 0 || frame == 2) {
-			frame = 1;
-		}
-		//0-1-0-2-0-1-0-2
-		else if (frame == 1 && prevFrame == 0) {
-			frame = 2;
-		}
-		else {
-			frame = 0;
-		}
-	}
-	//ricky's moving down
-	else if (dir->y < 0) {
-		//if it is not the current down frame
-		if (!(frame >= 3 && frame <= 5)) {
-			frame = 4;
-		}
-		//go back to sequence 0
-		else if (frame == 3 || frame == 5) {
-			frame = 4;
-		}
-		//0-1-0-2-0-1-0-2
-		else if (frame == 4 && prevFrame == 3) {
-			frame = 5;
-		}
-		else {
-			frame = 3;
-		}
-	}
-	//moving to the right
-	else if (dir->x > 0) {
-		//if it is not the current right frame
 		if (!(frame >= 6 && frame <= 8)) {
-			frame = 7;
+			frame = 6;
 		}
 		//go back to sequence 0
-		else if (frame == 6 || frame == 8) {
-			frame = 7;
+		else if (frame == 7 || frame == 8) {
+			frame = 6;
 		}
 		//0-1-0-2-0-1-0-2
-		else if (frame == 7 && prevFrame == 6) {
+		else if (frame == 6 && prevFrame == 7) {
 			frame = 8;
 		}
 		else {
-			frame = 6;
+			frame = 7;
+		}
+	}
+	//ricky's moving down
+	else if (dir->y < 0 && dir->x == 0) {
+		//if it is not the current down frame
+		if (!(frame >= 0 && frame <= 2)) {
+			frame = 0;
+		}
+		//go back to sequence 0
+		else if (frame == 1 || frame == 2) {
+			frame = 0;
+		}
+		//0-1-0-2-0-1-0-2
+		else if (frame == 0 && prevFrame == 1) {
+			frame = 2;
+		}
+		else {
+			frame = 1;
+		}
+	}
+	//moving to the right
+	else if (dir->x > 0 && dir->y == 0) {
+		//if it is not the current right frame
+		if (!(frame >= 12 && frame <= 14)) {
+			frame = 12;
+		}
+		//go back to sequence 0
+		else if (frame == 13 || frame == 14) {
+			frame = 12;
+		}
+		//0-1-0-2-0-1-0-2
+		else if (frame == 12 && prevFrame == 13) {
+			frame = 14;
+		}
+		else {
+			frame = 13;
 		}
 	}
 	//moving to the left
-	else if (dir->x < 0) {
+	else if (dir->x < 0 && dir->y == 0) {
 		//if it is not the current left frame
-		if (!(frame >= 9 && frame <= 11)) {
-			frame = 10;
+		if (!(frame >= 18 && frame <= 20)) {
+			frame = 18;
 		}
 		//go back to sequence 0
-		else if (frame == 9 || frame == 11) {
-			frame = 10;
+		else if (frame == 19 || frame == 20) {
+			frame = 18;
 		}
 		//0-1-0-2-0-1-0-2
-		else if (frame == 10 && prevFrame == 9) {
-			frame = 11;
+		else if (frame == 18 && prevFrame == 19) {
+			frame = 20;
 		}
 		else {
-			frame = 9;
+			frame = 19;
+		}
+	}
+	//moving righ-down
+	else if (dir->x > 0 && dir->y < 0) {
+		//if it is not the current left frame
+		if (!(frame >= 36 && frame <= 38)) {
+			frame = 36;
+		}
+		//go back to sequence 0
+		else if (frame == 37 || frame == 38) {
+			frame = 36;
+		}
+		//0-1-0-2-0-1-0-2
+		else if (frame == 36 && prevFrame == 37) {
+			frame = 38;
+		}
+		else {
+			frame = 37;
+		}
+	}
+	//moving left-down
+	else if (dir->x < 0 && dir->y < 0) {
+		//if it is not the current left frame
+		if (!(frame >= 42 && frame <= 44)) {
+			frame = 42;
+		}
+		//go back to sequence 0
+		else if (frame == 43 || frame == 44) {
+			frame = 42;
+		}
+		//0-1-0-2-0-1-0-2
+		else if (frame == 42 && prevFrame == 43) {
+			frame = 44;
+		}
+		else {
+			frame = 43;
+		}
+	}
+	//moving righ-up
+	else if (dir->x > 0 && dir->y > 0) {
+		//if it is not the current left frame
+		if (!(frame >= 30 && frame <= 32)) {
+			frame = 30;
+		}
+		//go back to sequence 0
+		else if (frame == 31 || frame == 32) {
+			frame = 30;
+		}
+		//0-1-0-2-0-1-0-2
+		else if (frame == 30 && prevFrame == 31) {
+			frame = 32;
+		}
+		else {
+			frame = 31;
+		}
+	}
+	//moving left-up
+	else if (dir->x < 0 && dir->y > 0) {
+		//if it is not the current left frame
+		if (!(frame >= 24 && frame <= 26)) {
+			frame = 24;
+		}
+		//go back to sequence 0
+		else if (frame == 25 || frame == 26) {
+			frame = 24;
+		}
+		//0-1-0-2-0-1-0-2
+		else if (frame == 24 && prevFrame == 25) {
+			frame = 26;
+		}
+		else {
+			frame = 25;
 		}
 	}
 	else {
@@ -247,4 +323,160 @@ void Ship::advanceFrame(Vec2* dir) {
 	prevFrame = sprite->getFrame();
     sprite->setFrame(frame);
 }
+
+void Ship::advanceFrameShotty(Vec2* dir) {
+	// Our animation depends on the current frame.
+	unsigned int frame = sprite->getFrame();
+
+	//if ricky's moving up
+	if (dir->y > 0 && dir->x == 0) {
+		//if it is not the current up frame
+		if (!(frame >= 9 && frame <= 11)) {
+			frame = 9;
+		}
+		//go back to sequence 0
+		else if (frame == 10 || frame == 11) {
+			frame = 9;
+		}
+		//0-1-0-2-0-1-0-2
+		else if (frame == 9 && prevFrame == 10) {
+			frame = 11;
+		}
+		else {
+			frame = 10;
+		}
+	}
+	//ricky's moving down
+	else if (dir->y < 0 && dir->x == 0) {
+		//if it is not the current down frame
+		if (!(frame >= 3 && frame <= 5)) {
+			frame = 3;
+		}
+		//go back to sequence 0
+		else if (frame == 4 || frame == 5) {
+			frame = 3;
+		}
+		//0-1-0-2-0-1-0-2
+		else if (frame == 3 && prevFrame == 4) {
+			frame = 5;
+		}
+		else {
+			frame = 4;
+		}
+	}
+	//moving to the right
+	else if (dir->x > 0 && dir->y == 0) {
+		//if it is not the current right frame
+		if (!(frame >= 15 && frame <= 17)) {
+			frame = 15;
+		}
+		//go back to sequence 0
+		else if (frame == 16 || frame == 17) {
+			frame = 15;
+		}
+		//0-1-0-2-0-1-0-2
+		else if (frame == 15 && prevFrame == 16) {
+			frame = 17;
+		}
+		else {
+			frame = 16;
+		}
+	}
+	//moving to the left
+	else if (dir->x < 0 && dir->y == 0) {
+		//if it is not the current left frame
+		if (!(frame >= 21 && frame <= 23)) {
+			frame = 21;
+		}
+		//go back to sequence 0
+		else if (frame == 22 || frame == 23) {
+			frame = 21;
+		}
+		//0-1-0-2-0-1-0-2
+		else if (frame == 21 && prevFrame == 22) {
+			frame = 23;
+		}
+		else {
+			frame = 22;
+		}
+	}
+	//moving righ-down
+	else if (dir->x > 0 && dir->y < 0) {
+		//if it is not the current left frame
+		if (!(frame >= 39 && frame <= 41)) {
+			frame = 39;
+		}
+		//go back to sequence 0
+		else if (frame == 40 || frame == 41) {
+			frame = 39;
+		}
+		//0-1-0-2-0-1-0-2
+		else if (frame == 39 && prevFrame == 40) {
+			frame = 41;
+		}
+		else {
+			frame = 40;
+		}
+	}
+	//moving left-down
+	else if (dir->x < 0 && dir->y < 0) {
+		//if it is not the current left frame
+		if (!(frame >= 45 && frame <= 47)) {
+			frame = 45;
+		}
+		//go back to sequence 0
+		else if (frame == 46 || frame == 47) {
+			frame = 45;
+		}
+		//0-1-0-2-0-1-0-2
+		else if (frame == 45 && prevFrame == 46) {
+			frame = 47;
+		}
+		else {
+			frame = 46;
+		}
+	}
+	//moving righ-up
+	else if (dir->x > 0 && dir->y > 0) {
+		//if it is not the current left frame
+		if (!(frame >= 33 && frame <= 35)) {
+			frame = 33;
+		}
+		//go back to sequence 0
+		else if (frame == 34 || frame == 35) {
+			frame = 33;
+		}
+		//0-1-0-2-0-1-0-2
+		else if (frame == 33 && prevFrame == 34) {
+			frame = 35;
+		}
+		else {
+			frame = 34;
+		}
+	}
+	//moving left-up
+	else if (dir->x < 0 && dir->y > 0) {
+		//if it is not the current left frame
+		if (!(frame >= 27 && frame <= 29)) {
+			frame = 27;
+		}
+		//go back to sequence 0
+		else if (frame == 28 || frame == 29) {
+			frame = 27;
+		}
+		//0-1-0-2-0-1-0-2
+		else if (frame == 27 && prevFrame == 28) {
+			frame = 29;
+		}
+		else {
+			frame = 28;
+		}
+	}
+	else {
+		frame = sprite->getFrame();
+	}
+	prevFrame = sprite->getFrame();
+	sprite->setFrame(frame);
+}
+
 

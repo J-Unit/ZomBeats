@@ -54,13 +54,6 @@ ResourceLoader::ResourceLoader() {
 		textures["grass1"] = text;
 	}
 
-    //text = Director::getInstance()->getTextureCache()->addImage("textures/ships.png");
-	//text = Director::getInstance()->getTextureCache()->addImage("textures/chuck.png");
-	text = Director::getInstance()->getTextureCache()->addImage("textures/spritebasic_withsword.png");
-    if (text) {
-        text->retain();
-        textures["ricky"] = text;
-    }
 	
 	text = Director::getInstance()->getTextureCache()->addImage("textures/ricky_lawnmower.png.png");
 	if (text) {
@@ -72,7 +65,7 @@ ResourceLoader::ResourceLoader() {
         text->retain();
         textures["zombie"] = text;
     }
-	text = text = Director::getInstance()->getTextureCache()->addImage("textures/spritebasic_withshotty.png");
+	text = text = Director::getInstance()->getTextureCache()->addImage("textures/spritebasic.png");
 	if (text) {
 		text->retain();
 		textures["ricky_gun"] = text;
