@@ -21,12 +21,13 @@ public:
 	b2Vec2 lastPosition;
 	FilmStrip* sprite;
 	b2Vec2 direction, seperation, zombiness, cohesion, alignment, attraction, aidir;
-
+	ParticleSystemQuad *emitter;
 
 
 	void setSprite(FilmStrip* value);
 	void advanceFrame();
 	void increaseAwarness();
+	void addParticles();
 
 	Zombie(float x, float y, b2World* world);
 	~Zombie();

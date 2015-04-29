@@ -208,6 +208,49 @@ void Zombie::advanceFrame() {
 	
 }
 
+void Zombie::addParticles(){
+	emitter = ParticleSystemQuad::create();
+
+	emitter->setDuration(2.0f);
+	emitter->setLife(1.6f);
+	emitter->setLifeVar(0.2f);
+	emitter->setSpeed(80.0f);
+	emitter->setSpeedVar(8.0f);
+	emitter->setAngle(90.0f);
+	emitter->setAngleVar(5.0f);
+	emitter->setPosVar(Vec2(15,15));
+	//emitter->setSpeed(0.0f);
+	//emitter->setSpeedVar(0.0f);
+	emitter->setEmissionRate(75.0f);
+
+	emitter->setGravity(ccp(0, -150));
+	emitter->setTangentialAccelVar(0);
+	emitter->setRadialAccelVar(0);
+	/*emitter->setSpeed(1000.0f);
+
+	emitter->setEmissionRate(5.0f);
+
+
+	emitter->setRadialAccelVar(200.0f);*/
+	emitter->setRadialAccel(0);
+	emitter->setTangentialAccel(0);
+	emitter->setAnchorPoint(Vec2(0.5f, 0.5f));
+	emitter->setPosition(sprite->getContentSize() / 2);
+	emitter->setStartSize(6.0);
+	emitter->setEndSize(4.5);
+	emitter->setStartSizeVar(4.0);
+	emitter->setEndSizeVar(3);
+	emitter->setBlendAdditive(false);
+	emitter->setBlendFunc(BlendFunc::ALPHA_NON_PREMULTIPLIED);
+
+	emitter->setTexture(ResourceLoader::getInstance()->getTexture("blood"));
+	emitter->setStartColorVar(ccColor4F(0.5f, 0.5f, 0.5f, 0));
+	emitter->setEndColorVar(ccColor4F(0.1f, 0.1f, 0.1f, 0));
+	emitter->setStartColor(ccColor4F(1.0f, 1.0f, 1.0f, 0.9f));
+	emitter->setEndColor(ccColor4F(0.3f, 0.3f, 0.3f, 0.4f));
+	sprite->addChild(emitter, 1);
+}
+
 void Zombie::increaseAwarness()
 {
 	awareness += AWARENESS_INCREASE;
@@ -221,5 +264,4 @@ Zombie::~Zombie()
 		sprite->release();
 	}
 	sprite = NULL;
-	body->GetWorld()->DestroyBody(body);
 }

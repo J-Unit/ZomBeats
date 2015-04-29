@@ -181,6 +181,7 @@ void GameController::setCurrentLevel(int level){
 void GameController::createFog() {
 	//add the fog of war here
 	fogSp = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("fog"));
+	//fogSp->setVisible(false);
 	//fogSpOuter = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("fog_outer"));
 	fogSp->setScale(FOG_SCALE, FOG_SCALE);
 	//fogSpOuter->setScale(OUTER_FOG_SCALE, OUTER_FOG_SCALE);
@@ -487,21 +488,41 @@ void GameController::removeDeadEWeapons(){
 	}
 }
 
-void GameController::removeDeadZombies(){
+void GameController::removeDeadZombies(){ 
 	CTypedPtrDblList<CTypedPtrDblElement<Zombie>> zombsToDel;
 	for (CTypedPtrDblElement<Zombie> *zombie = state->zombies.GetHeadPtr(); !state->zombies.IsSentinel(zombie); zombie = zombie->Next())
 	{
 		Zombie *zomb = zombie->Data();
 		if (zomb->isDestroyed){
+			zomb->body->GetWorld()->DestroyBody(zomb->body);
 			zomb->isDestroyed = false;
+			zomb->addParticles();
+			zomb->sprite->setColor(Color3B(128, 128, 128));
 			zombsToDel.AddTail(zombie);
-			view->zombies->removeChild(zomb->sprite);
 		}
 
 	}
+
+	for (CTypedPtrDblElement<CTypedPtrDblElement<Zombie>> *z = zombsToDel.GetHeadPtr(); !zombsToDel.IsSentinel(z);  z = z->Next()){
+		state->dyingZombies.AddTail(z->Data()->Data());
+		state->zombies.Remove(z->Data());
+	}
+}
+
+void GameController::removeDyingZombies(){
+	CTypedPtrDblList<CTypedPtrDblElement<Zombie>> zombsToDel;
+	for (CTypedPtrDblElement<Zombie> *zombie = state->dyingZombies.GetHeadPtr(); !state->dyingZombies.IsSentinel(zombie); zombie = zombie->Next())
+	{
+		Zombie *z = zombie->Data();
+		if (!z->emitter->isActive()){
+			view->zombies->removeChild(z->sprite);
+			zombsToDel.AddTail(zombie);
+		}
+	}
 	for (CTypedPtrDblElement<CTypedPtrDblElement<Zombie>> *z = zombsToDel.GetHeadPtr(); !zombsToDel.IsSentinel(z); z = z->Next()){
 		delete z->Data()->Data();
-		state->zombies.Remove(z->Data());
+		state->dyingZombies.Remove(z->Data());
+
 	}
 }
 
@@ -563,6 +584,7 @@ void GameController::update(float deltaTime) {
 		removeDeadWeapons();
 		removeDeadEWeapons();
 		removeDeadZombies();
+		removeDyingZombies();
 
 		//if we are currently activating environment and player clicking
 		if (state->ship->isActivatingEnvironment){

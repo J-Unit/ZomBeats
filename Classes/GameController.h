@@ -202,6 +202,7 @@ private:
 	void removeDeadWeapons();
 	void removeDeadEWeapons();
 	void removeDeadZombies();
+	void removeDyingZombies();
 
 	LevelSerializer ls;
 	SaveSerializer save;
