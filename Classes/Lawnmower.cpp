@@ -25,20 +25,28 @@ Lawnmower::Lawnmower(b2World *world, float x, float y)
 }
 
 void Lawnmower::addParticles(){
+	addParticlesForTexture("grass1", 1, 8.0f, 0.32f);
+	addParticlesForTexture("grass2", -1, 13.5f, 1.0f);
+	addParticlesForTexture("grass3", -1, 13.5f, 1.0f);
+	addParticlesForTexture("grass1", -1, 13.5f, 1.0f);
+}
+
+void Lawnmower::addParticlesForTexture(std::string text, int z, float r, float sa){
 	//emitter = CCParticleSun::create();
 	//emitter->setEmitterMode(kCCParticleModeGravity);
 	emitter = CCParticleSun::createWithTotalParticles(100);
-	
+
 	emitter->setDuration(kCCParticleDurationInfinity);
-	emitter->setLife(1.5);
-	emitter->setLifeVar(0.5);
-	emitter->setSpeed(40.0f);
-	emitter->setSpeedVar(20.0f);
+	emitter->setLife(1.02);
+	emitter->setLifeVar(0.1);
+	emitter->setSpeed(55.0f);
+	emitter->setSpeedVar(15.0f);
+	emitter->setPosVar(Vec2(15,15));
 	//emitter->setSpeed(0.0f);
 	//emitter->setSpeedVar(0.0f);
-	emitter->setEmissionRate(20.0f);
+	emitter->setEmissionRate(r);
 
-	emitter->setGravity(ccp(0, -5));
+	emitter->setGravity(ccp(0, -3));
 	//emitter->setTangentialAccelVar(10.0f);
 	//emitter->setRadialAccelVar(10.0f);
 	/*emitter->setSpeed(1000.0f);
@@ -49,21 +57,21 @@ void Lawnmower::addParticles(){
 	emitter->setRadialAccelVar(200.0f);*/
 	//emitter->setRadialAccel(2.0f);
 	//emitter->setTangentialAccelVar(200.0f);
-	emitter->setAnchorPoint(Vec2(0.5f, 0.5f));	
-	emitter->setPosition(sprite->getContentSize()/2);
-	emitter->setStartSize(8.0);
-	emitter->setEndSize(5.0);
-	emitter->setStartSizeVar(3.0);
-	emitter->setEndSizeVar(1); 
+	emitter->setAnchorPoint(Vec2(0.5f, 0.5f));
+	emitter->setPosition(sprite->getContentSize() / 2);
+	emitter->setStartSize(7.0);
+	emitter->setEndSize(6.5);
+	emitter->setStartSizeVar(2.0);
+	emitter->setEndSizeVar(1);
 	emitter->setBlendAdditive(false);
 	emitter->setBlendFunc(BlendFunc::ALPHA_NON_PREMULTIPLIED);
 
-	emitter->setTexture(ResourceLoader::getInstance()->getTexture("grass1"));
-	emitter->setStartColorVar(ccColor4F(0, 0, 0, 0));
+	emitter->setTexture(ResourceLoader::getInstance()->getTexture(text));
+	emitter->setStartColorVar(ccColor4F(0.05f, 0.05f, 0.05f, 0));
 	emitter->setEndColorVar(ccColor4F(0, 0, 0, 0));
-	emitter->setStartColor(ccColor4F(1.0f, 1.0f, 1.0f, 1.0f));
-	emitter->setEndColor(ccColor4F(1.0f, 1.0f, 1.0f, 0.5f));
-	sprite->addChild(emitter, -1);
+	emitter->setStartColor(ccColor4F(1.0f, 1.0f, 1.0f, sa));
+	emitter->setEndColor(ccColor4F(0.97f, 0.97f, 0.97f, 0.5f));
+	sprite->addChild(emitter, z);
 }
 
 Lawnmower::Lawnmower(b2World *world, float x, float y, b2Vec2 dir)

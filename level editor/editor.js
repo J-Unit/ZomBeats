@@ -10,6 +10,7 @@ WALL_HOUSE_IMAGE = "../Resources/textures/house.png"
 WALL_ROCK_IMAGE = "../Resources/textures/rock.png"
 WALL_TREE_IMAGE = "../Resources/textures/tree.png"
 TILE_IMAGE = "../Resources/textures/tile_new.png"
+ENVI_TRASHCAN_IMAGE = "../Resources/textures/trashcan_single.png"
 
 //SONGS
 SIMPLE_BEAT = {"bpm":128.0, "path":"songs/SimpleBeat.mp3", "offset":0.0}
@@ -60,7 +61,7 @@ ia.onchange = function(){
 			it.innerHTML = "<option value='sword'>Sword</option> <option value='shotgun'>Shotgun</option>";
 			break;
 		case "enviweapon":
-			it.innerHTML = "<option value='lawnmower'>Lawn Mower</option>";
+			it.innerHTML = "<option value='lawnmower'>Lawn Mower</option> <option value='trashcan'>Trash Can</option>";
 			break;
 		case "wall":
 			it.innerHTML = "<option value='pyramid'>Pyramid</option> <option value='rock'>Rock</option> <option value='fence'>Fence</option> <option value='tree'>Tree</option> <option value='house'>House</option>";
@@ -210,6 +211,8 @@ function createObject(event){
 			obj.type = it.options[it.selectedIndex].value;
 			switch(obj.type){
 				case "lawnmower": img.src = ENVI_LAWNMOWER_IMAGE;
+				case "trashcan": img.src = ENVI_TRASHCAN_IMAGE;
+
 			}
 			level.environment_weapons[objId] = obj;
 			break;
@@ -251,6 +254,7 @@ function addImage(obj, type){
 		case "enviweapon":
 			switch(obj.type){
 				case "lawnmower": img.src = ENVI_LAWNMOWER_IMAGE;
+				case "trashcan" : img.src = ENVI_TRASHCAN_IMAGE;
 			}
 		break;
 	}

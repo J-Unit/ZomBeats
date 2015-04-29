@@ -17,4 +17,5 @@ public:
 	~Lawnmower();
 	CCParticleSystemQuad *emitter;
 	void addParticles();
+	void addParticlesForTexture(std::string t, int z, float r, float sa);
 };

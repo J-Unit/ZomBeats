@@ -11,7 +11,7 @@ class GameState
 {
 public:
 	Ship *ship;
-	CTypedPtrDblList<Zombie> zombies;
+	CTypedPtrDblList<Zombie> zombies, dyingZombies;
 	CTypedPtrDblList<Weapon> weapons;
 	CTypedPtrDblList<EnvironmentWeapon> environment_weapons;
 	LevelMap *level;
