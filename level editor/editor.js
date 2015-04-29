@@ -17,6 +17,8 @@ SIMPLE_BEAT = {"bpm":128.0, "path":"songs/SimpleBeat.mp3", "offset":0.0}
 OVERDRIVE = {"bpm":128.0, "path":"songs/01 OverDrive.mp3", "offset":0.0}
 LOOKING_FOR = {"bpm":128.0, "path":"songs/01 Looking For.mp3", "offset":0.0}
 CHILL_DEEP = {"bpm":120.0, "path":"songs/ChillDeepHouse.mp3", "offset":0.0}
+IN_PIZZA = {"bpm":90.0, "path":"songs/InPizzaWeCrust.mp3", "offset":0.0}
+
 
 
 
@@ -278,6 +280,9 @@ function changeTrack(){
 			break;
 		case "songs/ChillDeepHouse.mp3":
 			level.track = CHILL_DEEP;
+			break;
+		case "songs/InPizzaWeCrust.mp3":
+			level.track = IN_PIZZA;
 			break;
 	}
 	playing = !document.getElementById("audio").paused;
