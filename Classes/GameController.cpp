@@ -136,42 +136,7 @@ void GameController::BeginContact(b2Contact* contact){
 void GameController::EndContact(b2Contact* contact){
 
 }
-/*
-void GameController::createZombies(){
-Zombie *z1 = new Zombie(PLANET1_POS.x, PLANET1_POS.y, state->world);
-Zombie *z2 = new Zombie(PLANET2_POS.x, PLANET2_POS.y, state->world);
-state->zombies.AddTail(z1);
-state->zombies.AddTail(z2);
-view->enviornment->addChild(z1->sprite);
-view->enviornment->addChild(z2->sprite);
-}
-void GameController::createWalls(){
-state->level->walls = new Wall[30];
-state->level->nWalls = 30;
-int j = 0;
-// set up the walls here
-//we can move the below code to level editor later so it looks clean
-//-------------------------------f------------------------------------------------------
-// a vertical wall here
-for (int i = 0; i < 20; i++, j++) {
-state->level->walls[j].init(state->world, SPACE_TILE*5.5f, SPACE_TILE*(5.125f + i*0.25f));
-view->enviornment->addChild(state->level->walls[j].sprite);
-//new_wall->setSprite(view->walls[i]);
-}
-// a horizontal wall here
-for (int i = 20; i < 30; i++, j++) {
-state->level->walls[j].init(state->world, SPACE_TILE*(5.5f + (i - 19)*0.25f), SPACE_TILE*5.125f);
-view->enviornment->addChild(state->level->walls[j].sprite);
-//new_wall->setSprite(view->walls[i]);
-}
-state->level->markWallTiles();
-}
-void GameController::createWeapons(){
-//Sword *s1 = new Sword(state->world, SPACE_TILE*5.9f, SPACE_TILE*(5.5f + 1*0.25f)); //this makes it corner inside of wall
-Sword *s1 = new Sword(state->world, SPACE_TILE*9.0f, SPACE_TILE*(5.5f + 1 * 0.25f));
-state->weapons.AddTail(s1);
-view->enviornment->addChild(s1->sprite);
-}*/
+
 
 //purpose of this function is to set a level when choosing from start menu
 void GameController::setCurrentLevel(int level){
@@ -285,6 +250,13 @@ void GameController::initEnvironment() {
 	// Tell the director we are ready for animation.
 	this->scheduleUpdate();
 	isPaused = false;
+	//for calibration level we need to initially pause the game to let
+	//kids read the instruction
+	if (currentLevel == CALIBRATION_LEVEL){
+		pauseGameOnly();
+	}
+
+	//ricky texture not initially removed
 	removed = false;
 
 	//create the pause button on the upper right corner
@@ -295,6 +267,7 @@ void GameController::initEnvironment() {
 	Sprite* restartButtonClickedTexture = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("restart_button_clicked"));
 	Sprite* pause = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("pause_button"));
 	Sprite* pauseClicked = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("pause_button_clicked"));
+	Sprite* okButton = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("ok_button"));
 	//---remove above later----- 
 
 	createPauseButton();
@@ -312,6 +285,29 @@ void GameController::createPauseButton() {
 	pauseButtonMenu->setPosition(Point::ZERO);
 	this->addChild(pauseButtonMenu);
 }
+
+//create a okay button for the calibration level
+void GameController::createOkButton(int index) {
+	if (index == 0) {
+		auto okButton = MenuItemImage::create("textures/ok_button.png", "textures/ok_clicked.png", CC_CALLBACK_0(GameController::resumeGameOnly, this, 0));
+		okButton->setPosition(Vec2(HUD_OFFSET.x*70.5f, HUD_OFFSET.y * 5));
+		okButton->setScale(0.2f);
+
+		okButtonMenu = Menu::create(okButton, NULL);
+		okButtonMenu->setPosition(Point::ZERO);
+		view->resIndepScreen->addChild(okButtonMenu, 5);
+	}
+	else {
+		auto okButton = MenuItemImage::create("textures/ok_button.png", "textures/ok_clicked.png", CC_CALLBACK_0(GameController::resumeGameOnly, this, 1));
+		okButton->setPosition(Vec2(HUD_OFFSET.x*70.5f, HUD_OFFSET.y * 5));
+		okButton->setScale(0.2f);
+
+		okButtonMenu = Menu::create(okButton, NULL);
+		okButtonMenu->setPosition(Point::ZERO);
+		view->resIndepScreen->addChild(okButtonMenu, 5);
+	}
+}
+
 
 Vec2 GameController::mouseToWorld(Vec2 click){
 	b2Vec2 pos = state->ship->body->GetPosition();
@@ -367,11 +363,13 @@ void GameController::loadLevel(int i){
 		Size visibleSizeDialogue = Director::getInstance()->getVisibleSize();
 		Vec2 originDialogue = Director::getInstance()->getVisibleOrigin();
 
-		Sprite* popup = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("dialogue_popup"));
+		popup = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("dialogue_popup"));
 		popup->setScale(DIALOGUE_POPUP_SCALE);
-		popup->setPosition(Point(visibleSizeDialogue.width / 2, visibleSizeDialogue.height / 7));
+		popup->setPosition(Vec2(HUD_OFFSET.x*44.5, HUD_OFFSET.y*10));
+		//popup->setPosition(Point(visibleSizeDialogue.width / 2, visibleSizeDialogue.height / 7));
 		view->resIndepScreen->addChild(popup, 4);
-		view->objective->setString("Audio Calibration: Tap anywhere to the beat\nafter the first four, don't miss any!");
+		createOkButton(0);
+		view->objective->setString("Audio Calibration: Tap anywhere to the beat\nafter the first four, don't miss any!\nClick ok to resume");
 	}
 
 	audio->playTrack(ls.getLevelTrack(), currentLevel != CALIBRATION_LEVEL);
@@ -380,6 +378,10 @@ void GameController::loadLevel(int i){
 //restart the game upon death or reset
 void GameController::restartGame() {
 	loadLevel(currentLevel);
+	if (currentLevel == CALIBRATION_LEVEL){
+		isPaused = true;
+	}
+
 	removeGameMenu();
 	removed = false;
 }
@@ -390,14 +392,36 @@ void GameController::goBackToMainMenu() {
 	Director::getInstance()->replaceScene(TransitionFade::create(LEVEL_MENU_TRANSITION_TIME, scene));
 }
 
+//pause the game and also create a pause menu
 void GameController::pauseGame() {
 	isPaused = true;
 	createGameMenu();
+	
 }
+
+//only pause the game without creating the game menu,
+//used ONLY in calibration level
+void GameController::pauseGameOnly() {
+	isPaused = true;
+}
+
+
 
 void GameController::resumeGame() {
 	isPaused = false;
 	removeGameMenu();
+}
+
+//used ONLY in calibration level
+void GameController::resumeGameOnly(int index) {
+	isPaused = false;
+	view->resIndepScreen->removeChild(okButtonMenu);
+	if (index == 0) {
+		view->objective->setString("Audio Calibration: Tap anywhere to the beat\nafter the first four, don't miss any!");
+	}
+	else if (index == 1) {
+		view->objective->setString("Now tap just as the center of each zombie lines up\nwith Ricky, don't miss any!");
+	}
 }
 
 void GameController::createWeaponRanges(float weapWidth, float weapRange, float weapDetectionRange, b2Vec2 dir){
@@ -528,7 +552,7 @@ void GameController::removeDyingZombies(){
 
 #define VIDEO_CALIBRATION_OFFSET 150
 void GameController::startVideoCalibration(){
-	view->objective->setString("Now tap just as the center of each zombie lines up\nwith Ricky, don't miss any!");
+	//view->objective->setString("Now tap just as the center of each zombie lines up\nwith Ricky, don't miss any!");
 	calibration->totalOffset = 0.0;
 	calibration->clicks = 0;
 	calibration->acceptClicks = true;
@@ -563,11 +587,17 @@ void GameController::update(float deltaTime) {
 						restartGame();
 					}
 					else{
+						view->objective->setString("Now tap just as the center of each zombie lines up\nwith Ricky, don't miss any!\nClick ok to continue");
+						createOkButton(1);
+						pauseGameOnly();
 						startVideoCalibration();
 					}
 				}
 				else{
 					if (calibration->clicks < 16){
+						view->objective->setString("Now tap just as the center of each zombie lines up\nwith Ricky, don't miss any!\nClick ok to continue");
+						createOkButton(1);
+						pauseGameOnly();
 						startVideoCalibration();
 					}
 					else{
@@ -868,7 +898,9 @@ void GameController::update(float deltaTime) {
 				}
 				if (elapsedTime - calibration->zombieTimes[15] > 1.0f){
 					calibration->acceptClicks = false;
-					if (calibration->clicks != 16) view->objective->setString("You missed some of the zombies, try again.");
+					if (calibration->clicks != 16) {
+						view->objective->setString("You missed some of the zombies, try again.");
+					}
 				}
 			}
 			else{

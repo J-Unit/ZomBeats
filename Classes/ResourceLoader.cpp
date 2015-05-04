@@ -216,6 +216,13 @@ ResourceLoader::ResourceLoader() {
 		text->retain();
 		textures["dialogue_popup"] = text;
 	}
+
+	text = Director::getInstance()->getTextureCache()->addImage("textures/ok_button.png");
+	if (text) {
+		text->retain();
+		textures["ok_button"] = text;
+	}
+
 }
 
 /**

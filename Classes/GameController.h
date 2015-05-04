@@ -171,6 +171,10 @@ public:
 
 	void resumeGame();
 
+	void pauseGameOnly();
+
+	void resumeGameOnly(int index);
+
 	b2Vec2 weaponRectangle[4];
 
 	b2Vec2 weaponDetectionRectangle[4];
@@ -193,6 +197,7 @@ private:
 	void createWeapons();
 	void createFog();
 	void createPauseButton();
+	void createOkButton(int index);
 	void createGameMenu();
 	void removeGameMenu();
 	void updateFog();
@@ -203,6 +208,11 @@ private:
 	void removeDeadEWeapons();
 	void removeDeadZombies();
 	void removeDyingZombies();
+
+	//the dialogue popup used in calibration level
+	Sprite* popup;
+	//the okay button menu used in calibration menu
+	Menu* okButtonMenu;
 
 	LevelSerializer ls;
 	SaveSerializer save;

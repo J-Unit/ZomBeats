@@ -290,8 +290,8 @@ void View::buildScene(LevelMap *level, Layer* l, int levNum) {
 	objective->setTTFConfig(*ResourceLoader::getInstance()->getFont("NewFont"));
 	Size visibleSizeLabel = Director::getInstance()->getVisibleSize();
 	Vec2 originLabel = Director::getInstance()->getVisibleOrigin();
-	objective->setPosition(Point(visibleSizeLabel.width/2 - 20, visibleSizeLabel.height / 7));
-	//objective->setPosition(Vec2(HUD_OFFSET.x*44.5f, HUD_OFFSET.y * 57));
+	//objective->setPosition(Point(visibleSizeLabel.width/2 - 20, visibleSizeLabel.height / 7));
+	objective->setPosition(Vec2(HUD_OFFSET.x*44.5f, HUD_OFFSET.y * 10));
 	objective->setAnchorPoint(anchor);
 
 	beatHUD = Label::create();
