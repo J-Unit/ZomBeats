@@ -60,7 +60,7 @@ void LevelSerializer::addObjects(GameState *s){
 	for (unsigned int i = 0; i < d["zombies"].Size(); i++){
 		s->zombies.AddTail(new Zombie(s->level->tileWidth*(d["zombies"][i]["x"].GetInt()+0.5f), top-s->level->tileHeight*(d["zombies"][i]["y"].GetInt()+0.5f), s->world));
 	}
-	s->ship = new Ship(s->world, s->level->tileWidth*(d["startX"].GetInt()+0.5f), top-s->level->tileHeight*(d["startY"].GetInt()+0.5f), 0.5f * d["bkgX"].GetInt() * 256, 0.5f * d["bkgY"].GetInt() * 256);
+	s->ship = new Ship(s->world, s->level->tileWidth*(d["startX"].GetInt()+0.5f), top-s->level->tileHeight*(d["startY"].GetInt()+0.5f), 0.5f * d["bkgX"].GetInt() * 256, 0.5f * d["bkgY"].GetInt() * 256+10);
 }
 
 float LevelSerializer::getWallOffsetByType(std::string type){

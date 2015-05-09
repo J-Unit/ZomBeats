@@ -25,8 +25,10 @@ using namespace cocos2d;
 #define EIGHTH_NOTE_DAMPENING 0.0
 #define NORMAL_DAMPENING 3.0
 
-#define SHIP_WIDTH 29.5f
-#define SHIP_HEIGHT 55.0f
+//#define SHIP_WIDTH 29.5f
+//#define SHIP_HEIGHT 55.0f
+#define SHIP_WIDTH 25.5f
+#define SHIP_HEIGHT 53.0f
 #define SHIP_DIAGONAL sqrt(WIDTH*WIDTH+HEIGHT*HEIGHT) / 2
 #define RICKY_SCALE 1.5f
 
