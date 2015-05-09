@@ -33,7 +33,7 @@
 #include "MainMenuScene.h"
 
 #define STARTING_LEVEL 0
-#define MAX_LEVELS 4
+#define MAX_LEVELS 7
 
 /**
 * Initialize the game state.

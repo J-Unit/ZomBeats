@@ -10,6 +10,8 @@
 #include "Wall.h"
 #include "util.h"
 
+#define VIEW_SCALE 0.70
+
 View::View(int w, int h){
 	screen_size_x = w;
 	screen_size_y = h;
@@ -375,7 +377,7 @@ void View::buildScene(LevelMap *level, Layer* l, int levNum) {
 	resIndepScreen->addChild(durabilityBox);
 	durabilityBox->addChild(durabilityHolder);
 	durabilityBox->addChild(durabilitySpriteContainer);
-
+	allSpace->setScale(VIEW_SCALE);
 	//l->addChild(detectionRadiusHUD);
 	//l->addChild(zombieOneAwarenessHUD); //remove this later
 }
