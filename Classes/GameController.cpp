@@ -346,7 +346,7 @@ void GameController::loadLevel(int i){
 		view->durabilityBox->setVisible(false);
 		view->durability->setVisible(false);
 		calibration->init();
-
+		audio->audioDelay = audio->videoDelay = 0.0f;
 		Size visibleSizeDialogue = Director::getInstance()->getVisibleSize();
 		Vec2 originDialogue = Director::getInstance()->getVisibleOrigin();
 
@@ -851,7 +851,7 @@ void GameController::update(float deltaTime) {
 						stringstream ss;
 						ss << "Ok, great.  Video Delay: " << formatMs(audio->videoDelay);
 						view->objective->setString(ss.str());
-						//save.exportSave(this);
+						save.exportSave(this);
 					}
 				}
 			}

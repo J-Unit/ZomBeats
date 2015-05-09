@@ -6,6 +6,7 @@
 #include <fstream>
 
 void SaveSerializer::parseSave(GameController *gc, std::string f){
+	f = cocos2d::FileUtils::getInstance()->getWritablePath() + f;
 	if (FileUtils::getInstance()->isFileExist(f)){
 		ssize_t bufsize = 1024 * 1024;
 		std::string zz = FileUtils::getInstance()->getStringFromFile(f);
@@ -34,7 +35,8 @@ void SaveSerializer::exportSave(GameController *gc){
 	rapidjson::Writer<StringBuffer> writer(buf, &allocator);
 	d.Accept(writer);
 	std::string json(buf.GetString(), buf.Size());
-	FILE *fp = fopen(SAVE_FILE, "w");
+	std::string path = cocos2d::FileUtils::getInstance()->getWritablePath() + SAVE_FILE;
+	FILE *fp = fopen(path.c_str(), "w");
 	//std::ofstream of(SAVE_FILE);
 	//of << json;
 	//if (!of.good()) throw std::runtime_error("Can't write the JSON string to the file!");

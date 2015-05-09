@@ -26,7 +26,7 @@
 #define GAME_MENU_BUTTON_OFFSET 160
 #define DIALOGUE_POPUP_SCALE 0.13f
 
-#define SAVE_FILE "saves/save.zbs"
+#define SAVE_FILE "save.zbs"
 
 //delays
 #define ENVIRONMENTAL_WEAPON_DELAY 1.0f
