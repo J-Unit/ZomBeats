@@ -70,25 +70,12 @@ void GameController::BeginContact(b2Contact* contact){
 		w->isDesroyed = true;
 		state->ship->hasWeapon = true;
 		state->ship->currentWeapon = w;
+		//set the sprite frame immediately to correspond to the change of weapon state
+		int currentFrame = state->ship->sprite->getFrame();
+		currentFrame += 3;
+		state->ship->sprite->setFrame(currentFrame);
 		view->redrawDurability(w->durability);
 
-		/*
-		//reset weapon sprites durability for new weapon in Ricky
-		int durabil = state->ship->currentWeapon->durability;
-		for (int i = 0; i < 3; ++i){
-		for (int j = 0; j < 2; ++j){
-		if (durabil < 1){
-		break;
-		}
-		//create the new sprite
-		state->ship->weaponDurabilityDisplay[i][j] = state->ship->currentWeapon->sprite;
-		state->ship->weaponDurabilityDisplay[i][j]->setAnchorPoint(Vec2(0.0f, 0.0f));
-		state->ship->weaponDurabilityDisplay[i][j]->setPosition(j*20.0f, i*20.0f);
-		view->durabilitySpriteContainer->addChild(state->ship->weaponDurabilityDisplay[i][j]);
-		durabil--;
-		}
-		}
-		*/
 		return;
 	}
 
@@ -754,17 +741,7 @@ void GameController::update(float deltaTime) {
 					if (state->ship->hasWeapon){
 						//if you have a weapon and click on the beat, check if you kill any zombies in that direction
 						//mouseclick to world coords subtract rickies pos from that...normalize it...snap it to nearest rotation: round nearest int(arctan2(normalized) /. pi/2) * pi/4
-						/*if ((destination != 0 && destPrev != 0) && (destination == destPrev)){
-						dRickyTap = dRickyTap;
-						}
-						if (state->ship->currentWeapon->durability < 1){
-						state->ship->hasWeapon = false;
-						free(state->ship->currentWeapon);
-						state->ship->currentWeapon = NULL;
-						else{
-						dRickyTap = new Vec2(destination->x - destPrev->x, destination->y - destPrev->y);
-						dRickyTap->normalize();
-						}*/
+
 						dRickyTap->set(click.x - state->ship->body->GetPosition().x, click.y - state->ship->body->GetPosition().y);
 						float theta = atan2(dRickyTap->y, dRickyTap->x);
 						theta = round(theta / (M_PI / 4.0f)) * (M_PI / 4.0f);
