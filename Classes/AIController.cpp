@@ -101,11 +101,25 @@ void AIController::update(GameState *state){
 		curZ->zombiness = ZOMBIENESS * curZ->direction;
 		dir += curZ->zombiness;
 		//ATTRACTION
+		//player
 		curZ->attraction = state->ship->body->GetPosition() - curZ->body->GetPosition();
 		curZ->attraction.Normalize();
-		curZ->attraction *= ATTRACTION * curZ->awareness;
+		curZ->attraction *= curZ->awareness[1];
+		//intial position
+		b2Vec2 tmp = curZ->initialLocation - curZ->body->GetPosition();
+		tmp.Normalize();
+		tmp *= curZ->awareness[0];
+		curZ->attraction += tmp;
+		//bottles, lawnmower, etc
+		tmp = curZ->interestPoint - curZ->body->GetPosition();
+		tmp.Normalize();
+		tmp *= curZ->awareness[2];
+		curZ->attraction += tmp;
+		curZ->attraction.Normalize();
+		curZ->attraction *= ATTRACTION * (curZ->awareness[0] + curZ->awareness[1] + curZ->awareness[2]);
 		dir += curZ->attraction;
-		curZ->awareness = std::max(0.0, curZ->awareness - 0.002);
+		curZ->awareness[1] = std::max(0.0, curZ->awareness[1] - AWARENESS_DRAIN);
+		curZ->awareness[2] = std::max(0.0, curZ->awareness[2] - AWARENESS_DRAIN);
 		//apply
 		dir.Normalize();
 		dir *= IMPULSE;

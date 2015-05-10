@@ -5,15 +5,21 @@
 #include "math.h"
 
 #define ZOMBIE_SCALE 1.5f
-#define AWARENESS_INCREASE 1.5f
+#define AWARENESS_INCREASE 3.0f
 #define INITIAL_AWARENESS 0.0f 
+#define ORIGIN_AWARENESS 0.8f
+#define BOTTLE_AWARENES_INCREASE 30.0f
+#define MOWER_AWARENES_INCREASE 0.4f
+#define MAX_AWARENESS 30.0f;
 #define ZOMBIE_FRAME_INTERVAL 10
 
 using namespace cocos2d;
 class Zombie : public BoxObject
 {
 public:
-	float awareness;
+	float awareness[3];
+	b2Vec2 initialLocation;
+	b2Vec2 interestPoint;
 	int frameRate;
 	int prevFrame; //the previous animation frame
 	bool isDestroyed;

@@ -361,6 +361,7 @@ void GameController::loadLevel(int i){
 		audio->paused = true;
 	}
 	else{
+		audio->paused = false;
 		audio->playTrack(ls.getLevelTrack(), currentLevel != CALIBRATION_LEVEL);
 	}
 }
@@ -838,7 +839,7 @@ void GameController::update(float deltaTime) {
 						curZ->increaseAwarness();
 					}
 					if (count == 0) {
-						currAwareness = curZ->awareness;
+						currAwareness = curZ->awareness[1];
 					}
 
 					count++;
@@ -1120,7 +1121,7 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 		//view->weaponBox->drawRect(Vec2(weaponRectangle[0].x, weaponRectangle[0].y), Vec2(weaponRectangle[1].x, weaponRectangle[1].y), Vec2(weaponRectangle[3].x, weaponRectangle[3].y), Vec2(weaponRectangle[2].x, weaponRectangle[2].y), ccColor4F(2.0f, 2.0f, 2.0f, 1.0f));
 	}
 	//view->directionUseEnvironmentWeapon->drawLine(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y), currentFingerPos, ccColor4F(128.0f, 128.0f, 128.0f, 0.5f));
-	/*view->ai->clear();
+	view->ai->clear();
 	for (CTypedPtrDblElement<Zombie> *z = state->zombies.GetHeadPtr(); !state->zombies.IsSentinel(z); z = z->Next()){
 	Zombie *zom = z->Data();
 	b2Vec2 pos = zom->body->GetPosition();
@@ -1130,7 +1131,7 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 	view->ai->drawLine(Vec2(pos.x, pos.y), Vec2(pos.x + zom->alignment.x, pos.y + zom->alignment.y), ccColor4F(1, 0, 1, 1.0f));
 	view->ai->drawLine(Vec2(pos.x, pos.y), Vec2(pos.x + zom->cohesion.x, pos.y + zom->cohesion.y), ccColor4F(0, 0, 1, 1.0f));
 	view->ai->drawLine(Vec2(pos.x, pos.y), Vec2(pos.x + zom->zombiness.x, pos.y + zom->zombiness.y), ccColor4F(1, 1, 0, 1.0f));
-	}*/
+	}
 
 	if (currentLevel != CALIBRATION_LEVEL){
 		stringstream st;

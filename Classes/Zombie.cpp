@@ -23,7 +23,11 @@ Zombie::Zombie(float x, float y, b2World *world)
 	prevFrame = 0;
 	setSprite(FilmStrip::create(ResourceLoader::getInstance()->getTexture("zombie"), 8, 3, 24));
 	//initialize the awareness
-	awareness = INITIAL_AWARENESS;
+	awareness[0] = ORIGIN_AWARENESS;
+	awareness[1] = INITIAL_AWARENESS;
+	awareness[2] = 0.0;
+	interestPoint.SetZero(); 
+	initialLocation.Set(x, y);
 	cohesion.SetZero();
 	seperation.SetZero();
 	attraction.SetZero();
@@ -252,7 +256,7 @@ void Zombie::addParticles(){
 
 void Zombie::increaseAwarness()
 {
-	awareness += AWARENESS_INCREASE;
+	awareness[1] += AWARENESS_INCREASE;
 }
 
 
