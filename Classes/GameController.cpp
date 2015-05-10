@@ -209,6 +209,8 @@ bool GameController::init() {
 	view = new View(winsize.width, winsize.height);
 	view->scene->addChild(this);
 	state = NULL;
+	currentEnvironment = currentMower = NULL;
+	currentTrash = NULL;
 	audio = new AudioController();
 	save.parseSave(this, SAVE_FILE);
 	return true;
@@ -225,12 +227,6 @@ void GameController::initEnvironment() {
 	loadLevel(currentLevel);
 
 	ai = new AIController();
-	environmentalTimer = 0.0f;
-	trashTimer = 0.0f;
-	processDirection = false;
-	currentEnvironment = NULL;
-	currentMower = NULL;
-	currentTrash = NULL;
 
 	//add the fog of war here
 	musicNoteCounter = 0; //initialize the sequence of music note path
@@ -318,10 +314,16 @@ void GameController::loadLevel(int i){
 	input->clickProcessed = true;
 	dRickyTap = new Vec2(1.0f, 0.0f);
 	dRickyTap->normalize();
+	environmentalTimer = 0.0f;
+	trashTimer = 0.0f;
+	processDirection = false;
+	if (currentEnvironment != NULL) currentEnvironment = NULL;//CC_SAFE_DELETE(currentEnvironment);
+	if (currentMower != NULL) currentMower = NULL;//CC_SAFE_DELETE(currentMower);
+	if (currentTrash != NULL) currentTrash = NULL;//CC_SAFE_DELETE(currentTrash);
 	elapsedTime = 0.0;
 	stringstream ss;
 	ss << "levels/level" << currentLevel << ".zbl";
-	CC_SAFE_DELETE(state);
+	if (state != NULL) CC_SAFE_DELETE(state);
 	state = ls.parseLevel(ss.str());
 	state->world->SetContactListener(this);
 
@@ -449,8 +451,8 @@ void GameController::createWeaponRanges(float weapWidth, float weapRange, float 
 
 	}
 	view->weaponBox->clear();
-	//view->weaponBox->drawRect(Vec2(weaponRectangle[0].x, weaponRectangle[0].y), Vec2(weaponRectangle[1].x, weaponRectangle[1].y), Vec2(weaponRectangle[3].x, weaponRectangle[3].y), Vec2(weaponRectangle[2].x, weaponRectangle[2].y), ccColor4F(2.0f, 2.0f, 2.0f, 1.0f));
-	//view->weaponBox->drawRect(Vec2(weaponDetectionRectangle[0].x, weaponDetectionRectangle[0].y), Vec2(weaponDetectionRectangle[1].x, weaponDetectionRectangle[1].y), Vec2(weaponDetectionRectangle[3].x, weaponDetectionRectangle[3].y), Vec2(weaponDetectionRectangle[2].x, weaponDetectionRectangle[2].y), ccColor4F(1.0f, 0.0f, 0.0f, 1.0f));
+	view->weaponBox->drawRect(Vec2(weaponRectangle[0].x, weaponRectangle[0].y), Vec2(weaponRectangle[1].x, weaponRectangle[1].y), Vec2(weaponRectangle[3].x, weaponRectangle[3].y), Vec2(weaponRectangle[2].x, weaponRectangle[2].y), ccColor4F(2.0f, 2.0f, 2.0f, 1.0f));
+	view->weaponBox->drawRect(Vec2(weaponDetectionRectangle[0].x, weaponDetectionRectangle[0].y), Vec2(weaponDetectionRectangle[1].x, weaponDetectionRectangle[1].y), Vec2(weaponDetectionRectangle[3].x, weaponDetectionRectangle[3].y), Vec2(weaponDetectionRectangle[2].x, weaponDetectionRectangle[2].y), ccColor4F(1.0f, 0.0f, 0.0f, 1.0f));
 }
 
 bool GameController::isZombieHit(b2Vec2 az, b2Vec2 bz, b2Vec2 ab, b2Vec2 bc){
@@ -504,6 +506,7 @@ void GameController::removeDeadEWeapons(){
 		}
 	}
 	if (toDelete != NULL){
+		//delete toDelete->Data()
 		state->environment_weapons.Remove(toDelete);
 	}
 }
