@@ -241,6 +241,7 @@ void GameController::initEnvironment() {
 	//kids read the instruction
 	if (currentLevel == CALIBRATION_LEVEL){
 		pauseGameOnly();
+		calibration->acceptClicks = false;
 	}
 
 	//ricky texture not initially removed
@@ -357,9 +358,11 @@ void GameController::loadLevel(int i){
 		view->resIndepScreen->addChild(popup, 4);
 		createOkButton(0);
 		view->objective->setString("Audio Calibration: Tap anywhere to the beat\nafter the first four, don't miss any!\nClick ok to resume");
+		audio->paused = true;
 	}
-
-	audio->playTrack(ls.getLevelTrack(), currentLevel != CALIBRATION_LEVEL);
+	else{
+		audio->playTrack(ls.getLevelTrack(), currentLevel != CALIBRATION_LEVEL);
+	}
 }
 
 //restart the game upon death or reset
@@ -395,20 +398,25 @@ void GameController::pauseGameOnly() {
 
 
 void GameController::resumeGame() {
+	input->clickProcessed = true;
 	isPaused = false;
 	removeGameMenu();
 }
 
 //used ONLY in calibration level
 void GameController::resumeGameOnly(int index) {
+	input->clickProcessed = true;
 	isPaused = false;
 	view->resIndepScreen->removeChild(okButtonMenu);
 	if (index == 0) {
 		view->objective->setString("Audio Calibration: Tap anywhere to the beat\nafter the first four, don't miss any!");
+		audio->playTrack(ls.getLevelTrack(), currentLevel != CALIBRATION_LEVEL);
+		audio->paused = false;
 	}
 	else if (index == 1) {
 		view->objective->setString("Now tap just as the center of each zombie lines up\nwith Ricky, don't miss any!");
 	}
+	calibration->acceptClicks = true;
 }
 
 void GameController::createWeaponRanges(float weapWidth, float weapRange, float weapDetectionRange, b2Vec2 dir){
@@ -542,7 +550,6 @@ void GameController::startVideoCalibration(){
 	//view->objective->setString("Now tap just as the center of each zombie lines up\nwith Ricky, don't miss any!");
 	calibration->totalOffset = 0.0;
 	calibration->clicks = 0;
-	calibration->acceptClicks = true;
 	state->ship->body->SetLinearVelocity(b2Vec2_zero);
 	Vec2 anchor = Vec2(0.5f, 0.5f);
 	b2Vec2 p = state->ship->body->GetPosition();
@@ -566,6 +573,10 @@ void GameController::startVideoCalibration(){
 * However, this method is responsible for updating any transforms in the scene graph.
 */
 void GameController::update(float deltaTime) {
+	if (!audio->paused){
+		elapsedTime += deltaTime;
+		audio->setFrameOnBeat(deltaTime);
+	}
 	if (!isPaused) {
 		if (hasWonLevel()){
 			if (currentLevel == CALIBRATION_LEVEL){
@@ -596,8 +607,6 @@ void GameController::update(float deltaTime) {
 				loadLevel(std::min(currentLevel + 1, MAX_LEVELS));
 			}
 		}
-		elapsedTime += deltaTime;
-		audio->setFrameOnBeat(deltaTime);
 		removeDeadWeapons();
 		removeDeadEWeapons();
 		removeDeadZombies();
@@ -841,7 +850,11 @@ void GameController::update(float deltaTime) {
 			else{
 				if (calibration->acceptClicks){
 					time_t now = time(0);
-					calibration->totalOffset += (((elapsedTime - (now - input->clickTime)) - audio->audioDelay) - calibration->zombieTimes[calibration->clicks]);
+					float offset = (((elapsedTime - (now - input->clickTime)) - audio->audioDelay) - calibration->zombieTimes[calibration->clicks]);
+					calibration->totalOffset += offset;
+					stringstream vss;
+					vss << "OFFSET: " << formatMs(offset);
+					view->beatHUD->setString(vss.str());
 					view->zombies->removeChild(calibration->zombies[calibration->clicks]);
 					calibration->clicks++;
 					input->clickProcessed = true;

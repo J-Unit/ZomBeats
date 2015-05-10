@@ -16,7 +16,7 @@ void CalibrationController::init(){
 	totalOffset = 0.0f;
 	phaseDelay = 0.0f;
 	audioCalibration = true;
-	acceptClicks = true;
+	acceptClicks = false;
 }
 
 void CalibrationController::update(float deltaTime){
