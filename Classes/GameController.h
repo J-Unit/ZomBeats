@@ -14,6 +14,7 @@
 #include "LevelSerializer.h"
 #include <vector>
 #include "util.h"
+#include "FilmStrip.h"
 #include "SaveSerializer.h"
 
 //fog scale
@@ -25,6 +26,7 @@
 #define GAME_MENU_BUTTON_SCALE 0.75f
 #define GAME_MENU_BUTTON_OFFSET 160
 #define DIALOGUE_POPUP_SCALE 0.13f
+#define COUNT_DOWN_SCALE 0.5f
 
 #define SAVE_FILE "save.zbs"
 
@@ -95,6 +97,9 @@ public:
 	Sprite* pauseMenuBackground;
 	//the in-game menu
 	Menu* menu;
+	//the count down
+	FilmStrip* countDown;
+	int countDownCounter;
 
     // MODEL
     // A page-out could dispose of the view as long as it just has this.
@@ -203,6 +208,7 @@ private:
 	void updateFog();
 	void createWeaponRanges(float weapWidth, float weapRange, float weapDetectionRange, b2Vec2 dir);
 	bool isZombieHit(b2Vec2 az, b2Vec2 bz, b2Vec2 ab, b2Vec2 bc);
+	void createCountDown();
 
 	void removeDeadWeapons();
 	void removeDeadEWeapons();
@@ -217,6 +223,9 @@ private:
 	LevelSerializer ls;
 	SaveSerializer save;
 	bool removed;
+
+	//used for the initial pause and begin count down
+	bool beginCountDown;
 
 };
 
