@@ -12,6 +12,7 @@ Lawnmower::Lawnmower(b2World *world, float x, float y)
 	cdTimer = 0.0f;
 	hitWall = false;
 	onCooldown = false;
+	isJammed = false;
 	e_weapon_type = 0; //TODO: Make array of different weapon types somewhere
 	bodyDef.type = b2_staticBody;
 	bodyDef.position.Set(x, y);
@@ -80,6 +81,7 @@ Lawnmower::Lawnmower(b2World *world, float x, float y, b2Vec2 dir)
 	pos_y = y;
 	isUsed = false;
 	onCooldown = false;
+	isJammed = false;
 	hasMoved = true;
 	hitWall = false;
 	e_weapon_type = 0; //TODO: Make array of different weapon types somewhere

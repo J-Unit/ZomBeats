@@ -12,6 +12,7 @@ Trash::Trash(b2World *world, float x, float y)
 	startPos =  Vec2(x, y);
 	isUsed = false;
 	onCooldown = false;
+	isJammed = false;
 	cdTimer = 0.0f;
 	hasMoved = true;
 	hitWall = false;

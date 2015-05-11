@@ -215,6 +215,9 @@ bool GameController::init() {
 		return false;
 	}
 	meter = new GrooveMeter();
+	currentEnvironmentMeter = 0.3f;
+	activationDelay = true;
+	doneActivating = false;
 	Director* director = Director::getInstance();
 	Size winsize = director->getWinSizeInPixels();
 	view = new View(winsize.width, winsize.height);
@@ -446,6 +449,45 @@ void GameController::resumeGameOnly(int index) {
 	calibration->acceptClicks = true;
 }
 
+void GameController::createEnvironmentActivationMeter(float meterWidth, float meterLength, float percentFull, b2Vec2 dir){
+	outterEnvironmentActivation[0] = b2Vec2(-meterLength / 2.0f, meterWidth / 2.0f); //top left
+	outterEnvironmentActivation[1] = b2Vec2(meterLength / 2.0f, meterWidth / 2.0f); //top right
+	outterEnvironmentActivation[2] = b2Vec2(meterLength / 2.0f, -meterWidth / 2.0f); //bottom right 
+	outterEnvironmentActivation[3] = b2Vec2(-meterLength / 2.0f, -meterWidth / 2.0f); //bottom left
+
+	innerEnvironmentActivation[0] = b2Vec2(-meterLength / 2.0f, meterWidth / 2.0f); //top left
+	innerEnvironmentActivation[1] = b2Vec2(-meterLength /2.0f + (meterLength * percentFull), meterWidth / 2.0f); //top right
+	innerEnvironmentActivation[2] = b2Vec2(-meterLength / 2.0f + (meterLength * percentFull), -meterWidth / 2.0f); //bottom right
+	innerEnvironmentActivation[3] = b2Vec2(-meterLength / 2.0f, -meterWidth / 2.0f); //bottom left
+
+	float theta = atan2(dir.y, dir.x);
+	b2Rot rotationM = b2Rot(theta);
+
+	//add ricky pos to each point and translate box in front by mult dir facing * half range weap
+	for (int i = 0; i < sizeof(outterEnvironmentActivation) / sizeof(b2Vec2); i++){
+		b2Vec2 rickPos = state->ship->body->GetPosition();
+		outterEnvironmentActivation[i] = b2Vec2(outterEnvironmentActivation[i].y, outterEnvironmentActivation[i].x);
+		outterEnvironmentActivation[i] = b2MulT(rotationM, outterEnvironmentActivation[i]);
+		outterEnvironmentActivation[i] = b2Vec2(outterEnvironmentActivation[i].y, outterEnvironmentActivation[i].x);
+		outterEnvironmentActivation[i] = outterEnvironmentActivation[i] + rickPos + ((meterLength / 2.0f + SHIP_HEIGHT)*dir);
+
+		transformedOuterEnvironmnetActivation[i] = Vec2(outterEnvironmentActivation[i].x, outterEnvironmentActivation[i].y);
+
+		innerEnvironmentActivation[i] = b2Vec2(innerEnvironmentActivation[i].y, innerEnvironmentActivation[i].x);
+		innerEnvironmentActivation[i] = b2MulT(rotationM, innerEnvironmentActivation[i]);
+		innerEnvironmentActivation[i] = b2Vec2(innerEnvironmentActivation[i].y, innerEnvironmentActivation[i].x);
+		innerEnvironmentActivation[i] = innerEnvironmentActivation[i] + rickPos + ((meterLength / 2.0f + SHIP_HEIGHT)*dir);
+
+		transformedInnerEnvironmentActivation[i] = Vec2(innerEnvironmentActivation[i].x, innerEnvironmentActivation[i].y);
+
+	}
+	view->weaponBox->clear();
+	view->weaponBox->drawPoly(transformedOuterEnvironmnetActivation,4, true, ccColor4F(0.0f, 0.0f, 0.0f, 1.0f));
+	view->weaponBox->drawSolidPoly(transformedInnerEnvironmentActivation, 4, ccColor4F(1.0f, 0.0f, 0.0f, 0.6f));
+	//view->weaponBox->drawRect(Vec2(outterEnvironmentActivation[0].x, outterEnvironmentActivation[0].y), Vec2(outterEnvironmentActivation[1].x, outterEnvironmentActivation[1].y), Vec2(outterEnvironmentActivation[3].x, outterEnvironmentActivation[3].y), Vec2(outterEnvironmentActivation[2].x, outterEnvironmentActivation[2].y), ccColor4F(2.0f, 2.0f, 2.0f, 1.0f));
+	//view->weaponBox->drawRect(Vec2(innerEnvironmentActivation[0].x, innerEnvironmentActivation[0].y), Vec2(innerEnvironmentActivation[1].x, innerEnvironmentActivation[1].y), Vec2(innerEnvironmentActivation[3].x, innerEnvironmentActivation[3].y), Vec2(innerEnvironmentActivation[2].x, innerEnvironmentActivation[2].y), ccColor4F(1.0f, 0.0f, 0.0f, 1.0f));
+}
+
 void GameController::createWeaponRanges(float weapWidth, float weapRange, float weapDetectionRange, b2Vec2 dir){
 	weaponRectangle[0] = b2Vec2(-weapRange / 2.0f, weapWidth / 2.0f); //top left
 	weaponRectangle[1] = b2Vec2(weapRange / 2.0f, weapWidth / 2.0f); //top right
@@ -514,6 +556,11 @@ void GameController::removeDeadEWeapons(){
 	for (CTypedPtrDblElement<EnvironmentWeapon> *e_weapon = state->environment_weapons.GetHeadPtr(); !state->environment_weapons.IsSentinel(e_weapon); e_weapon = e_weapon->Next())
 	{
 		eweap = e_weapon->Data();
+		if ((eweap->e_weapon_type == 0) && (eweap->isJammed)){
+			eweap->onCooldown = true;
+			eweap->isUsed = false;
+			eweap->isJammed = false;
+		}
 		if ((eweap->e_weapon_type == 1) && (eweap->isUsed)){
 			eweap->onCooldown = true;
 			eweap->update();
@@ -643,10 +690,12 @@ void GameController::update(float deltaTime) {
 			removeDyingZombies();
 			meter->drain();
 
-			//if we are currently activating environment and player clicking
-			if (state->ship->isActivatingEnvironment){
-				environmentalTimer += deltaTime; //just ran into environmental object so start delay count before it registers next click
+
+			//reduce meter by a little bit
+			if (state->ship->isActivatingEnvironment && currentLevel != CALIBRATION_LEVEL){
+				currentEnvironmentMeter -= ENVIRONMENT_METER_DEC;
 			}
+
 
 			EnvironmentWeapon *eweap = NULL;
 			for (CTypedPtrDblElement<EnvironmentWeapon> *e_weapon = state->environment_weapons.GetHeadPtr(); !state->environment_weapons.IsSentinel(e_weapon); e_weapon = e_weapon->Next())
@@ -673,64 +722,18 @@ void GameController::update(float deltaTime) {
 				}
 
 			}
-
-			//delay is up so now 
-			if (input->clicked &&  environmentalTimer >= ENVIRONMENTAL_WEAPON_DELAY){
-				processDirection = true;
-				currentFingerPos = Vec2((input->lastClick.x - view->screen_size_x / 2.0) + state->ship->body->GetPosition().x, -1.0f*(input->lastClick.y - view->screen_size_y / 2.0) + state->ship->body->GetPosition().y);
-				currentFingerPos.subtract(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y));
-				currentFingerPos.normalize();
-				currentFingerPos.scale(TDISTANCE);
-				currentFingerPos.add(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y));
-			}
-
-			bool activated = false;
-
-			if (environmentalTimer >= ENVIRONMENTAL_WEAPON_DELAY_MAX || (!input->clicked &&  environmentalTimer >= ENVIRONMENTAL_WEAPON_DELAY)){
-				environmentalTimer = 0.0f;
-				state->ship->isActivatingEnvironment = false;
-				processDirection = false;
-				activated = true;
-				//TODO: Process moving the mower, etc. make mower variable that says in use..might have and make sure it is still active. Iterate thru mower list and point to the correct one, then switch position of ricky to it and it to slightly towards new direction
-
-				currentEnvironment->isUsed = true;
-				state->ship->hasEnvironmentWeapon = false;
-
-			}
-
-
-			if (currentEnvironment != NULL && currentEnvironment->isUsed && !currentEnvironment->hasMoved){
-				Vec2 mowerDir = currentFingerPos;
-				mowerDir.subtract(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y));
-				mowerDir.normalize();
-				mowerDir.scale(125.0f);
-				mowerDir.add(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y));
-
-				b2Vec2 dir = b2Vec2(mowerDir.x, mowerDir.y);
-
-				if (currentEnvironment->e_weapon_type == 0){
-					Lawnmower *lm = new Lawnmower(state->world, mowerDir.x, mowerDir.y, dir);
-					state->environment_weapons.AddTail(lm);
-					view->enviornment->addChild(lm->sprite, 2); //lawnmower's z-order needs to be changed the same as envrionment weapon 
-					audio->playEffect("sound_effects/LawnMower.mp3", 1.2f);
-					lm->addParticles();
-					currentMower = lm;
-					currentEnvironment = lm;
+		
+			if (currentEnvironment != NULL && currentEnvironment->e_weapon_type == 1  && !state->ship->hasEnvironmentWeapon && doneActivating){
+				//eweap->update();
+				eweap->sprite->setFrame(0);
+				if (!eweap->onCooldown){
+					eweap->sprite->setFrame(1);
 				}
-				else if (currentEnvironment->e_weapon_type == 1){
-					Trash *tr = new Trash(state->world, mowerDir.x, mowerDir.y);
-					state->environment_weapons.AddTail(tr);
-					view->enviornment->addChild(tr->sprite, 2);
-					currentTrash = tr;
-					currentEnvironment = tr;
-				}
-
-				/*
-				b2Vec2 dir = b2Vec2(mowerDir.x,mowerDir.y);
-				dir.Normalize();
-				dir *= MOWER_IMPULSE;
-				lm->body->ApplyLinearImpulse(dir, lm->body->GetPosition(), true);*/
+				view->allSpace->addChild(state->ship->getSprite());
+				removed = false;
 			}
+
+
 			if (state->ship->isDestroyed){
 				restartGame();
 			}
@@ -738,7 +741,8 @@ void GameController::update(float deltaTime) {
 			float x = state->ship->body->GetPosition().x;
 			float y = state->ship->body->GetPosition().y;
 			MapNode *from = state->level->locateCharacter(x, y);
-			if (!input->clickProcessed && !activated){
+			//if (!input->clickProcessed && !activated)
+			if (!input->clickProcessed){
 				if (currentLevel != CALIBRATION_LEVEL || (calibration->audioCalibration && calibration->acceptClicks)){
 					//cout << "PBF: " << elapsedTime << "\n";
 					stringstream st;
@@ -756,20 +760,103 @@ void GameController::update(float deltaTime) {
 
 						//if it is not on beat, increase the detection radius slightly
 						meter->increaseRadius();
+
+						//TODO: Decrease meter gradually and when missed
+						if (state->ship->isActivatingEnvironment){
+							currentEnvironmentMeter -= ENVIRONMENT_METER_DEC_OFFBEAT;
+						}
 					}
+					//know we must be on beat 
+					//check if activating environment
+					else if (state->ship->isActivatingEnvironment && userOnBeat != 0 && currentLevel != CALIBRATION_LEVEL){
+						meter->decreaseRadius();
+
+						if (!activationDelay){
+							currentEnvironmentMeter += ENVIRONMENT_METER_INC;
+						}
+						activationDelay = false;
+					
+						//since this is percentage based, snap it between 0-100 for drawing purposes
+						if (currentEnvironmentMeter < 0.0f){
+							currentEnvironmentMeter = 0.0f;
+						}
+						if (currentEnvironmentMeter > 1.0f){
+							currentEnvironmentMeter = 1.0f;
+						}
+						/*
+					
+					
+						TODO:
+						-Display meter full before it gets released
+						-make meter gradually drain and drain when off beat and make sure cooldown works
+						-make meter different colors to match UI
+					
+					
+						*/
+
+						processDirection = true;// signals to draw meter
+						currentFingerPos = Vec2((input->lastClick.x - view->screen_size_x / 2.0) + state->ship->body->GetPosition().x, -1.0f*(input->lastClick.y - view->screen_size_y / 2.0) + state->ship->body->GetPosition().y);
+						currentFingerPos.subtract(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y));
+						currentFingerPos.normalize();
+						currentFingerPos.scale(TDISTANCE);
+						currentFingerPos.add(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y));
+
+						//check activation status
+						if (currentEnvironmentMeter == 1.0f){
+							//successfully activated
+							activationDelay = true;
+							Vec2 clk = mouseToWorld(input->lastClick);
+							dRickyTap->set(clk.x - state->ship->body->GetPosition().x, clk.y - state->ship->body->GetPosition().y);
+							float tht = atan2(dRickyTap->y, dRickyTap->x);
+							//tht = round(tht / (M_PI / 4.0f)) * (M_PI / 4.0f);
+
+							createEnvironmentActivationMeter(ENVIRONMENT_METER_WIDTH, ENVIRONMENT_METER_LENGTH, 1.0f, b2Vec2(cos(tht), sin(tht)));
+
+							state->ship->isActivatingEnvironment = false;
+							processDirection = false;
+							state->ship->hasEnvironmentWeapon = false;
+
+							currentEnvironment->isUsed = true;
+
+							Vec2 mowerDir = currentFingerPos;
+							mowerDir.subtract(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y));
+							mowerDir.normalize();
+							mowerDir.scale(125.0f);
+							mowerDir.add(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y));
+
+							b2Vec2 dir = b2Vec2(mowerDir.x, mowerDir.y);
+							view->weaponBox->clear();
+							if (currentEnvironment->e_weapon_type == 0){
+								Lawnmower *lm = new Lawnmower(state->world, mowerDir.x, mowerDir.y, dir);
+								state->environment_weapons.AddTail(lm);
+								view->enviornment->addChild(lm->sprite, 2); //lawnmower's z-order needs to be changed the same as envrionment weapon 
+								audio->playEffect("sound_effects/LawnMower.mp3", 1.2f);
+								lm->addParticles();
+								currentMower = lm;
+								currentEnvironment = lm;
+							}
+							else if (currentEnvironment->e_weapon_type == 1){
+								Trash *tr = new Trash(state->world, mowerDir.x, mowerDir.y);
+								state->environment_weapons.AddTail(tr);
+								view->enviornment->addChild(tr->sprite, 2);
+								currentTrash = tr;
+								currentEnvironment = tr;
+							}
+
+						}
+					}	
 					else{
 						if (userOnBeat == 2){
 							state->ship->boostFrames = MAX_EIGHTH_NOTE_FRAMES;
 							state->ship->thrustFactor = EIGHTH_NOTE_THRUST_FACTOR;
 							state->ship->body->SetLinearDamping(EIGHTH_NOTE_DAMPENING);
-							state->ship->addDustParticles();
 						}
 						else{
 							state->ship->boostFrames = MAX_BOOST_FRAMES;
 							state->ship->thrustFactor = 1.0f;
 							state->ship->body->SetLinearDamping(NORMAL_DAMPENING);
 						}
-
+						view->weaponBox->clear();
 						Vec2 click = mouseToWorld(input->lastClick);
 						MapNode *dest = state->level->locateCharacter(click.x, click.y);
 						state->level->shortestPath(from, dest);
@@ -907,6 +994,58 @@ void GameController::update(float deltaTime) {
 			if (destination != 0 && from == destination){
 				destination = from->next;
 			}
+			if (currentEnvironmentMeter < 0.0f){
+				currentEnvironmentMeter = 0.0f;
+			}
+			if (currentEnvironmentMeter > 1.0f){
+				currentEnvironmentMeter = 1.0f;
+			}
+
+			if (state->ship->isActivatingEnvironment && currentEnvironmentMeter >= 0.0f && currentLevel != CALIBRATION_LEVEL){
+				Vec2 clk = mouseToWorld(input->lastClick);
+				dRickyTap->set(clk.x - state->ship->body->GetPosition().x, clk.y - state->ship->body->GetPosition().y);
+				float tht = atan2(dRickyTap->y, dRickyTap->x);
+
+				createEnvironmentActivationMeter(ENVIRONMENT_METER_WIDTH, ENVIRONMENT_METER_LENGTH, currentEnvironmentMeter, b2Vec2(cos(tht), sin(tht)));
+
+				//createEnvironmentActivationMeter(ENVIRONMENT_METER_WIDTH, ENVIRONMENT_METER_LENGTH, currentEnvironmentMeter, b2Vec2(cos(ang), sin(ang)));
+			}
+
+			if (currentEnvironmentMeter <= 0.0f && currentLevel != CALIBRATION_LEVEL){
+				activationDelay = true;
+				doneActivating = true;
+				view->weaponBox->clear();
+				//failed to activate
+				state->ship->isActivatingEnvironment = false;
+				processDirection = false;
+				state->ship->hasEnvironmentWeapon = false;
+				//place the specific weapon on cd
+				if (currentEnvironment->e_weapon_type == 0){
+					currentEnvironment->isJammed = true;
+					view->enviornment->addChild(currentEnvironment->sprite);
+				}
+				else if(currentEnvironment->e_weapon_type == 1){
+					currentEnvironment->isUsed = true;
+				}
+			
+				currentEnvironmentMeter = 0.3f;
+
+			}
+
+			if (currentEnvironmentMeter >= 1.0f && currentLevel != CALIBRATION_LEVEL){
+				currentEnvironmentMeter = 0.3f;
+				Vec2 clk = mouseToWorld(input->lastClick);
+				dRickyTap->set(clk.x - state->ship->body->GetPosition().x, clk.y - state->ship->body->GetPosition().y);
+				float tht = atan2(dRickyTap->y, dRickyTap->x);
+				//tht = round(tht / (M_PI / 4.0f)) * (M_PI / 4.0f);
+
+				createEnvironmentActivationMeter(ENVIRONMENT_METER_WIDTH, ENVIRONMENT_METER_LENGTH, 1.0f, b2Vec2(cos(tht), sin(tht)));
+			}
+
+			if (destination != 0 && from == destination){
+				destination = from->next;
+			}
+
 			if (destination != 0){
 				Vec2 dir = Vec2(state->level->getTileCenterX(destination) - x, state->level->getTileCenterY(destination) - y);
 				dir.normalize();
@@ -953,7 +1092,7 @@ void GameController::update(float deltaTime) {
 			}
 
 
-			activated = false;
+			//activated = false;
 
 			if (state->ship->isActivatingEnvironment){
 				state->ship->body->SetLinearVelocity(b2Vec2_zero);
@@ -1151,9 +1290,9 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 	//view->hitBox->drawRect(Vec2(state->ship->body->GetPosition().x - 29.5f, state->ship->body->GetPosition().y - 55.0f), Vec2(state->ship->body->GetPosition().x + 29.5f, state->ship->body->GetPosition().y + 55.0f), ccColor4F(2.0f, 2.0f, 2.0f, 1.0f));
 
 	//visualize the arrow for activating the environment
-	if (processDirection){
-		view->directionUseEnvironmentWeapon->drawLine(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y), Vec2(currentFingerPos.x, currentFingerPos.y), ccColor4F(0.0f, 0.0f, 0.0f, 0.8f));
-	}
+	//if (processDirection){
+	//	view->directionUseEnvironmentWeapon->drawLine(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y), Vec2(currentFingerPos.x, currentFingerPos.y), ccColor4F(0.0f, 0.0f, 0.0f, 0.8f));
+	//}
 
 	if (state->ship->hasWeapon){
 
