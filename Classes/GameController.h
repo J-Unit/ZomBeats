@@ -35,6 +35,13 @@
 #define TRASHCAN_CD 8.0f
 #define ENVIRONMENTAL_WEAPON_DELAY_MAX 5.0f
 
+//environment activation shizz
+#define ENVIRONMENT_METER_LENGTH 200.0f
+#define ENVIRONMENT_METER_WIDTH 30.0f
+#define ENVIRONMENT_METER_INC 0.35f 
+#define ENVIRONMENT_METER_DEC_OFFBEAT 0.17f
+#define ENVIRONMENT_METER_DEC 0.002f
+
 using namespace cocos2d;
 using namespace std;
 
@@ -124,8 +131,12 @@ public:
 	float environmentalTimer;
 	float trashTimer;
 
+	//env activation
+	float currentEnvironmentMeter;
+
 	bool processDirection;
 	bool trashOnCD;
+	bool doneActivating;
 
 	EnvironmentWeapon *currentEnvironment;
 	Lawnmower *currentMower;
@@ -184,6 +195,14 @@ public:
 
 	b2Vec2 weaponDetectionRectangle[4];
 
+	b2Vec2 outterEnvironmentActivation[4];
+
+	b2Vec2 innerEnvironmentActivation[4];
+
+	Vec2 transformedInnerEnvironmentActivation[4];
+
+	Vec2 transformedOuterEnvironmnetActivation[4];
+
 	Vec2 *dRickyTap;
 
 	Vec2 mouseToWorld(Vec2 click);
@@ -192,6 +211,8 @@ public:
 	Sprite *musicNotes[MAX_MUSIC_NOTES];
 
 	int musicNoteCounter;
+
+	bool activationDelay;
 
 	int currentLevel;
 	void setCurrentLevel(int level);
@@ -207,6 +228,7 @@ private:
 	void removeGameMenu();
 	void updateFog();
 	void createWeaponRanges(float weapWidth, float weapRange, float weapDetectionRange, b2Vec2 dir);
+	void createEnvironmentActivationMeter(float meterWidth, float meterLength, float percentFull, b2Vec2 dir);
 	bool isZombieHit(b2Vec2 az, b2Vec2 bz, b2Vec2 ab, b2Vec2 bc);
 	void createCountDown();
 

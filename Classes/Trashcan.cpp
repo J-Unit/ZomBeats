@@ -10,6 +10,7 @@ Trashcan::Trashcan(b2World *world, float x, float y)
 	pos_y = y;
 	isUsed = false;
 	hasMoved = false;
+	isJammed = false;
 	hitWall = false;
 	cdTimer = 0.0f;
 	onCooldown = false;
@@ -33,6 +34,7 @@ Trashcan::Trashcan(b2World *world, float x, float y, b2Vec2 dir)
 	pos_y = y;
 	isUsed = false;
 	hasMoved = true;
+	isJammed = false;
 	hitWall = false;
 	e_weapon_type = 1; //TODO: Make array of different weapon types somewhere
 

@@ -18,6 +18,8 @@ OVERDRIVE = {"bpm":128.0, "path":"songs/01 OverDrive.mp3", "offset":0.0}
 LOOKING_FOR = {"bpm":128.0, "path":"songs/01 Looking For.mp3", "offset":0.0}
 CHILL_DEEP = {"bpm":120.0, "path":"songs/ChillDeepHouse.mp3", "offset":0.0}
 IN_PIZZA = {"bpm":90.0, "path":"songs/InPizzaWeCrust.mp3", "offset":0.0}
+BLANCO = {"bpm":90.0, "path":"songs/BLANCO.mp3", "offset":0.0}
+PICKLE = {"bpm":140.0, "path":"songs/01 Pickles.mp3", "offset":0.0}
 
 
 
@@ -283,6 +285,12 @@ function changeTrack(){
 			break;
 		case "songs/InPizzaWeCrust.mp3":
 			level.track = IN_PIZZA;
+			break;
+		case "songs/BLANCO.mp3":
+			level.track = BLANCO;
+			break;
+		case "songs/01 Pickles.mp3":
+			level.track = PICKLE;
 			break;
 	}
 	playing = !document.getElementById("audio").paused;

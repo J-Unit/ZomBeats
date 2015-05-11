@@ -22,6 +22,7 @@ public:
 	bool onCooldown;
 	float cdTimer;
 	bool isUsed;
+	bool isJammed;
 	bool hitWall;
 	void setSprite(FilmStrip* value);
 	void update();
