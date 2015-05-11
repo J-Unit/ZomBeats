@@ -1,7 +1,5 @@
 #include "AudioController.h"
 #include "SongDecomposition.h"
-#include "cocos2d.h"
-#include "audio/include/AudioEngine.h"
 
 using namespace cocos2d::experimental;
 
@@ -15,6 +13,9 @@ AudioController::AudioController()
 	estimated_song_time = 0;
 	prevOnBeat = frameOnBeat = false;
 	audioDelay = videoDelay = 0.0f;
+	hisses.maxInstances = 3;
+	hisses.name = "hisses";
+	//AudioEngine::setMaxAudioInstance(4);
 }
 
 
@@ -31,7 +32,13 @@ void AudioController::playTrack(SongDecomposition *track, bool loop){
 }
 
 void AudioController::playEffect(std::string effect, float vol){
-	AudioEngine::play2d(effect, false, vol);
+	if (effect == "sound_effects/ZombieHiss.mp3"){
+		AudioEngine::play2d(effect, false, vol, &hisses);
+
+	}
+	else{
+		AudioEngine::play2d(effect, false, vol);
+	}
 }
 
 void AudioController::setFrameOnBeat(float deltaTime){

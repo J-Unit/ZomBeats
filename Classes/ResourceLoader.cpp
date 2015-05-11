@@ -82,6 +82,11 @@ ResourceLoader::ResourceLoader() {
 		text->retain();
 		textures["shrapnel"] = text;
 	}
+	text = Director::getInstance()->getTextureCache()->addImage("textures/glass.png");
+	if (text) {
+		text->retain();
+		textures["glass"] = text;
+	}
 
     //text = Director::getInstance()->getTextureCache()->addImage("textures/ships.png");
 	//text = Director::getInstance()->getTextureCache()->addImage("textures/chuck.png");

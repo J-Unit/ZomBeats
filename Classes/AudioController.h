@@ -1,16 +1,21 @@
 #include <string>
+#include "audio/include/AudioEngine.h"
+
 
 #define EFFECT_VOLUME 0.60f
 #define MUSIC_VOLUME 0.70f
+using namespace cocos2d::experimental;
 
 class SongDecomposition;
 
 class AudioController
 {
 public:
+	AudioProfile hisses;
+
 	SongDecomposition *currentSong;
 	int curSongId;
-
+	
 
 	AudioController();
 	~AudioController();

@@ -133,7 +133,7 @@ void GameController::setCurrentLevel(int level){
 void GameController::createFog() {
 	//add the fog of war here
 	fogSp = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("fog"));
-	//fogSp->setVisible(false);
+	fogSp->setVisible(false);
 	//fogSpOuter = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("fog_outer"));
 	fogSp->setScale(FOG_SCALE, FOG_SCALE);
 	//fogSpOuter->setScale(OUTER_FOG_SCALE, OUTER_FOG_SCALE);
@@ -499,6 +499,7 @@ void GameController::removeDeadEWeapons(){
 			eweap->isUsed = false;
 			if (eweap->e_weapon_type == 2){
 				audio->playEffect("sound_effects/BottleSmash.mp3",2.0f);
+				((Trash *)eweap)->addParticles();
 			}
 			state->world->DestroyBody(eweap->body);
 			toDelete = e_weapon;
@@ -831,6 +832,7 @@ void GameController::update(float deltaTime) {
 				Zombie *curZ;
 				b2Vec2 tmp;
 				int count = 0;
+				bool hiss = false;
 				while (!state->zombies.IsSentinel(cur)){
 					curZ = cur->Data();
 					tmp = state->ship->body->GetPosition() - curZ->body->GetPosition();
@@ -838,7 +840,7 @@ void GameController::update(float deltaTime) {
 					float dis;
 					dis = sqrt(tmp.x*tmp.x + tmp.y*tmp.y);
 					if (!userOnBeat && dis < meter->detectionRadius) {
-						audio->playEffect("sound_effects/ZombieHiss.mp3", 0.5f);
+						hiss = true;
 						curZ->increaseAwarness();
 					}
 					if (count == 0) {
@@ -847,6 +849,9 @@ void GameController::update(float deltaTime) {
 
 					count++;
 					cur = cur->Next();
+				}
+				if (hiss){
+					audio->playEffect("sound_effects/ZombieHiss.mp3", 0.5f);
 				}
 
 
@@ -1011,6 +1016,10 @@ void GameController::update(float deltaTime) {
 		while (!state->environment_weapons.IsSentinel(envwe)){
 			pos = envwe->Data()->body->GetPosition();
 			envwe->Data()->sprite->setPosition(pos.x, pos.y);
+			if (envwe->Data()->e_weapon_type == 2){
+				float rot = envwe->Data()->sprite->getRotation();
+				envwe->Data()->sprite->setRotation(rot+17);
+			}
 			envwe = envwe->Next();
 		}
 	}

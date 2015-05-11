@@ -16,6 +16,7 @@ public:
 	Trash(b2World *world, float x, float y);
 	bool   update(float deltaTime, Vec2 thrust);
 	Vec2 startPos;
+	void addParticles();
 	~Trash();
 };
 
