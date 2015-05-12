@@ -4,6 +4,8 @@
 #include "View.h"
 USING_NS_CC;
 
+ProgressScene *ProgressScene::layer;
+
 ProgressScene::ProgressScene()
 {
 }
@@ -24,8 +26,8 @@ Scene* ProgressScene::createScene()
 
 void ProgressScene::createLayer(int l)
 {
-	ProgressScene::layer = ProgressScene::create();
-	ProgressScene::level = l;
+	layer = ProgressScene::create();
+	layer->setLevel(l);
 }
 
 bool ProgressScene::init()
@@ -43,17 +45,17 @@ bool ProgressScene::init()
 	loadingSprite->setScale(LEVEL_BACKGROUND_SCALE);
 
 	this->addChild(loadingSprite);
+	this->scheduleUpdate();
 
 	return true;
 }
 
-void ProgressScene::onEnter()
-{
-	//first create a progress scene to make user think that it is running
-	GameController* gc = GameController::create();
-	gc->setCurrentLevel(level);
-	gc->initEnvironment();
-	Director::getInstance()->replaceScene(TransitionFade::create(LEVEL_MENU_TRANSITION_TIME, gc->view->scene));
-
+void ProgressScene::update(float dt){
+	if (levelSet){
+		GameController* gc = GameController::create();
+		gc->setCurrentLevel(level);
+		gc->initEnvironment();
+		Director::getInstance()->replaceScene(TransitionFade::create(LEVEL_MENU_TRANSITION_TIME, gc->view->scene));
+		this->unscheduleUpdate();
+	}
 }
-
