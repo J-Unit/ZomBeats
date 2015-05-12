@@ -206,6 +206,7 @@ void GameController::panning() {
 	view->allSpace->setScale(PANNING_SCALE);
 	Vec2 anchor(0.4f, 0.6f);
 	view->allSpace->setAnchorPoint(anchor);
+	view->durability->setVisible(false);
 	view->durabilityBox->setVisible(false);
 }
 
@@ -214,8 +215,10 @@ void GameController::unPanning() {
 	view->allSpace->setScale(GAME_VIEW_SCALE);
 	Vec2 anchor(0.5f, 0.5f);
 	view->allSpace->setAnchorPoint(anchor);
+	view->durability->setVisible(true);
 	view->durabilityBox->setVisible(true);
 	view->allSpace->addChild(state->ship->getSprite()); //add ricky sprite back to canvas
+	createPauseButton();
 }
 
 
@@ -268,6 +271,7 @@ void GameController::initEnvironment() {
 		pauseGameOnly();
 		calibration->acceptClicks = false;
 		beginCountDown = false; //no need to do count down in calibration level
+		createPauseButton();
 	}
 	//for normal levels, we only need to pause the games 
 	else {
@@ -290,7 +294,6 @@ void GameController::initEnvironment() {
 	Sprite* okButton = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("ok_button"));
 	//---remove above later----- 
 
-	createPauseButton();
 }
 
 //helper method, create pauseButton on the upper right corner
@@ -370,7 +373,7 @@ void GameController::loadLevel(int i){
 	this->removeAllChildrenWithCleanup(true);
 	view->buildScene(state->level, this, i);
 	view->createMusicNotePath(musicNotes);
-	createPauseButton();
+
 	if (currentLevel == CALIBRATION_LEVEL) {
 		view->allSpace->addChild(state->ship->getSprite());
 	}
