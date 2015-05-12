@@ -381,17 +381,17 @@ void GameController::loadLevel(int i){
 		view->resIndepScreen->addChild(popup, 4);
 		createOkButton(0);
 		view->objective->setString("Audio Calibration: Tap anywhere to the beat\nafter the first four, don't miss any!\nClick ok to resume");
-		audio->paused = true;
+
 	}
-	//for normal levels, pause the sound for count down initially
+	//for normal levels, may need to do sth here later
 	else{
-		audio->paused = true;
-		audio->playTrack(ls.getLevelTrack(), currentLevel != CALIBRATION_LEVEL);
+		
 	}
 }
 
 //restart the game upon death or reset
 void GameController::restartGame() {
+	audio->stop(); //stop all songs upon restart
 	loadLevel(currentLevel);
 	if (currentLevel == CALIBRATION_LEVEL){
 		isPaused = true;
@@ -1215,6 +1215,8 @@ void GameController::update(float deltaTime) {
 				isPaused = false;
 				view->resIndepScreen->removeChild(countDown);
 				view->allSpace->setScale(0.7f);
+				//now we can start playing songs
+				audio->playTrack(ls.getLevelTrack(), currentLevel != CALIBRATION_LEVEL);
 				return;
 			}
 			countDown->setFrame(currentFrame);
