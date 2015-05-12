@@ -249,10 +249,10 @@ ResourceLoader::ResourceLoader() {
 		textures["ok_button"] = text;
 	}
 
-	text = Director::getInstance()->getTextureCache()->addImage("textures/count_down_new.png");
+	text = Director::getInstance()->getTextureCache()->addImage("textures/countdown.png");
 	if (text) {
 		text->retain();
-		textures["count_down_new"] = text;
+		textures["count_down"] = text;
 	}
 	text = Director::getInstance()->getTextureCache()->addImage("textures/loading.png");
 	if (text) {
