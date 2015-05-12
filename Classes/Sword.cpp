@@ -19,6 +19,7 @@ Sword::Sword(b2World *world, float x, float y)
 	body->SetUserData(&type);
 	box.SetAsBox(25.0f, 25.0f);
 	fixture.shape = &box;
+	fixture.isSensor = true;
 	body->CreateFixture(&fixture);
 	setSprite(Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("sword")));
 }

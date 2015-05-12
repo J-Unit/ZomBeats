@@ -47,7 +47,6 @@ void GameController::BeginContact(b2Contact* contact){
 	b1 = (Type *)contact->GetFixtureA()->GetBody()->GetUserData();
 	b2 = (Type *)contact->GetFixtureB()->GetBody()->GetUserData();
 
-
 	//trigger environment weapon activation
 	EnvironmentWeapon *ewep;
 	if ((b1->type == EnvironmentWeaponType && b2->type == WallType) || (b1->type == WallType && b2->type == EnvironmentWeaponType)){
@@ -133,7 +132,8 @@ void GameController::setCurrentLevel(int level){
 void GameController::createFog() {
 	//add the fog of war here
 	fogSp = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("fog"));
-	fogSp->setVisible(false);
+	
+	if(currentLevel == CALIBRATION_LEVEL) fogSp->setVisible(false);
 	//fogSpOuter = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("fog_outer"));
 	fogSp->setScale(FOG_SCALE, FOG_SCALE);
 	//fogSpOuter->setScale(OUTER_FOG_SCALE, OUTER_FOG_SCALE);
@@ -316,8 +316,8 @@ void GameController::createOkButton(int index) {
 
 Vec2 GameController::mouseToWorld(Vec2 click){
 	b2Vec2 pos = state->ship->body->GetPosition();
-	return Vec2((input->lastClick.x - view->screen_size_x / 2.0) / view->resIndepScreen->getScale() + pos.x,
-		-(input->lastClick.y - view->screen_size_y / 2.0) / view->resIndepScreen->getScale() + pos.y);
+	return Vec2((input->lastClick.x - view->screen_size_x / 2.0) / view->resIndepScreen->getScale() / view->allSpace->getScale() + pos.x,
+		-(input->lastClick.y - view->screen_size_y / 2.0) / view->resIndepScreen->getScale() / view->allSpace->getScale() + pos.y);
 }
 
 bool GameController::hasWonLevel(){
@@ -444,6 +444,9 @@ void GameController::resumeGameOnly(int index) {
 		audio->paused = false;
 	}
 	else if (index == 1) {
+		for (int i = 0; i < 16; i++){
+			calibration->zombieTimes[i] = elapsedTime * 2 + 1000000;
+		}
 		view->objective->setString("Now tap just as the center of each zombie lines up\nwith Ricky, don't miss any!");
 	}
 	calibration->acceptClicks = true;
@@ -629,15 +632,21 @@ void GameController::startVideoCalibration(){
 	state->ship->body->SetLinearVelocity(b2Vec2_zero);
 	Vec2 anchor = Vec2(0.5f, 0.5f);
 	b2Vec2 p = state->ship->body->GetPosition();
+	Sprite *hat = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("triangle1"));
+	hat->setAnchorPoint(anchor);
+	hat->setScale(0.6f);
+	hat->setPosition(state->ship->sprite->getContentSize().width/2, state->ship->sprite->getContentSize().height/2+ 50);
+	state->ship->sprite->addChild(hat);
 	calibration->audioCalibration = false;
 	view->zombies->removeAllChildren();
 	view->zombies->setPosition(Vec2::ZERO);
 	for (int i = 0; i < 16; i++){
-		calibration->zombies[i] = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("zombie_single"));
+		calibration->zombies[i] = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("triangle2"));
 		calibration->zombies[i]->setAnchorPoint(anchor);
-		calibration->zombies[i]->setPosition(p.x + VIDEO_CALIBRATION_OFFSET*i + 2 * VIDEO_CALIBRATION_OFFSET, p.y + 80);
-		calibration->zombieTimes[i] = elapsedTime * 2;
-		view->zombies->addChild(calibration->zombies[i]);
+		calibration->zombies[i]->setScale(0.8f);
+		calibration->zombies[i]->setPosition(p.x + VIDEO_CALIBRATION_OFFSET*i + 2 * VIDEO_CALIBRATION_OFFSET, p.y + 165);
+		calibration->zombieTimes[i] = elapsedTime * 2 + 1000000;
+		view->zombies->addChild(calibration->zombies[i], 10);
 	}
 }
 
@@ -732,7 +741,6 @@ void GameController::update(float deltaTime) {
 				view->allSpace->addChild(state->ship->getSprite());
 				removed = false;
 			}
-
 
 			if (state->ship->isDestroyed){
 				restartGame();
@@ -846,10 +854,11 @@ void GameController::update(float deltaTime) {
 						}
 					}	
 					else{
-						if (userOnBeat == 2){
+						if (userOnBeat == 2 && currentLevel != CALIBRATION_LEVEL){
 							state->ship->boostFrames = MAX_EIGHTH_NOTE_FRAMES;
 							state->ship->thrustFactor = EIGHTH_NOTE_THRUST_FACTOR;
 							state->ship->body->SetLinearDamping(EIGHTH_NOTE_DAMPENING);
+							state->ship->addDustParticles();
 						}
 						else{
 							state->ship->boostFrames = MAX_BOOST_FRAMES;
@@ -971,7 +980,7 @@ void GameController::update(float deltaTime) {
 				else{
 					if (calibration->acceptClicks){
 						time_t now = time(0);
-						float offset = (((elapsedTime - (now - input->clickTime)) - audio->audioDelay) - calibration->zombieTimes[calibration->clicks]);
+						float offset = (((elapsedTime - (now - input->clickTime) / 1000.0f) - audio->audioDelay) - calibration->zombieTimes[calibration->clicks]);
 						calibration->totalOffset += offset;
 						stringstream vss;
 						vss << "OFFSET: " << formatMs(offset);
@@ -1182,7 +1191,7 @@ void GameController::update(float deltaTime) {
 				envwe->Data()->sprite->setPosition(pos.x, pos.y);
 				if (envwe->Data()->e_weapon_type == 2){
 					float rot = envwe->Data()->sprite->getRotation();
-					envwe->Data()->sprite->setRotation(rot + 17);
+					envwe->Data()->sprite->setRotation(rot + 15);
 				}
 				envwe = envwe->Next();
 			}
