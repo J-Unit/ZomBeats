@@ -206,12 +206,15 @@ void GameController::panning() {
 	view->allSpace->setScale(PANNING_SCALE);
 	Vec2 anchor(0.4f, 0.6f);
 	view->allSpace->setAnchorPoint(anchor);
+	view->durabilityBox->setVisible(false);
 }
 
 void GameController::unPanning() {
+	createFog();
 	view->allSpace->setScale(GAME_VIEW_SCALE);
 	Vec2 anchor(0.5f, 0.5f);
 	view->allSpace->setAnchorPoint(anchor);
+	view->durabilityBox->setVisible(true);
 }
 
 
@@ -697,11 +700,17 @@ void GameController::update(float deltaTime) {
 						}
 						else{
 							loadLevel(std::min(currentLevel + 1, MAX_LEVELS));
+							beginCountDown = true;
+							createCountDown();
+							return;
 						}
 					}
 				}
 				else{
 					loadLevel(std::min(currentLevel + 1, MAX_LEVELS));
+					beginCountDown = true;
+					createCountDown();
+					return;
 				}
 			}
 			removeDeadWeapons();
@@ -757,7 +766,9 @@ void GameController::update(float deltaTime) {
 				restartGame();
 				return;
 			}
-			updateFog();
+			if (currentLevel != CALIBRATION_LEVEL) {
+				updateFog();
+			}
 			float x = state->ship->body->GetPosition().x;
 			float y = state->ship->body->GetPosition().y;
 			MapNode *from = state->level->locateCharacter(x, y);
@@ -1004,7 +1015,7 @@ void GameController::update(float deltaTime) {
 							calibration->acceptClicks = false;
 							audio->videoDelay = calibration->videoDelay();
 							stringstream ss;
-							ss << "Ok, great.  Video Delay: " << formatMs(audio->videoDelay);
+							ss << "Ok, great.  Video Delay: " << formatMs(audio->videoDelay); //finishing up calibration
 							view->objective->setString(ss.str());
 							save.exportSave(this);
 						}
@@ -1226,7 +1237,6 @@ void GameController::update(float deltaTime) {
 				audio->paused = false;
 				isPaused = false;
 				view->resIndepScreen->removeChild(countDown);
-				createFog();
 				unPanning();
 				//now we can start playing songs
 				audio->playTrack(ls.getLevelTrack(), currentLevel != CALIBRATION_LEVEL);
