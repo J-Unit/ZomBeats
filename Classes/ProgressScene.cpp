@@ -16,10 +16,16 @@ ProgressScene ::~ProgressScene()
 Scene* ProgressScene::createScene()
 {
 	auto scene = Scene::create();
-	auto layer = ProgressScene::create();
+	//auto layer = ProgressScene::create();
 	scene->addChild(layer);
 	return scene;
 
+}
+
+void ProgressScene::createLayer(int l)
+{
+	ProgressScene::layer = ProgressScene::create();
+	ProgressScene::level = l;
 }
 
 bool ProgressScene::init()
@@ -39,5 +45,15 @@ bool ProgressScene::init()
 	this->addChild(loadingSprite);
 
 	return true;
+}
+
+void ProgressScene::onEnter()
+{
+	//first create a progress scene to make user think that it is running
+	GameController* gc = GameController::create();
+	gc->setCurrentLevel(level);
+	gc->initEnvironment();
+	Director::getInstance()->replaceScene(TransitionFade::create(LEVEL_MENU_TRANSITION_TIME, gc->view->scene));
+
 }
 

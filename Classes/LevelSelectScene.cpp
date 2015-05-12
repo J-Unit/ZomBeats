@@ -94,15 +94,10 @@ bool LevelSelectScene::init()
 
 void LevelSelectScene::GoToGameScene(cocos2d::Ref *sender, int level)
 {
+	ProgressScene::createLayer(level);
 	auto progressScene = ProgressScene::createScene();
-	//Director::getInstance()->replaceScene(TransitionFade::create(LEVEL_MENU_TRANSITION_TIME, progressScene));
 	Director::getInstance()->replaceScene(progressScene);
 
-	//first create a progress scene to make user think that it is running
-	GameController* gc = GameController::create();
-	gc->setCurrentLevel(level);
-	gc->initEnvironment();
-	Director::getInstance()->replaceScene(TransitionFade::create(LEVEL_MENU_TRANSITION_TIME, gc->view->scene));
 }
 
 void LevelSelectScene::GoToMainMenuScene(cocos2d::Ref *sender)

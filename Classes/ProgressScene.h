@@ -12,8 +12,12 @@ public:
 	ProgressScene();
 	~ProgressScene();
 
+	static Layer* layer;
 	static Scene* createScene();
+	static void createLayer(int l);
 	virtual bool init();
+	static int level;
+	void onEnter();
 
 	CREATE_FUNC(ProgressScene);
 };
