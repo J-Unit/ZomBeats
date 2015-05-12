@@ -15,7 +15,6 @@
 View::View(int w, int h){
 	screen_size_x = w;
 	screen_size_y = h;
-	ResourceLoader::loadContent();
 	meshVis = path = detectionRadiusCircle = directionUseEnvironmentWeapon = meter = durabilityBox = durabilityHolder = durabilitySpriteContainer = hitBox = weaponBox = ai = zombiePositions = NULL;
 	grooviness = durability = objective = NULL; 
 	enviornment = zombies = shipImage = NULL;

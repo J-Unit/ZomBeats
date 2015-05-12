@@ -26,7 +26,10 @@ public:
 	CREATE_FUNC(ProgressScene);
 
 private:
+	DrawNode *bar;
 	bool levelSet;
+	bool loading;
+	GameController *gc;
 	int level;
 };
 
