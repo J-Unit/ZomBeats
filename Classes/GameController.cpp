@@ -204,10 +204,14 @@ void GameController::createCountDown() {
 
 void GameController::panning() {
 	view->allSpace->setScale(PANNING_SCALE);
+	Vec2 anchor(0.4f, 0.6f);
+	view->allSpace->setAnchorPoint(anchor);
 }
 
 void GameController::unPanning() {
 	view->allSpace->setScale(GAME_VIEW_SCALE);
+	Vec2 anchor(0.5f, 0.5f);
+	view->allSpace->setAnchorPoint(anchor);
 }
 
 
