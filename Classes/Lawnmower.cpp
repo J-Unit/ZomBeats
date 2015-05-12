@@ -21,6 +21,7 @@ Lawnmower::Lawnmower(b2World *world, float x, float y)
 	body->SetUserData(&type);
 	box.SetAsBox(35.0f, 35.0f);
 	fixture.shape = &box;
+	fixture.isSensor = true;
 	body->CreateFixture(&fixture);
 	setSprite(FilmStrip::create(ResourceLoader::getInstance()->getTexture("mower"), 1, 1, 1));
 }

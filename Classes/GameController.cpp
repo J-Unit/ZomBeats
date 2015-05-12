@@ -47,7 +47,6 @@ void GameController::BeginContact(b2Contact* contact){
 	b1 = (Type *)contact->GetFixtureA()->GetBody()->GetUserData();
 	b2 = (Type *)contact->GetFixtureB()->GetBody()->GetUserData();
 
-
 	//trigger environment weapon activation
 	EnvironmentWeapon *ewep;
 	if ((b1->type == EnvironmentWeaponType && b2->type == WallType) || (b1->type == WallType && b2->type == EnvironmentWeaponType)){
