@@ -31,6 +31,12 @@ private:
     unordered_map<string, Texture2D*> textures;
     /** Hash map storing the fonts */
     unordered_map<string, TTFConfig*> fontdata;
+	/** The number of textures that we expect to load eventually */
+	int texturesExpected;
+	/** The number of textures that we have loaded so far */
+	int texturesLoaded;
+
+	void textureCB(Texture2D* texture, string key);
 
 protected:
     /** Reference to the singleton object */
@@ -102,6 +108,28 @@ public:
      */
     TTFConfig* getFont(string key)      { return fontdata[key]; }
 
+	/**
+	* Adds a new texture file to the loading queue
+	*
+	* The file will be loaded asynchronously.  When it is finished loading, it will be
+	* added to this asset manager, and accessible under the given key.
+	*
+	* This method will mark the loading process as not complete, even if it was
+	* completed previously.
+	*
+	* @param filename The pathname to a texture file
+	* @param key      The key to access the texture after loading
+	*/
+	void queueTexture(const std::string& filename, const std::string& key);
+
+	/**
+	* Returns true if the assert manager has finished loading
+	*
+	* @return true if the assert manager has finished loading
+	*/
+	bool isComplete() const { return texturesExpected == texturesLoaded; }
+
+	float getPercentage() { return float(texturesLoaded) / texturesExpected; }
 };
 
 
