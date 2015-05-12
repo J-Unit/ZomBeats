@@ -1,8 +1,10 @@
 #include "LevelSelectScene.h"
 #include "GameController.h"
 #include "MainMenuScene.h"
+#include "ProgressScene.h"
 #include "View.h"
 USING_NS_CC;
+using namespace cocos2d;
 
 LevelSelectScene::LevelSelectScene()
 {
@@ -84,8 +86,19 @@ bool LevelSelectScene::init()
 	return true;
 }
 
+/*
+	auto progressScene = ProgressScene::createScene();
+	//Director::getInstance()->replaceScene(TransitionFade::create(LEVEL_MENU_TRANSITION_TIME, progressScene));
+	Director::getInstance()->replaceScene(progressScene);
+*/
+
 void LevelSelectScene::GoToGameScene(cocos2d::Ref *sender, int level)
 {
+	auto progressScene = ProgressScene::createScene();
+	//Director::getInstance()->replaceScene(TransitionFade::create(LEVEL_MENU_TRANSITION_TIME, progressScene));
+	Director::getInstance()->replaceScene(progressScene);
+
+	//first create a progress scene to make user think that it is running
 	GameController* gc = GameController::create();
 	gc->setCurrentLevel(level);
 	gc->initEnvironment();

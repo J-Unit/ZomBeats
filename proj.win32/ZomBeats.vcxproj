@@ -157,6 +157,7 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
     <ClCompile Include="..\Classes\LevelSelectScene.cpp" />
     <ClCompile Include="..\Classes\LevelSerializer.cpp" />
     <ClCompile Include="..\Classes\MainMenuScene.cpp" />
+    <ClCompile Include="..\Classes\ProgressScene.cpp" />
     <ClCompile Include="..\Classes\ResourceLoader.cpp" />
     <ClCompile Include="..\Classes\SaveSerializer.cpp" />
     <ClCompile Include="..\Classes\Ship.cpp" />
@@ -191,6 +192,7 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
     <ClInclude Include="..\Classes\MainMenuScene.h" />
     <ClInclude Include="..\Classes\Node.h" />
     <ClInclude Include="..\Classes\PriorityQueue.h" />
+    <ClInclude Include="..\Classes\ProgressScene.h" />
     <ClInclude Include="..\Classes\ResourceLoader.h" />
     <ClInclude Include="..\Classes\SaveSerializer.h" />
     <ClInclude Include="..\Classes\Ship.h" />

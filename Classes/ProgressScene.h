@@ -4,6 +4,7 @@
 #pragma once
 
 #define LEVEL_MENU_TRANSITION_TIME 0.3f
+#define LEVEL_BACKGROUND_SCALE 1.25f
 
 class ProgressScene : public cocos2d::Layer
 {
@@ -15,6 +16,5 @@ public:
 	virtual bool init();
 
 	CREATE_FUNC(ProgressScene);
-	void GoToGameScene(cocos2d::Ref* sender, int level);
 };
 

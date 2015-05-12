@@ -19,8 +19,8 @@ public:
 	static Scene* createScene();
 	virtual bool init();
 
-	CREATE_FUNC(LevelSelectScene);
 	void GoToGameScene(cocos2d::Ref* sender, int level);
 	void GoToMainMenuScene(cocos2d::Ref* sender);
+	CREATE_FUNC(LevelSelectScene);
 };
 

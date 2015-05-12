@@ -193,7 +193,7 @@ void GameController::updateFog() {
 }
 
 void GameController::createCountDown() {
-	countDown = FilmStrip::create(ResourceLoader::getInstance()->getTexture("count_down"), 1, 3, 3);
+	countDown = FilmStrip::create(ResourceLoader::getInstance()->getTexture("count_down_new"), 1, 3, 3);
 	countDown->setScale(COUNT_DOWN_SCALE, COUNT_DOWN_SCALE);
 	countDown->setPosition(Vec2(HUD_OFFSET.x*43.5f, HUD_OFFSET.y * 35.5)); //change it later
 	view->resIndepScreen->addChild(countDown, 5);
