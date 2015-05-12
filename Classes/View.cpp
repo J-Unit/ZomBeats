@@ -230,7 +230,7 @@ void View::buildScene(LevelMap *level, Layer* l, int levNum) {
 	enviornment->addChild(weaponBox);
 
 	enviornment->addChild(directionUseEnvironmentWeapon);
-	enviornment->addChild(zombies);
+	enviornment->addChild(zombies,2);
 	// Put planets in the foreground.
 	/*nearSpace = Node::create();
 	nearSpace->setContentSize(allSpace->getContentSize());
