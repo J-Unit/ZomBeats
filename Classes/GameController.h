@@ -27,7 +27,7 @@
 #define GAME_MENU_BUTTON_OFFSET 160
 #define DIALOGUE_POPUP_SCALE 0.13f
 #define COUNT_DOWN_SCALE 0.6f
-#define PANNING_SCALE 0.3f
+#define PANNING_SCALE 0.4f
 #define GAME_VIEW_SCALE 0.7f
 
 #define SAVE_FILE "save.zbs"

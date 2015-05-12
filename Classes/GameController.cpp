@@ -215,6 +215,7 @@ void GameController::unPanning() {
 	Vec2 anchor(0.5f, 0.5f);
 	view->allSpace->setAnchorPoint(anchor);
 	view->durabilityBox->setVisible(true);
+	view->allSpace->addChild(state->ship->getSprite()); //add ricky sprite back to canvas
 }
 
 
@@ -370,7 +371,9 @@ void GameController::loadLevel(int i){
 	view->buildScene(state->level, this, i);
 	view->createMusicNotePath(musicNotes);
 	createPauseButton();
-	view->allSpace->addChild(state->ship->getSprite());
+	if (currentLevel == CALIBRATION_LEVEL) {
+		view->allSpace->addChild(state->ship->getSprite());
+	}
 	//createFog();
 	for (int i = 0; i<state->level->nWalls; i++) view->enviornment->addChild(state->level->walls[i].sprite);
 	for (CTypedPtrDblElement<Zombie> *cz = state->zombies.GetHeadPtr(); !state->zombies.IsSentinel(cz); cz = cz->Next()) view->zombies->addChild(cz->Data()->sprite, 2);
