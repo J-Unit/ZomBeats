@@ -199,9 +199,16 @@ void GameController::createCountDown() {
 	view->resIndepScreen->addChild(countDown, 5);
 	countDown->setFrame(0);
 	countDownCounter = 0;
-	view->allSpace->setScale(0.25f); //panning
+	panning();
 }
 
+void GameController::panning() {
+	view->allSpace->setScale(PANNING_SCALE);
+}
+
+void GameController::unPanning() {
+	view->allSpace->setScale(GAME_VIEW_SCALE);
+}
 
 
 /**
@@ -357,7 +364,7 @@ void GameController::loadLevel(int i){
 	view->createMusicNotePath(musicNotes);
 	createPauseButton();
 	view->allSpace->addChild(state->ship->getSprite());
-	createFog();
+	//createFog();
 	for (int i = 0; i<state->level->nWalls; i++) view->enviornment->addChild(state->level->walls[i].sprite);
 	for (CTypedPtrDblElement<Zombie> *cz = state->zombies.GetHeadPtr(); !state->zombies.IsSentinel(cz); cz = cz->Next()) view->zombies->addChild(cz->Data()->sprite, 2);
 	for (CTypedPtrDblElement<Weapon> *cw = state->weapons.GetHeadPtr(); !state->weapons.IsSentinel(cw); cw = cw->Next()) view->enviornment->addChild(cw->Data()->sprite, 2);
@@ -744,6 +751,7 @@ void GameController::update(float deltaTime) {
 
 			if (state->ship->isDestroyed){
 				restartGame();
+				return;
 			}
 			updateFog();
 			float x = state->ship->body->GetPosition().x;
@@ -1214,7 +1222,8 @@ void GameController::update(float deltaTime) {
 				audio->paused = false;
 				isPaused = false;
 				view->resIndepScreen->removeChild(countDown);
-				view->allSpace->setScale(0.7f);
+				createFog();
+				unPanning();
 				//now we can start playing songs
 				audio->playTrack(ls.getLevelTrack(), currentLevel != CALIBRATION_LEVEL);
 				return;

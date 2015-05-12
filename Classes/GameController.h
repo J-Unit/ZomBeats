@@ -27,6 +27,8 @@
 #define GAME_MENU_BUTTON_OFFSET 160
 #define DIALOGUE_POPUP_SCALE 0.13f
 #define COUNT_DOWN_SCALE 0.6f
+#define PANNING_SCALE 0.3f
+#define GAME_VIEW_SCALE 0.7f
 
 #define SAVE_FILE "save.zbs"
 
@@ -231,6 +233,8 @@ private:
 	void createEnvironmentActivationMeter(float meterWidth, float meterLength, float percentFull, b2Vec2 dir);
 	bool isZombieHit(b2Vec2 az, b2Vec2 bz, b2Vec2 ab, b2Vec2 bc);
 	void createCountDown();
+	void panning();
+	void unPanning();
 
 	void removeDeadWeapons();
 	void removeDeadEWeapons();
