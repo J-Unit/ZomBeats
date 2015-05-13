@@ -9,6 +9,7 @@
 #include "Lawnmower.h"
 #include "Pistol.h"
 #include "Shotgun.h"
+#include "GoalObject.h"
 #include "SongDecomposition.h"
 
 GameState *LevelSerializer::parseLevel(std::string f){
@@ -61,6 +62,12 @@ void LevelSerializer::addObjects(GameState *s){
 		s->zombies.AddTail(new Zombie(s->level->tileWidth*(d["zombies"][i]["x"].GetInt()+0.5f), top-s->level->tileHeight*(d["zombies"][i]["y"].GetInt()+0.5f), s->world));
 	}
 	s->ship = new Ship(s->world, s->level->tileWidth*(d["startX"].GetInt()+0.5f), top-s->level->tileHeight*(d["startY"].GetInt()+0.5f), 0.5f * d["bkgX"].GetInt() * 256, 0.5f * d["bkgY"].GetInt() * 256+10);
+
+	//the new goal object
+	if (d.HasMember("goal_object")){
+		s->instrument = new GoalObject(s->world, s->level->tileWidth*(d["goal_object"]["x"].GetInt() + 0.5f), top - s->level->tileHeight*(d["goal_object"]["y"].GetInt() + 0.5f), d["goal_object"]["type"].GetString());
+	}
+	
 }
 
 float LevelSerializer::getWallOffsetByType(std::string type){

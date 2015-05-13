@@ -100,6 +100,9 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\ProgressScene.cpp">
+		  <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\GoalObject.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -207,6 +210,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\ProgressScene.h">
+		  <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GoalObject.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

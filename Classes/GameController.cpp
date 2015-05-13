@@ -20,6 +20,7 @@
 #include "Trashcan.h"
 #include "Trash.h"
 #include "Zombie.h"
+#include "GoalObject.h"
 #include <math.h>
 #include <vector>
 #include <iostream>
@@ -111,6 +112,14 @@ void GameController::BeginContact(b2Contact* contact){
 			return;
 		}
 		return;
+	}
+
+	//collecting goal item
+	GoalObject *go;
+	if ((b1->type == GoalType && b2->type == ShipType) || (b1->type == ShipType && b2->type == GoalType)){
+		go = (b1->type == GoalType) ? b1->getGoalObject() : b2->getGoalObject();
+		go->isCollected = true; //signal to remove goal object
+		hasCollectedGoal = true; //signal win condition
 	}
 
 	//fucking up zombies
@@ -239,6 +248,7 @@ bool GameController::init() {
 	currentEnvironmentMeter = 0.3f;
 	activationDelay = true;
 	doneActivating = false;
+	hasCollectedGoal = false;
 	Director* director = Director::getInstance();
 	Size winsize = director->getWinSizeInPixels();
 	view = new View(winsize.width, winsize.height);
@@ -342,7 +352,28 @@ Vec2 GameController::mouseToWorld(Vec2 click){
 }
 
 bool GameController::hasWonLevel(){
-	if (currentLevel != CALIBRATION_LEVEL) return state->zombies.GetCount() == 0;
+	//add 2 fields to game state or game controller
+	//target num zombies 
+	//pointer to collectable in level...can be null if level doesnt have collectable
+	if (currentLevel != CALIBRATION_LEVEL) {
+		//logic for multiple goals
+		if (state->instrument != NULL){
+			//the level has a collectable item
+			//check if hasCollectedGoal and numzombies is below threshold
+			if (hasCollectedGoal){ //TODO: add zombie threshold here
+				hasCollectedGoal = false;
+				return true;
+			}
+			else return false;
+			
+		}
+		else{
+			//no collectable item on level
+			//just check if numzombies is below threshold
+			return state->zombies.GetCount() == 0;
+		}
+		
+	}
 	else {
 		if (calibration->audioCalibration) return audio->songIsOver() && calibration->phaseDelay > 5.0f;
 		else return elapsedTime - calibration->zombieTimes[15] > 5.0f;
@@ -385,6 +416,9 @@ void GameController::loadLevel(int i){
 	for (CTypedPtrDblElement<Zombie> *cz = state->zombies.GetHeadPtr(); !state->zombies.IsSentinel(cz); cz = cz->Next()) view->zombies->addChild(cz->Data()->sprite, 2);
 	for (CTypedPtrDblElement<Weapon> *cw = state->weapons.GetHeadPtr(); !state->weapons.IsSentinel(cw); cw = cw->Next()) view->enviornment->addChild(cw->Data()->sprite, 2);
 	for (CTypedPtrDblElement<EnvironmentWeapon> *ew = state->environment_weapons.GetHeadPtr(); !state->environment_weapons.IsSentinel(ew); ew = ew->Next()) view->enviornment->addChild(ew->Data()->sprite, 2);
+	if (state->instrument != NULL){
+		view->enviornment->addChild(state->instrument->sprite, 2);
+	}
 	//initial detection radius
 	meter->detectionRadius = INITIAL_DETECTION_RADIUS;
 	currAwareness = 0.0f;
@@ -558,6 +592,17 @@ bool GameController::isZombieHit(b2Vec2 az, b2Vec2 bz, b2Vec2 ab, b2Vec2 bc){
 }
 
 
+void GameController::removeCollectedGoals(){
+	GoalObject *go = state->instrument;
+	if (go != NULL && go->isCollected){
+		go->isCollected = false;
+		state->world->DestroyBody(go->body);
+		view->enviornment->removeChild(go->sprite);
+		//delete(go);
+	}
+}
+
+
 void GameController::removeDeadWeapons(){
 
 	CTypedPtrDblElement<Weapon> *toDelete = NULL;
@@ -727,6 +772,7 @@ void GameController::update(float deltaTime) {
 			removeDeadEWeapons();
 			removeDeadZombies();
 			removeDyingZombies();
+			removeCollectedGoals();
 			meter->drain();
 
 

@@ -92,6 +92,9 @@ public:
 	//for game menu use
 	bool isPaused;
 
+	//bool for collection
+	bool hasCollectedGoal;
+
 	GrooveMeter *meter;
 
 	/**
@@ -242,6 +245,7 @@ private:
 	void removeDeadEWeapons();
 	void removeDeadZombies();
 	void removeDyingZombies();
+	void removeCollectedGoals();
 
 	//the dialogue popup used in calibration level
 	Sprite* popup;

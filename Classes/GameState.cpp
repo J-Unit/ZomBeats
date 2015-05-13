@@ -7,6 +7,7 @@ GameState::GameState(int tilesX, int tilesY, int nodesX, int nodesY)
 	//world->SetContinuousPhysics(false);
 	level = new LevelMap(tilesX, tilesY, nodesX, nodesY);
 	ship = NULL;
+	instrument = NULL;
 }
 
 
@@ -16,6 +17,7 @@ GameState::~GameState()
 	for (CTypedPtrDblElement<Zombie> *z = zombies.GetHeadPtr(); !zombies.IsSentinel(z); z = z->Next()) delete z->Data();
 	for (CTypedPtrDblElement<Weapon> *w = weapons.GetHeadPtr(); !weapons.IsSentinel(w); w = w->Next()) delete w->Data();
 	for (CTypedPtrDblElement<EnvironmentWeapon> *w = environment_weapons.GetHeadPtr(); !environment_weapons.IsSentinel(w); w = w->Next()) delete w->Data();
+	delete instrument;
 	delete level;
 	delete world;
 }

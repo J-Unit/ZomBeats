@@ -3,8 +3,9 @@ class Wall;
 class Zombie;
 class Weapon;
 class EnvironmentWeapon;
+class GoalObject;
 
-enum Types { ShipType, WallType, ZombieType, WeaponType, EnvironmentWeaponType, NONE };
+enum Types { ShipType, WallType, ZombieType, WeaponType, EnvironmentWeaponType, GoalType, NONE };
 struct Type{
 private:
 	void *ref;
@@ -35,6 +36,10 @@ public:
 		type = EnvironmentWeaponType;
 		ref = ew;
 	}
+	Type(GoalObject *go){
+		type = GoalType;
+		ref = go;
+	}
 
 	Wall *getWall(){
 		return (Wall *)ref;
@@ -54,6 +59,7 @@ public:
 	EnvironmentWeapon *getEnvironmentWeapon(){
 		return (EnvironmentWeapon *)ref;
 	}
-
-
+	GoalObject *getGoalObject(){
+		return (GoalObject *)ref;
+	}
 };
