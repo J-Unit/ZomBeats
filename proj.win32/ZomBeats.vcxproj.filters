@@ -100,9 +100,15 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\ProgressScene.cpp">
-		  <Filter>src</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\GoalObject.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\LevelSelectScene2.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\LevelSelectScene3.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -197,9 +203,6 @@
     <ClInclude Include="..\Classes\CalibrationController.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\LevelSelectScene.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\Classes\SaveSerializer.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -210,9 +213,18 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\ProgressScene.h">
-		  <Filter>src</Filter>
+      <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\GoalObject.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\LevelSelectScene2.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\LevelSelectScene.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\LevelSelectScene3.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
