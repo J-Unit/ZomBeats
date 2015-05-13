@@ -470,6 +470,7 @@ void GameController::goBackToMainMenu() {
 
 //pause the game and also create a pause menu
 void GameController::pauseGame() {
+	if (isPaused) return;
 	isPaused = true;
 	if (currentLevel == CALIBRATION_LEVEL){
 		audio->pauseSounds();
