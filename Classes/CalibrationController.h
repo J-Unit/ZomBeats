@@ -1,6 +1,9 @@
 #pragma once
 #include "cocos2d.h"
 
+#define VIDEO_BEATS 8
+#define AUDIO_BEATS 16
+
 class CalibrationController
 {
 public:
@@ -16,8 +19,8 @@ public:
 	float videoDelay();
 	bool acceptClicks;
 
-	cocos2d::Sprite *zombies[16];
-	float zombieTimes[16];
+	cocos2d::Sprite *zombies[VIDEO_BEATS];
+	float zombieTimes[VIDEO_BEATS];
 	float phaseDelay;
 };
 

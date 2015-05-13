@@ -355,7 +355,7 @@ bool GameController::hasWonLevel(){
 				return true;
 			}
 			else return false;
-			
+
 		}
 		else{
 			//no collectable item on level
@@ -365,13 +365,14 @@ bool GameController::hasWonLevel(){
 			int j = state->zomGoal;
 			return state->zombies.GetCount() <= state->zomGoal;
 		}
-		
+
 	}
 	else {
-		if (calibration->audioCalibration) return audio->songIsOver() && calibration->phaseDelay > 5.0f;
-		else return elapsedTime - calibration->zombieTimes[15] > 5.0f;
+		if (calibration->audioCalibration) return audio->songIsOver() && calibration->phaseDelay > 2.5f;
+		else return elapsedTime - calibration->zombieTimes[calibration->clicks] > 3.0f;
 	}
 }
+
 
 void GameController::loadLevel(int i){
 	currentLevel = i;
@@ -433,7 +434,7 @@ void GameController::loadLevel(int i){
 		//popup->setPosition(Point(visibleSizeDialogue.width / 2, visibleSizeDialogue.height / 7));
 		view->resIndepScreen->addChild(popup, 4);
 		createOkButton(0);
-		view->objective->setString("Audio Calibration: Tap anywhere to the beat\nafter the first four, don't miss any!\nClick ok to resume");
+		view->objective->setString("Audio Calibration: Listen to the four warm-up beats,\nthen start tapping the screen to the beat, and\ndon't miss any!  Click ok to start.");
 
 	}
 	//for normal levels, may need to do sth here later
@@ -493,15 +494,15 @@ void GameController::resumeGameOnly(int index) {
 	isPaused = false;
 	view->resIndepScreen->removeChild(okButtonMenu);
 	if (index == 0) {
-		view->objective->setString("Audio Calibration: Tap anywhere to the beat\nafter the first four, don't miss any!");
+		view->objective->setString("Audio Calibration: After the four warm-up beats, tap\nthe screen to the beat, and don't miss any!");
 		audio->playTrack(ls.getLevelTrack(), currentLevel != CALIBRATION_LEVEL);
 		audio->paused = false;
 	}
 	else if (index == 1) {
-		for (int i = 0; i < 16; i++){
+		for (int i = 0; i < VIDEO_BEATS; i++){
 			calibration->zombieTimes[i] = elapsedTime * 2 + 1000000;
 		}
-		view->objective->setString("Now tap just as the center of each zombie lines up\nwith Ricky, don't miss any!");
+		view->objective->setString("Video: Tap when center of each orange triangle\nlines up with the blue triangle, don't miss any!");
 	}
 	calibration->acceptClicks = true;
 }
@@ -705,7 +706,7 @@ void GameController::startVideoCalibration(){
 	calibration->audioCalibration = false;
 	view->zombies->removeAllChildren();
 	view->zombies->setPosition(Vec2::ZERO);
-	for (int i = 0; i < 16; i++){
+	for (int i = 0; i < VIDEO_BEATS; i++){
 		calibration->zombies[i] = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("triangle2"));
 		calibration->zombies[i]->setAnchorPoint(anchor);
 		calibration->zombies[i]->setScale(0.8f);
@@ -732,19 +733,19 @@ void GameController::update(float deltaTime) {
 			if (hasWonLevel()){
 				if (currentLevel == CALIBRATION_LEVEL){
 					if (calibration->audioCalibration){
-						if (calibration->clicks < 32){
+						if (calibration->clicks < AUDIO_BEATS){
 							restartGame();
 						}
 						else{
-							view->objective->setString("Now tap just as the center of each zombie lines up\nwith Ricky, don't miss any!\nClick ok to continue");
+							view->objective->setString("Now tap just as the center of each orange triangle\nlines up with the blue triangle, don't miss any!\nClick ok to continue");
 							createOkButton(1);
 							pauseGameOnly();
 							startVideoCalibration();
 						}
 					}
 					else{
-						if (calibration->clicks < 16){
-							view->objective->setString("Now tap just as the center of each zombie lines up\nwith Ricky, don't miss any!\nClick ok to continue");
+						if (calibration->clicks < VIDEO_BEATS){
+							view->objective->setString("Now tap just as the center of each orange triangle\nlines up with the blue triangle, don't miss any!\nClick ok to continue");
 							createOkButton(1);
 							pauseGameOnly();
 							startVideoCalibration();
@@ -838,7 +839,7 @@ void GameController::update(float deltaTime) {
 
 					//view->beatHUD->setString("Actual time: " + std::to_string(elapsedTime) + " song time: " + std::to_string(AudioEngine::getCurrentTime(audioid)));
 					time_t now = time(0);
-					int userOnBeat = audio->wasOnBeat(now - input->clickTime);
+					int userOnBeat = audio->wasOnBeat((now - input->clickTime)/1000.0f);
 					if (userOnBeat == 0 && currentLevel != CALIBRATION_LEVEL) {
 						b2Vec2 halfVel = state->ship->body->GetLinearVelocity();
 						halfVel *= 0.25;
@@ -1027,7 +1028,7 @@ void GameController::update(float deltaTime) {
 							st << "OFFSET: " << formatMs(audio->timeToBeat(4 + calibration->clicks));
 							calibration->clicks++;
 							view->beatHUD->setString(st.str());
-							if (calibration->clicks >= 32) calibration->acceptClicks = false;
+							if (calibration->clicks >= AUDIO_BEATS) calibration->acceptClicks = false;
 						}
 					}
 					else{
@@ -1073,6 +1074,7 @@ void GameController::update(float deltaTime) {
 					if (calibration->acceptClicks){
 						time_t now = time(0);
 						float offset = (((elapsedTime - (now - input->clickTime) / 1000.0f) - audio->audioDelay) - calibration->zombieTimes[calibration->clicks]);
+						calibration->zombieTimes[calibration->clicks] = elapsedTime;
 						calibration->totalOffset += offset;
 						stringstream vss;
 						vss << "OFFSET: " << formatMs(offset);
@@ -1080,7 +1082,7 @@ void GameController::update(float deltaTime) {
 						view->zombies->removeChild(calibration->zombies[calibration->clicks]);
 						calibration->clicks++;
 						input->clickProcessed = true;
-						if (calibration->clicks == 16){
+						if (calibration->clicks == VIDEO_BEATS){
 							calibration->acceptClicks = false;
 							audio->videoDelay = calibration->videoDelay();
 							stringstream ss;
@@ -1161,26 +1163,35 @@ void GameController::update(float deltaTime) {
 				ai->update(state);
 			}
 			else{
+				//calibration->phaseDelay += deltaTime;
 				if (!calibration->audioCalibration){
 					view->zombies->setPosition(view->zombies->getPosition() + Vec2(-2, 0));
-					for (int i = calibration->clicks; i < 16; i++){
+					for (int i = calibration->clicks; i < VIDEO_BEATS; i++){
 						if (calibration->zombieTimes[i]>elapsedTime){
 							calibration->zombieTimes[i] = elapsedTime + (VIDEO_CALIBRATION_OFFSET*i + 2 * VIDEO_CALIBRATION_OFFSET + view->zombies->getPosition().x) / 2 * deltaTime;
 						}
 					}
-					if (elapsedTime - calibration->zombieTimes[15] > 1.0f){
+					if (elapsedTime - calibration->zombieTimes[calibration->clicks] > 1.0f){
 						calibration->acceptClicks = false;
-						if (calibration->clicks != 16) {
-							view->objective->setString("You missed some of the zombies, try again.");
+						if (calibration->clicks != VIDEO_BEATS) {
+							view->objective->setString("You missed some of the triangles, please try again.");
 						}
 					}
 				}
 				else{
-					if (audio->songTime > 20.0f || calibration->clicks == 32){
+					if (audio->songTime > 11.1f || calibration->clicks == AUDIO_BEATS
+						|| (audio->songTime>3.5f && calibration->clicks < 1)
+						|| (calibration->totalOffset < -0.5f)){
 						audio->stop();
+						//calibration->phaseDelay = 0.0f;ph
 						stringstream ss;
-						if (calibration->clicks < 32){
-							ss << "You missed some of the the beats, try again.";
+						if (calibration->clicks < AUDIO_BEATS){
+							if (calibration->clicks > 0 && calibration->totalOffset < -0.5f){
+								ss << "Just listen to the first four beats,\nthen tap to the next 16!";
+							}
+							else{
+								ss << "You missed some of the the beats, try again.";
+							}
 						}
 						else{
 							audio->audioDelay = calibration->audioDelay();
@@ -1257,13 +1268,13 @@ void GameController::update(float deltaTime) {
 			while (!state->zombies.IsSentinel(z)){
 				pos = z->Data()->body->GetPosition();
 				if ((z->Data()->body->GetPosition() - state->ship->body->GetPosition()).Length() <= meter->detectionRadius + 40){
-					z->Data()->sprite->setVisible(true);
+					//z->Data()->sprite->setVisible(true);
 					z->Data()->sprite->setOpacity(255);
 					z->Data()->sprite->setPosition(pos.x, pos.y);
 					z->Data()->advanceFrame();
 				}
 				else{
-					z->Data()->sprite->setVisible(true);
+					//z->Data()->sprite->setVisible(true);
 					z->Data()->sprite->setOpacity(200);
 					z->Data()->sprite->setPosition(pos.x, pos.y);
 					z->Data()->advanceFrame();
