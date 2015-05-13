@@ -45,6 +45,7 @@ level = new function(){
 	//this.nWalls = 0;
 	//this.nZombies = 0;
 	//this.nWeapons = 0;
+	this.zombieObjective = 0;
 	this.objectives = {};
 	this.walls = {};
 	this.zombies = {};
@@ -157,7 +158,7 @@ function createObject(event){
 		delete level.zombies[event.target.id];
 		delete level.weapons[event.target.id];
 		delete level.environment_weapons[event.target.id];
-		delete level.objective[event.target.id]
+		delete level.objectives[event.target.id];
 		document.getElementById("display").removeChild(event.target);
 		return;
 	}
@@ -349,6 +350,10 @@ function flipGrid(){
 		lines = document.getElementsByClassName("line");
 		for(line in lines) if(line.parent) line.parent.removeChild(line);
 	}
+}
+
+function changeZombieObjective(){
+	level.zombieObjective = +document.getElementById("zombieObjective").value;
 }
 
 
