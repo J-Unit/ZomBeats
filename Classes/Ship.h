@@ -27,8 +27,8 @@ using namespace cocos2d;
 
 //#define SHIP_WIDTH 29.5f
 //#define SHIP_HEIGHT 55.0f
-#define SHIP_WIDTH 25.5f
-#define SHIP_HEIGHT 53.0f
+#define SHIP_WIDTH 20.5f
+#define SHIP_HEIGHT 30.0f
 #define SHIP_DIAGONAL sqrt(WIDTH*WIDTH+HEIGHT*HEIGHT) / 2
 #define RICKY_SCALE 1.5f
 

@@ -28,6 +28,7 @@ public:
 	void update();
 	void update2();
 	int frameRate;
+	bool beingUsed;
 };
 
 #endif

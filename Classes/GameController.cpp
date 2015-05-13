@@ -415,7 +415,10 @@ void GameController::loadLevel(int i){
 	for (int i = 0; i<state->level->nWalls; i++) view->enviornment->addChild(state->level->walls[i].sprite);
 	for (CTypedPtrDblElement<Zombie> *cz = state->zombies.GetHeadPtr(); !state->zombies.IsSentinel(cz); cz = cz->Next()) view->zombies->addChild(cz->Data()->sprite, 2);
 	for (CTypedPtrDblElement<Weapon> *cw = state->weapons.GetHeadPtr(); !state->weapons.IsSentinel(cw); cw = cw->Next()) view->enviornment->addChild(cw->Data()->sprite, 2);
-	for (CTypedPtrDblElement<EnvironmentWeapon> *ew = state->environment_weapons.GetHeadPtr(); !state->environment_weapons.IsSentinel(ew); ew = ew->Next()) view->enviornment->addChild(ew->Data()->sprite, 2);
+	for (CTypedPtrDblElement<EnvironmentWeapon> *ew = state->environment_weapons.GetHeadPtr(); !state->environment_weapons.IsSentinel(ew); ew = ew->Next()) {
+		view->enviornment->addChild(ew->Data()->sprite, 2);
+		ew->Data()->beingUsed = false;
+	}
 	if (state->instrument != NULL){
 		view->enviornment->addChild(state->instrument->sprite, 2);
 	}
@@ -801,7 +804,9 @@ void GameController::update(float deltaTime) {
 					}
 				}
 				else {
-					eweap->update2();
+					if (eweap->beingUsed == true) {
+						eweap->update2(); //update frame of trashcan when ricky's hiding
+					}
 					view->allSpace->removeChild(state->ship->getSprite());
 					removed = true;
 				}
@@ -815,6 +820,7 @@ void GameController::update(float deltaTime) {
 					eweap->sprite->setFrame(1);
 				}
 				view->allSpace->addChild(state->ship->getSprite());
+				eweap->beingUsed = false;
 				removed = false;
 			}
 
@@ -856,6 +862,10 @@ void GameController::update(float deltaTime) {
 					//know we must be on beat 
 					//check if activating environment
 					else if (state->ship->isActivatingEnvironment && userOnBeat != 0 && currentLevel != CALIBRATION_LEVEL){
+						if (currentEnvironment != NULL) {
+							currentEnvironment->beingUsed = true;
+						}
+
 						meter->decreaseRadius();
 
 						if (!activationDelay){
