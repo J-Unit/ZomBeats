@@ -1456,6 +1456,18 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 		stringstream ss;
 		ss << state->zombies.GetCount() << " zombies left!";
 		view->objective->setString(ss.str());
+		
+		if (state->instrument != NULL){
+			if (!hasCollectedGoal){
+				view->collectionGoal->setString("You must collect the instrument");
+			}
+			else{
+				view->collectionGoal->setString("You have found the instrument!");
+			}
+		}
+		else{
+			view->collectionGoal->setVisible(false);
+		}
 	}
 
 	/*if (!input->clickProcessed) {

@@ -16,7 +16,7 @@ View::View(int w, int h){
 	screen_size_x = w;
 	screen_size_y = h;
 	meshVis = path = detectionRadiusCircle = directionUseEnvironmentWeapon = meter = durabilityBox = durabilityHolder = durabilitySpriteContainer = hitBox = weaponBox = ai = zombiePositions = NULL;
-	grooviness = durability = objective = NULL; 
+	grooviness = durability = objective = collectionGoal = NULL;
 	enviornment = zombies = shipImage = NULL;
 	// Load the resources. This is NOT an asynchronous loader.
 	// We would design an asynchronous loader slightly differently.
@@ -286,11 +286,18 @@ void View::buildScene(LevelMap *level, Layer* l, int levNum) {
 	zombieOneAwarenessHUD->setPosition(Vec2(HUD_OFFSET.x * 60, HUD_OFFSET.y*5));
 	zombieOneAwarenessHUD->setAnchorPoint(Vec2::ZERO);*/
 
+	collectionGoal = Label::create();
+	//put the objective label in calibration level to lower bottom 
+	collectionGoal->setTTFConfig(*ResourceLoader::getInstance()->getFont("NewFont"));
+	//objective->setPosition(Point(visibleSizeLabel.width/2 - 20, visibleSizeLabel.height / 7));
+	collectionGoal->setPosition(Vec2(HUD_OFFSET.x*44.5f, HUD_OFFSET.y * 7.5f));
+	collectionGoal->setAnchorPoint(anchor);
+
 	objective = Label::create();
 	//put the objective label in calibration level to lower bottom 
 	objective->setTTFConfig(*ResourceLoader::getInstance()->getFont("NewFont"));
-	Size visibleSizeLabel = Director::getInstance()->getVisibleSize();
-	Vec2 originLabel = Director::getInstance()->getVisibleOrigin();
+	//Size visibleSizeLabel = Director::getInstance()->getVisibleSize();
+	//Vec2 originLabel = Director::getInstance()->getVisibleOrigin();
 	//objective->setPosition(Point(visibleSizeLabel.width/2 - 20, visibleSizeLabel.height / 7));
 	objective->setPosition(Vec2(HUD_OFFSET.x*44.5f, HUD_OFFSET.y * 10));
 	objective->setAnchorPoint(anchor);
@@ -364,6 +371,7 @@ void View::buildScene(LevelMap *level, Layer* l, int levNum) {
 	//allSpace->addChild(nearSpace,0.5);
 	//allSpace->addChild(shipImage, 1);
 	resIndepScreen->addChild(objective, 5);
+	resIndepScreen->addChild(collectionGoal, 5);
 
 	//l->addChild(coordHUD);  // On top of scene graph.
 	//l->addChild(velHUD);

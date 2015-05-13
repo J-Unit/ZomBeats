@@ -64,6 +64,7 @@ public:
 	DrawNode* durabilitySpriteContainer;
 	Vec2 shakeCenter;
 	Label* objective;
+	Label* collectionGoal;
 
 	Node*   enviornment;
 	Node* zombies;
