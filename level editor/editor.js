@@ -21,6 +21,10 @@ CHILL_DEEP = {"bpm":120.0, "path":"songs/ChillDeepHouse.mp3", "offset":0.0}
 IN_PIZZA = {"bpm":90.0, "path":"songs/InPizzaWeCrust.mp3", "offset":0.0}
 BLANCO = {"bpm":90.0, "path":"songs/BLANCO.mp3", "offset":0.0}
 PICKLE = {"bpm":140.0, "path":"songs/01 Pickles.mp3", "offset":0.0}
+GRASS = {"bpm":120.0, "path":"songs/Galactic_Grass.mp3", "offset":0.0}
+ROBOTS = {"bpm":110.0, "path":"songs/RobotsInTheRain.mp3", "offset":0.0}
+TRAP = {"bpm":140.0, "path":"songs/Its_A_Trap.mp3", "offset":0.0}
+
 
 
 
@@ -321,6 +325,15 @@ function changeTrack(){
 			break;
 		case "songs/01 Pickles.mp3":
 			level.track = PICKLE;
+			break;
+		case "songs/Galactic_Grass.mp3":
+			level.track = GRASS;
+			break;
+		case "songs/RobotsInTheRain.mp3":
+			level.track = ROBOTS;
+			break;
+		case "songs/Its_A_Trap.mp3":
+			level.track = TRAP;
 			break;
 	}
 	playing = !document.getElementById("audio").paused;
