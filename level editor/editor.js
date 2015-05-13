@@ -115,7 +115,9 @@ function importLevel(){
 		for(i = 0; i<level.zombies.length; i++) addImage(level.zombies[i], "zombie");
 		for(i = 0; i<level.weapons.length; i++) addImage(level.weapons[i], "weapon");
 		for(i = 0; i<level.environment_weapons.length; i++) addImage(level.environment_weapons[i], "enviweapon");
+		for(i = 0; i<level.objectives.length; i++) addImage(level.objectives[i], "objective");
 		addImage({"x":level.startX, "y":level.startY}, "start location");
+		document.getElementById("zombieObjective").value = level.zombieObjective;
 	};
 }
 document.getElementById('import').onchange = importLevel;
@@ -148,12 +150,13 @@ function exportLevel() {
     exp.zombies = Object.keys(level.zombies).map(function(k){return level.zombies[k];});
     exp.weapons = Object.keys(level.weapons).map(function(k){return level.weapons[k];});
     exp.environment_weapons = Object.keys(level.environment_weapons).map(function(k){return level.environment_weapons[k];});
+    exp.objectives = Object.keys(level.objectives).map(function(k){return level.objectives[k];});
     link.href = 'data:text/csv;charset=utf-8,' + escape(JSON.stringify(exp));
     document.getElementById("download").appendChild(link);
 }
 document.getElementById('export').onclick = exportLevel;
 function createObject(event){
-	if(event.target.className == "obj"){
+	if(event.target.className == "obj" || event.target.className.indexOf("objective")>-1){
 		delete level.walls[event.target.id];
 		delete level.zombies[event.target.id];
 		delete level.weapons[event.target.id];
@@ -230,7 +233,10 @@ function createObject(event){
 			break;
 		case "objective":
 			objv = document.getElementsByClassName("objective")[0]
-			if(objv) document.getElementById("display").removeChild(objv);
+			if(objv){
+				delete level.objectives[objv.id];
+				document.getElementById("display").removeChild(objv);
+			}
 			obj.type = it.options[it.selectedIndex].value;
 			img.className += " objective";
 			switch(obj.type){
@@ -282,7 +288,7 @@ function addImage(obj, type){
 		case "objective":
 			img.className += " objective";
 			switch(obj.type){
-				case "record": img.src = ENVI_LAWNMOWER_IMAGE; break;
+				case "record": img.src = OBJECTIVE_RECORD_IMAGE; break;
 			}
 		break;
 	}
