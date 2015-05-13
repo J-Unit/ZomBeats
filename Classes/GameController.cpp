@@ -360,7 +360,7 @@ bool GameController::hasWonLevel(){
 		if (state->instrument != NULL){
 			//the level has a collectable item
 			//check if hasCollectedGoal and numzombies is below threshold
-			if (hasCollectedGoal){ //TODO: add zombie threshold here
+			if (hasCollectedGoal && state->zombies.GetCount() <= state->zomGoal){ //TODO: add zombie threshold here
 				hasCollectedGoal = false;
 				return true;
 			}
@@ -370,7 +370,10 @@ bool GameController::hasWonLevel(){
 		else{
 			//no collectable item on level
 			//just check if numzombies is below threshold
-			return state->zombies.GetCount() == 0;
+			//they start out equal on backwards compatible levels
+			int i = state->zombies.GetCount();
+			int j = state->zomGoal;
+			return state->zombies.GetCount() <= state->zomGoal;
 		}
 		
 	}
@@ -1000,6 +1003,10 @@ void GameController::update(float deltaTime) {
 									if (isZombieHit(az2, bz2, ab2, bc2)){
 										if (isZombieHit(az, bz, ab, bc)){
 											num_zombies_killed += 1;
+											state->numZombiesRemain -= 1;
+											if (state->numZombiesRemain < 0){
+												state->numZombiesRemain = 0;
+											}
 											//zombie got hit so delete it
 											zombb->isDestroyed = true;
 										}
@@ -1454,7 +1461,7 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 		view->meter->drawSolidRect(Vec2(-15, 0), Vec2(+15, g * 180), ccColor4F(0.0f, 1.0f, 1.0f, 1.0f));
 		view->meter->drawRect(Vec2(-15, 0), Vec2(+15, 180), ccColor4F(0.5f, 0.5f, 0.5f, 1.0f));
 		stringstream ss;
-		ss << state->zombies.GetCount() << " zombies left!";
+		ss << state->numZombiesRemain << " zombies left!";
 		view->objective->setString(ss.str());
 		
 		if (state->instrument != NULL){

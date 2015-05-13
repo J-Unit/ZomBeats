@@ -64,8 +64,21 @@ void LevelSerializer::addObjects(GameState *s){
 	s->ship = new Ship(s->world, s->level->tileWidth*(d["startX"].GetInt()+0.5f), top-s->level->tileHeight*(d["startY"].GetInt()+0.5f), 0.5f * d["bkgX"].GetInt() * 256, 0.5f * d["bkgY"].GetInt() * 256+10);
 
 	//the new goal object
-	if (d.HasMember("goal_object")){
-		s->instrument = new GoalObject(s->world, s->level->tileWidth*(d["goal_object"]["x"].GetInt() + 0.5f), top - s->level->tileHeight*(d["goal_object"]["y"].GetInt() + 0.5f), d["goal_object"]["type"].GetString());
+	if (d.HasMember("objectives") && d["objectives"].Size() > 0){
+		//there is an objective so create it
+		unsigned int i = 0;
+		s->instrument = new GoalObject(s->world, s->level->tileWidth*(d["objectives"][i]["x"].GetInt() + 0.5f), top - s->level->tileHeight*(d["objectives"][i]["y"].GetInt() + 0.5f), d["objectives"][i]["type"].GetString());
+	}
+
+	//multiple goals
+	if (d.HasMember("zombieObjective")){
+		s->numZombiesRemain = d["zombieObjective"].GetInt();
+		s->zomGoal = d["zombies"].Size() - d["zombieObjective"].GetInt();
+	}
+	else{
+		//backwards compatibility
+		s->numZombiesRemain = d["zombies"].Size();
+		s->zomGoal = 0;
 	}
 	
 }
