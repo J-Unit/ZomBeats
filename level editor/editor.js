@@ -9,6 +9,7 @@ WALL_FENCE_IMAGE = "../Resources/textures/fence.png"
 WALL_HOUSE_IMAGE = "../Resources/textures/house.png"
 WALL_ROCK_IMAGE = "../Resources/textures/rock.png"
 WALL_TREE_IMAGE = "../Resources/textures/tree.png"
+OBJECTIVE_RECORD_IMAGE = "../Resources/textures/record.png"
 TILE_IMAGE = "../Resources/textures/tile_new.png"
 ENVI_TRASHCAN_IMAGE = "../Resources/textures/trashcan_single.png"
 
@@ -44,6 +45,7 @@ level = new function(){
 	//this.nWalls = 0;
 	//this.nZombies = 0;
 	//this.nWeapons = 0;
+	this.objectives = {};
 	this.walls = {};
 	this.zombies = {};
 	this.weapons = {};
@@ -69,6 +71,9 @@ ia.onchange = function(){
 			break;
 		case "wall":
 			it.innerHTML = "<option value='pyramid'>Pyramid</option> <option value='rock'>Rock</option> <option value='fence'>Fence</option> <option value='tree'>Tree</option> <option value='house'>House</option>";
+			break;
+		case "objective":
+			it.innerHTML = "<option value='record'>Record</option>";
 			break;
 	}
 	it.selectedIndex = 0;
@@ -152,6 +157,7 @@ function createObject(event){
 		delete level.zombies[event.target.id];
 		delete level.weapons[event.target.id];
 		delete level.environment_weapons[event.target.id];
+		delete level.objective[event.target.id]
 		document.getElementById("display").removeChild(event.target);
 		return;
 	}
@@ -167,6 +173,7 @@ function createObject(event){
 		case "start location": size_x = HERO_WIDTH / 2; size_y = HERO_HEIGHT/2; break;
 		case "weapon": size_x = SWORD_WIDTH / 2; size_y = SWORD_HEIGHT / 2; break;
 		case "enviweapon": size_x = SWORD_WIDTH / 2; size_y = SWORD_HEIGHT / 2; break;
+		case "record": size_x = SWORD_WIDTH / 2; size_y = SWORD_HEIGHT / 2; break;
 	}
 	pos_x = event.pageX - document.getElementById("display").offsetLeft;
 	pos_y = event.pageY - document.getElementById("display").offsetTop;
@@ -214,12 +221,22 @@ function createObject(event){
 		case "enviweapon":
 			obj.type = it.options[it.selectedIndex].value;
 			switch(obj.type){
-				case "lawnmower": img.src = ENVI_LAWNMOWER_IMAGE;
-				case "trashcan": img.src = ENVI_TRASHCAN_IMAGE;
+				case "lawnmower": img.src = ENVI_LAWNMOWER_IMAGE; break;
+				case "trashcan": img.src = ENVI_TRASHCAN_IMAGE; break;
 
 			}
 			level.environment_weapons[objId] = obj;
 			break;
+		case "objective":
+			objv = document.getElementsByClassName("objective")[0]
+			if(objv) document.getElementById("display").removeChild(objv);
+			obj.type = it.options[it.selectedIndex].value;
+			img.className += " objective";
+			switch(obj.type){
+				case "record": img.src = OBJECTIVE_RECORD_IMAGE; break;
+			}
+			level.objectives[objId] = obj;
+			break;	
 	}
 	img.id = objId++;
 	document.getElementById("display").appendChild(img);
@@ -257,8 +274,14 @@ function addImage(obj, type){
 		break;
 		case "enviweapon":
 			switch(obj.type){
-				case "lawnmower": img.src = ENVI_LAWNMOWER_IMAGE;
-				case "trashcan" : img.src = ENVI_TRASHCAN_IMAGE;
+				case "lawnmower": img.src = ENVI_LAWNMOWER_IMAGE; break;
+				case "trashcan" : img.src = ENVI_TRASHCAN_IMAGE; break;
+			}
+		break;
+		case "objective":
+			img.className += " objective";
+			switch(obj.type){
+				case "record": img.src = ENVI_LAWNMOWER_IMAGE; break;
 			}
 		break;
 	}
