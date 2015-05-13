@@ -296,16 +296,6 @@ void GameController::initEnvironment() {
 	//ricky texture not initially removed
 	removed = false;
 
-	//create the pause button on the upper right corner
-	//---remove these later, these don't really do anything, just to make sure yall have all the textures -----
-	Sprite* resumeButtonTexture = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("resume_button"));
-	Sprite* resumeButtonClickedTexture = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("resume_button_clicked"));
-	Sprite* restartButtonTexture = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("restart_button"));
-	Sprite* restartButtonClickedTexture = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("restart_button_clicked"));
-	Sprite* pause = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("pause_button"));
-	Sprite* pauseClicked = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("pause_button_clicked"));
-	Sprite* okButton = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("ok_button"));
-	//---remove above later----- 
 
 }
 

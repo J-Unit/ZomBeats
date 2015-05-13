@@ -11,11 +11,11 @@
 #define DIRECTION_BUTTON_SCALE 0.5f
 #define LEVEL_MENU_TRANSITION_TIME 0.3f
 
-class LevelSelectScene3 : public cocos2d::Layer
+class LevelSelectScene4 : public cocos2d::Layer
 {
 public:
-	LevelSelectScene3();
-	~LevelSelectScene3();
+	LevelSelectScene4();
+	~LevelSelectScene4();
 
 	static Scene* createScene();
 	virtual bool init();
@@ -23,7 +23,6 @@ public:
 	void GoToGameScene(cocos2d::Ref* sender, int level);
 	void GoToMainMenuScene(cocos2d::Ref* sender);
 	void GoToPrevLevelScene(cocos2d::Ref* sender);
-	void GoToNextLevelScene(cocos2d::Ref* sender);
-	CREATE_FUNC(LevelSelectScene3);
+	CREATE_FUNC(LevelSelectScene4);
 };
 

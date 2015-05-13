@@ -45,8 +45,8 @@ ResourceLoader::ResourceLoader() {
 	queueTexture("textures/grass3.png", "grass3");
 	queueTexture("textures/gun2.png", "shrapnel");
 	queueTexture("textures/glass.png", "glass");
-	//queueTexture("textures/triangle1.png", "triangle1");
-	//queueTexture("textures/triangle2.png", "triangle2");
+	queueTexture("textures/triangle1.png", "triangle1");
+	queueTexture("textures/triangle2.png", "triangle2");
 	queueTexture("textures/spritebasic_withsword.png", "ricky");
 	queueTexture("textures/ricky_lawnmower.png", "ricky_mower");
 	queueTexture("textures/low_res_sprite_sheet_zombie.png", "zombie");

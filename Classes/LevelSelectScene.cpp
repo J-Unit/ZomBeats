@@ -44,31 +44,31 @@ bool LevelSelectScene::init()
 	startButton0->setPosition(Point(visibleSize.width / 2 + origin.x - LEVEL_BUTTON_HORIZONTAL_OFFSET*1.4, visibleSize.height / 2 + origin.y + LEVEL_BUTTON_VERTICAL_OFFSET/2));
 	startButton0->setScale(LEVEL_BUTTON_SCALE);
 
-	auto startButton1 = MenuItemImage::create("textures/level1.png", "textures/level_1_clicked.png", CC_CALLBACK_1(LevelSelectScene::GoToGameScene, this, 1));
+	auto startButton1 = MenuItemImage::create("textures/level1.png", "textures/level1_clicked.png", CC_CALLBACK_1(LevelSelectScene::GoToGameScene, this, 1));
 	startButton1->setPosition(Point(visibleSize.width / 2 + origin.x - LEVEL_BUTTON_HORIZONTAL_OFFSET*0.5, visibleSize.height / 2 + origin.y + LEVEL_BUTTON_VERTICAL_OFFSET / 2));
 	startButton1->setScale(LEVEL_BUTTON_SCALE);
 
-	auto startButton2 = MenuItemImage::create("textures/level2.png", "textures/level_2_clicked.png", CC_CALLBACK_1(LevelSelectScene::GoToGameScene, this, 2));
+	auto startButton2 = MenuItemImage::create("textures/level2.png", "textures/level2_clicked.png", CC_CALLBACK_1(LevelSelectScene::GoToGameScene, this, 2));
 	startButton2->setPosition(Point(visibleSize.width / 2 + origin.x + LEVEL_BUTTON_HORIZONTAL_OFFSET*0.5, visibleSize.height / 2 + origin.y + LEVEL_BUTTON_VERTICAL_OFFSET / 2));
 	startButton2->setScale(LEVEL_BUTTON_SCALE);
 
-	auto startButton3 = MenuItemImage::create("textures/level3.png", "textures/level_3_clicked.png", CC_CALLBACK_1(LevelSelectScene::GoToGameScene, this, 3));
+	auto startButton3 = MenuItemImage::create("textures/level3.png", "textures/level3_clicked.png", CC_CALLBACK_1(LevelSelectScene::GoToGameScene, this, 3));
 	startButton3->setPosition(Point(visibleSize.width / 2 + origin.x + LEVEL_BUTTON_HORIZONTAL_OFFSET*1.4, visibleSize.height / 2 + origin.y + LEVEL_BUTTON_VERTICAL_OFFSET/2));
 	startButton3->setScale(LEVEL_BUTTON_SCALE);
 
-	auto startButton4 = MenuItemImage::create("textures/level4.png", "textures/level_4_clicked.png", CC_CALLBACK_1(LevelSelectScene::GoToGameScene, this, 4));
+	auto startButton4 = MenuItemImage::create("textures/level4.png", "textures/level4_clicked.png", CC_CALLBACK_1(LevelSelectScene::GoToGameScene, this, 4));
 	startButton4->setPosition(Point(visibleSize.width / 2 + origin.x - LEVEL_BUTTON_HORIZONTAL_OFFSET*1.4, visibleSize.height / 2 + origin.y - LEVEL_BUTTON_VERTICAL_OFFSET / 4));
 	startButton4->setScale(LEVEL_BUTTON_SCALE);
 
-	auto startButton5 = MenuItemImage::create("textures/level5.png", "textures/level_5_clicked.png", CC_CALLBACK_1(LevelSelectScene::GoToGameScene, this, 5));
+	auto startButton5 = MenuItemImage::create("textures/level5.png", "textures/level5_clicked.png", CC_CALLBACK_1(LevelSelectScene::GoToGameScene, this, 5));
 	startButton5->setPosition(Point(visibleSize.width / 2 + origin.x - LEVEL_BUTTON_HORIZONTAL_OFFSET*0.5, visibleSize.height / 2 + origin.y - LEVEL_BUTTON_VERTICAL_OFFSET / 4));
 	startButton5->setScale(LEVEL_BUTTON_SCALE);
 
-	auto startButton6 = MenuItemImage::create("textures/level6.png", "textures/level_6_clicked.png", CC_CALLBACK_1(LevelSelectScene::GoToGameScene, this, 6));
+	auto startButton6 = MenuItemImage::create("textures/level6.png", "textures/level6_clicked.png", CC_CALLBACK_1(LevelSelectScene::GoToGameScene, this, 6));
 	startButton6->setPosition(Point(visibleSize.width / 2 + origin.x + LEVEL_BUTTON_HORIZONTAL_OFFSET*0.5, visibleSize.height / 2 + origin.y - LEVEL_BUTTON_VERTICAL_OFFSET / 4));
 	startButton6->setScale(LEVEL_BUTTON_SCALE);
 
-	auto startButton7 = MenuItemImage::create("textures/level7.png", "textures/level_7_clicked.png", CC_CALLBACK_1(LevelSelectScene::GoToGameScene, this, 7));
+	auto startButton7 = MenuItemImage::create("textures/level7.png", "textures/level7_clicked.png", CC_CALLBACK_1(LevelSelectScene::GoToGameScene, this, 7));
 	startButton7->setPosition(Point(visibleSize.width / 2 + origin.x + LEVEL_BUTTON_HORIZONTAL_OFFSET*1.4, visibleSize.height / 2 + origin.y - LEVEL_BUTTON_VERTICAL_OFFSET / 4));
 	startButton7->setScale(LEVEL_BUTTON_SCALE);
 

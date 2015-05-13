@@ -1,4 +1,3 @@
-#include "LevelSelectScene2.h"
 #include "LevelSelectScene3.h"
 #include "LevelSelectScene4.h"
 #include "GameController.h"
@@ -8,26 +7,26 @@
 USING_NS_CC;
 using namespace cocos2d;
 
-LevelSelectScene3::LevelSelectScene3()
+LevelSelectScene4::LevelSelectScene4()
 {
 }
 
 
-LevelSelectScene3 ::~LevelSelectScene3()
+LevelSelectScene4 ::~LevelSelectScene4()
 {
 }
 
-Scene* LevelSelectScene3::createScene()
+Scene* LevelSelectScene4::createScene()
 {
 	auto scene = Scene::create();
-	auto layer = LevelSelectScene3::create();
+	auto layer = LevelSelectScene4::create();
 	scene->addChild(layer);
 
 	return scene;
 
 }
 
-bool LevelSelectScene3::init()
+bool LevelSelectScene4::init()
 {
 	if (!Layer::init())
 	{
@@ -42,16 +41,16 @@ bool LevelSelectScene3::init()
 	this->addChild(backgroundSprite);
 
 
-	auto backDirButton = MenuItemImage::create("textures/back_dir.png", "textures/back_dir.png", CC_CALLBACK_1(LevelSelectScene3::GoToPrevLevelScene, this));
+	auto backDirButton = MenuItemImage::create("textures/back_dir.png", "textures/back_dir.png", CC_CALLBACK_1(LevelSelectScene4::GoToPrevLevelScene, this));
 	backDirButton->setPosition(Point(visibleSize.width / 2 + origin.x - LEVEL_BUTTON_HORIZONTAL_OFFSET*0.5, visibleSize.height / 2 + origin.y - LEVEL_BUTTON_VERTICAL_OFFSET));
 	backDirButton->setScale(DIRECTION_BUTTON_SCALE);
 
-	auto forwardDirButton = MenuItemImage::create("textures/forward_dir.png", "textures/forward_dir.png", CC_CALLBACK_1(LevelSelectScene3::GoToNextLevelScene, this));
+	auto forwardDirButton = MenuItemImage::create("textures/forward_dir.png", "textures/forward_dir.png");
 	forwardDirButton->setPosition(Point(visibleSize.width / 2 + origin.x + LEVEL_BUTTON_HORIZONTAL_OFFSET*0.5, visibleSize.height / 2 + origin.y - LEVEL_BUTTON_VERTICAL_OFFSET));
 	forwardDirButton->setScale(DIRECTION_BUTTON_SCALE);
 
 
-	auto backButton = MenuItemImage::create("textures/back_button.png", "textures/back_button_clicked.png", CC_CALLBACK_1(LevelSelectScene3::GoToMainMenuScene, this));
+	auto backButton = MenuItemImage::create("textures/back_button.png", "textures/back_button_clicked.png", CC_CALLBACK_1(LevelSelectScene4::GoToMainMenuScene, this));
 	backButton->setPosition(Point(visibleSize.width / 2 + origin.x + LEVEL_BUTTON_HORIZONTAL_OFFSET*1.7, visibleSize.height / 2 + origin.y + LEVEL_BUTTON_VERTICAL_OFFSET*1.25));
 	backButton->setScale(BACK_BUTTON_SCALE);
 
@@ -67,7 +66,7 @@ auto progressScene = ProgressScene::createScene();
 Director::getInstance()->replaceScene(progressScene);
 */
 
-void LevelSelectScene3::GoToGameScene(cocos2d::Ref *sender, int level)
+void LevelSelectScene4::GoToGameScene(cocos2d::Ref *sender, int level)
 {
 	ProgressScene::createLayer(level);
 	auto progressScene = ProgressScene::createScene();
@@ -75,23 +74,13 @@ void LevelSelectScene3::GoToGameScene(cocos2d::Ref *sender, int level)
 
 }
 
-void LevelSelectScene3::GoToPrevLevelScene(cocos2d::Ref *sender)
+void LevelSelectScene4::GoToPrevLevelScene(cocos2d::Ref *sender)
 {
-	auto scene = LevelSelectScene2::createScene();
+	auto scene = LevelSelectScene3::createScene();
 	Director::getInstance()->replaceScene(TransitionFade::create(LEVEL_MENU_TRANSITION_TIME, scene));
 
 }
-
-void LevelSelectScene3::GoToNextLevelScene(cocos2d::Ref *sender)
-{
-	auto scene = LevelSelectScene4::createScene();
-	Director::getInstance()->replaceScene(TransitionFade::create(LEVEL_MENU_TRANSITION_TIME, scene));
-
-}
-
-
-
-void LevelSelectScene3::GoToMainMenuScene(cocos2d::Ref *sender)
+void LevelSelectScene4::GoToMainMenuScene(cocos2d::Ref *sender)
 {
 	auto scene = MainMenuScene::createScene();
 	Director::getInstance()->replaceScene(TransitionFade::create(LEVEL_MENU_TRANSITION_TIME, scene));
