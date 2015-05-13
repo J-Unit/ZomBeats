@@ -800,6 +800,7 @@ void GameController::update(float deltaTime) {
 				if (!(currentEnvironment != NULL && currentEnvironment->e_weapon_type == 1)){
 					if (removed == true) {
 						removed = false;
+						currentEnvironment->beingUsed = false;
 						view->allSpace->addChild(state->ship->getSprite());
 					}
 				}
@@ -864,6 +865,10 @@ void GameController::update(float deltaTime) {
 					else if (state->ship->isActivatingEnvironment && userOnBeat != 0 && currentLevel != CALIBRATION_LEVEL){
 						if (currentEnvironment != NULL) {
 							currentEnvironment->beingUsed = true;
+							//set the trashcan to ricky hiding
+							if (currentEnvironment->e_weapon_type == 1) {
+								currentEnvironment->sprite->setFrame(2); 
+							}
 						}
 
 						meter->decreaseRadius();
@@ -933,6 +938,7 @@ void GameController::update(float deltaTime) {
 								currentEnvironment = lm;
 							}
 							else if (currentEnvironment->e_weapon_type == 1){
+								currentEnvironment->beingUsed = false; //not using trashcan anymore
 								Trash *tr = new Trash(state->world, mowerDir.x, mowerDir.y);
 								state->environment_weapons.AddTail(tr);
 								view->enviornment->addChild(tr->sprite, 2);
@@ -1112,6 +1118,9 @@ void GameController::update(float deltaTime) {
 			if (currentEnvironmentMeter <= 0.0f && currentLevel != CALIBRATION_LEVEL){
 				activationDelay = true;
 				doneActivating = true;
+				if (currentEnvironment != NULL) {
+					currentEnvironment->beingUsed = false;
+				}
 				view->weaponBox->clear();
 				//failed to activate
 				state->ship->isActivatingEnvironment = false;
