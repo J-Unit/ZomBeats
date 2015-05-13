@@ -35,6 +35,8 @@
 #define STARTING_LEVEL 0
 #define MAX_LEVELS 7
 
+GameController *GameController::globalGC = NULL;
+
 /**
 * Initialize the game state.
 *
@@ -232,6 +234,7 @@ bool GameController::init() {
 	if (!Layer::init()) {
 		return false;
 	}
+	globalGC = this;
 	meter = new GrooveMeter();
 	currentEnvironmentMeter = 0.3f;
 	activationDelay = true;
@@ -430,6 +433,7 @@ void GameController::goBackToMainMenu() {
 	audio->stop();
 	auto scene = MainMenuScene::createScene();
 	Director::getInstance()->replaceScene(TransitionFade::create(LEVEL_MENU_TRANSITION_TIME, scene));
+	globalGC = NULL;
 }
 
 //pause the game and also create a pause menu

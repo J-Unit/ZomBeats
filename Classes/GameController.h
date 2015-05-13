@@ -78,6 +78,8 @@ class CalibrationController;
  */
 class GameController : public Layer, public b2ContactListener{
 public:
+	static GameController *globalGC;
+
     // CONTROLLERS
     /** Controller for abstracting out input away from layer */
     InputController* input;

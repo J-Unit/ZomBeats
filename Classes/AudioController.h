@@ -43,7 +43,8 @@ public:
 	float videoDelay;
 	bool paused;
 
-
+	void resumeSounds();
+	void pauseSounds();
 	void stop();
 };
 

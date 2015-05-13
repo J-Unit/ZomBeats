@@ -8,6 +8,7 @@
 #include "GameController.h"
 #include "MainMenuScene.h"
 #include "ResourceLoader.h"
+#include "AudioController.h"
 #include "View.h"
 
 
@@ -85,8 +86,13 @@ bool AppDelegate::applicationDidFinishLaunching() {
  * memory here.  We will have examples of this in later demos.
  */
 void AppDelegate::applicationDidEnterBackground() {
-    Director::getInstance()->stopAnimation();
-    
+	if (GameController::globalGC != NULL){
+		if (GameController::globalGC->audio != NULL){
+			GameController::globalGC->audio->pauseSounds();
+		}
+		GameController::globalGC->pauseGame();
+	}
+	Director::getInstance()->stopAnimation();
     // if you use SimpleAudioEngine, it must be pause
     // SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
 }
@@ -102,7 +108,11 @@ void AppDelegate::applicationDidEnterBackground() {
  */
 void AppDelegate::applicationWillEnterForeground() {
     Director::getInstance()->startAnimation();
-
+	if (GameController::globalGC != NULL){
+		if (GameController::globalGC->audio != NULL){
+			GameController::globalGC->audio->resumeSounds();
+		}
+	}
     // if you use SimpleAudioEngine, it must resume here
     // SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
 }

@@ -87,3 +87,13 @@ void AudioController::stop(){
 	trackLoops++;
 	AudioEngine::stopAll();
 }
+
+void AudioController::pauseSounds(){
+	AudioEngine::pauseAll();
+	paused = true;
+}
+
+void AudioController::resumeSounds(){
+	AudioEngine::resumeAll();
+	paused = false;
+}
