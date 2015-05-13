@@ -108,8 +108,12 @@ void AppDelegate::applicationDidEnterBackground() {
  */
 void AppDelegate::applicationWillEnterForeground() {
     Director::getInstance()->startAnimation();
+
 	if (GameController::globalGC != NULL){
-		if (GameController::globalGC->audio != NULL){
+		if (GameController::globalGC->currentLevel == CALIBRATION_LEVEL){
+			GameController::globalGC->loadLevel(CALIBRATION_LEVEL);
+		}
+		else if (GameController::globalGC->audio != NULL && GameController::globalGC->currentLevel != CALIBRATION_LEVEL){
 			GameController::globalGC->audio->resumeSounds();
 		}
 	}

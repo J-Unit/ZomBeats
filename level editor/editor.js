@@ -40,6 +40,7 @@ SWORD_WIDTH = 60;
 SWORD_HEIGHT = 35;
 objId = 0;
 level = new function(){
+	this.tip = ""
 	this.bkgX = 1 * 10;
 	this.bkgY = 1 * 10;
 	this.nodesX = this.bkgX * NODES_PER_TILE;
@@ -114,6 +115,8 @@ function importLevel(){
 	r.onload = function(e){
 		level = JSON.parse(e.target.result);
 		generateBackground();
+		if(!level.tip) level.tip = "";
+		document.getElementById("tip").value = level.tip;
 		objId = 0;
 		for(i = 0; i<level.walls.length; i++) addImage(level.walls[i], "wall");
 		for(i = 0; i<level.zombies.length; i++) addImage(level.zombies[i], "zombie");
@@ -159,6 +162,7 @@ function exportLevel() {
     document.getElementById("download").appendChild(link);
 }
 document.getElementById('export').onclick = exportLevel;
+
 function createObject(event){
 	if(event.target.className == "obj" || event.target.className.indexOf("objective")>-1){
 		delete level.walls[event.target.id];
@@ -375,6 +379,14 @@ function changeZombieObjective(){
 	level.zombieObjective = +document.getElementById("zombieObjective").value;
 }
 
+function updateTip(){
+	level.tip = document.getElementById("tip").value.trim();
+}
+
+function clearTip(){
+	document.getElementById("tip").value = "";
+	updateTip();
+}
 
 
 ////Main

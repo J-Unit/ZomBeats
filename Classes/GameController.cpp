@@ -421,6 +421,7 @@ void GameController::loadLevel(int i){
 	currAwareness = 0.0f;
 	currentFingerPos = Vec2(0.0f, 0.0f);
 	if (currentLevel == CALIBRATION_LEVEL){
+		audio->paused = true;
 		view->durabilityBox->setVisible(false);
 		view->durability->setVisible(false);
 		calibration->init();
@@ -470,6 +471,9 @@ void GameController::goBackToMainMenu() {
 //pause the game and also create a pause menu
 void GameController::pauseGame() {
 	isPaused = true;
+	if (currentLevel == CALIBRATION_LEVEL){
+		audio->pauseSounds();
+	}
 	createGameMenu();
 	
 }
@@ -485,6 +489,9 @@ void GameController::pauseGameOnly() {
 void GameController::resumeGame() {
 	input->clickProcessed = true;
 	isPaused = false;
+	if (currentLevel == CALIBRATION_LEVEL){
+		audio->resumeSounds();
+	}
 	removeGameMenu();
 }
 

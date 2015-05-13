@@ -15,6 +15,7 @@ AudioController::AudioController()
 	audioDelay = videoDelay = 0.0f;
 	hisses.maxInstances = 3;
 	hisses.name = "hisses";
+	paused = true;
 	//AudioEngine::setMaxAudioInstance(4);
 }
 
