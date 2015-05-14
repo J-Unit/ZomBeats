@@ -7,10 +7,10 @@
 #define FLOCK_RADIUS 400.0f
 #define MIN_DIST 115.0f
 #define IMPULSE 3220.0f
-#define COHESION 50.0f
-#define ALIGNMENT 50.0f
+#define COHESION 20.0f
+#define ALIGNMENT 20.0f
 #define SEPERATION 400.0f
-#define ZOMBIENESS 50.0f
+#define ZOMBIENESS 20.0f
 #define ATTRACTION 30.0f
 
 
