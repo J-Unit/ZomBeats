@@ -24,7 +24,28 @@ PICKLE = {"bpm":140.0, "path":"songs/01 Pickles.mp3", "offset":0.0}
 GRASS = {"bpm":120.0, "path":"songs/Galactic_Grass.mp3", "offset":0.0}
 ROBOTS = {"bpm":110.0, "path":"songs/RobotsInTheRain.mp3", "offset":0.0}
 TRAP = {"bpm":140.0, "path":"songs/Its_A_Trap.mp3", "offset":0.0}
-
+RF1 = {"bpm":78.0, "path":"songs/rf1.mp3", "offset":0.0}
+RF2 = {"bpm":130.0, "path":"songs/rf2.mp3", "offset":0.0}
+RF3 = {"bpm":110.0, "path":"songs/rf3.mp3", "offset":0.0}
+RF4 = {"bpm":100.0, "path":"songs/rf4.mp3", "offset":0.0}
+RF5 = {"bpm":124.0, "path":"songs/rf5.mp3", "offset":0.0}
+RF6 = {"bpm":92.0, "path":"songs/rf6.mp3", "offset":0.0}
+RF7 = {"bpm":125.0, "path":"songs/rf7.mp3", "offset":0.0}
+RF8 = {"bpm":125.0, "path":"songs/rf8.mp3", "offset":0.0}
+RF9 = {"bpm":93.0, "path":"songs/rf9.mp3", "offset":0.0}
+RF10 = {"bpm":138.0, "path":"songs/rf10.mp3", "offset":0.0}
+/* rf1-10
+	1- 78
+	2- 130
+	3- 110
+	4- 100
+	5- 124
+	6- 92
+	7- 125
+	8- 125
+	9- 93
+	10- 138
+	*/
 
 
 
@@ -338,6 +359,36 @@ function changeTrack(){
 			break;
 		case "songs/Its_A_Trap.mp3":
 			level.track = TRAP;
+			break;
+		case "songs/rf1.mp3":
+			level.track = RF1;
+			break;
+		case "songs/rf2.mp3":
+			level.track = RF2;
+			break;
+		case "songs/rf3.mp3":
+			level.track = RF3;
+			break;
+		case "songs/rf4.mp3":
+			level.track = RF4;
+			break;
+		case "songs/rf5.mp3":
+			level.track = RF5;
+			break;
+		case "songs/rf6.mp3":
+			level.track = RF6;
+			break;
+		case "songs/rf7.mp3":
+			level.track = RF7;
+			break;
+		case "songs/rf8.mp3":
+			level.track = RF8;
+			break;
+		case "songs/rf9.mp3":
+			level.track = RF9;
+			break;
+		case "songs/rf10.mp3":
+			level.track = RF10;
 			break;
 	}
 	playing = !document.getElementById("audio").paused;
