@@ -450,6 +450,7 @@ void GameController::restartGame() {
 	loadLevel(currentLevel);
 	if (currentLevel == CALIBRATION_LEVEL){
 		isPaused = true;
+		createPauseButton();
 	}
 	//normal level
 	else {
@@ -759,8 +760,9 @@ void GameController::update(float deltaTime) {
 							startVideoCalibration();
 						}
 						else{
+							//indicate that we have completed the level so far
+							save.exportLevel(currentLevel);
 							loadLevel(std::min(currentLevel + 1, MAX_LEVELS));
-							save.exportLevel(currentLevel); //indicate that we have completed the level so far
 							beginCountDown = true;
 							createCountDown();
 							return;
@@ -768,8 +770,9 @@ void GameController::update(float deltaTime) {
 					}
 				}
 				else{
+					//indicate that we have completed the level so far
+					save.exportLevel(currentLevel);
 					loadLevel(std::min(currentLevel + 1, MAX_LEVELS));
-					save.exportLevel(currentLevel); //indicate that we have completed the level so far
 					beginCountDown = true;
 					createCountDown();
 					return;
