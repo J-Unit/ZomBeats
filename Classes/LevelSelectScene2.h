@@ -10,6 +10,7 @@
 #define BACK_BUTTON_SCALE 2.2f
 #define DIRECTION_BUTTON_SCALE 0.5f
 #define LEVEL_MENU_TRANSITION_TIME 0.3f
+#define SAVE_LEVEL_FILE "save_level.zbs"
 
 class LevelSelectScene2 : public cocos2d::Layer
 {
@@ -19,6 +20,7 @@ public:
 
 	static Scene* createScene();
 	virtual bool init();
+	SaveSerializer save;
 
 	void GoToGameScene(cocos2d::Ref* sender, int level);
 	void GoToMainMenuScene(cocos2d::Ref* sender);

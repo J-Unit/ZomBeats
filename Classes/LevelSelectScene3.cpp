@@ -4,6 +4,7 @@
 #include "GameController.h"
 #include "MainMenuScene.h"
 #include "ProgressScene.h"
+#include "SaveSerializer.h"
 #include "View.h"
 USING_NS_CC;
 using namespace cocos2d;
@@ -41,6 +42,7 @@ bool LevelSelectScene3::init()
 	backgroundSprite->setScale(LEVEL_BACKGROUND_SCALE);
 	this->addChild(backgroundSprite);
 
+	int completedLevel = save.parseLevel(SAVE_LEVEL_FILE);
 
 	auto backDirButton = MenuItemImage::create("textures/back_dir.png", "textures/back_dir.png", CC_CALLBACK_1(LevelSelectScene3::GoToPrevLevelScene, this));
 	backDirButton->setPosition(Point(visibleSize.width / 2 + origin.x - LEVEL_BUTTON_HORIZONTAL_OFFSET*0.5, visibleSize.height / 2 + origin.y - LEVEL_BUTTON_VERTICAL_OFFSET));

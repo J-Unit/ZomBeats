@@ -4,6 +4,7 @@
 #include "MainMenuScene.h"
 #include "ProgressScene.h"
 #include "View.h"
+#include "SaveSerializer.h"
 USING_NS_CC;
 using namespace cocos2d;
 
@@ -40,35 +41,125 @@ bool LevelSelectScene::init()
 	backgroundSprite->setScale(LEVEL_BACKGROUND_SCALE);
 	this->addChild(backgroundSprite);
 
+	int completedLevel = save.parseLevel(SAVE_LEVEL_FILE);
+
 	auto startButton0 = MenuItemImage::create("textures/calibrate.png", "textures/calibrate_clicked.png", CC_CALLBACK_1(LevelSelectScene::GoToGameScene, this, 0));
 	startButton0->setPosition(Point(visibleSize.width / 2 + origin.x - LEVEL_BUTTON_HORIZONTAL_OFFSET*1.4, visibleSize.height / 2 + origin.y + LEVEL_BUTTON_VERTICAL_OFFSET/2));
 	startButton0->setScale(LEVEL_BUTTON_SCALE);
 
-	auto startButton1 = MenuItemImage::create("textures/level1.png", "textures/level1_clicked.png", CC_CALLBACK_1(LevelSelectScene::GoToGameScene, this, 1));
+	MenuItemImage* startButton1;
+	if (1 <= completedLevel) {
+		startButton1 = MenuItemImage::create("textures/level1_completed.png", "textures/level1_completed_clicked.png", CC_CALLBACK_1(LevelSelectScene::GoToGameScene, this, 1));
+	}
+	//next level we need to complete
+	else if (1 == completedLevel + 1) {
+		startButton1 = MenuItemImage::create("textures/level1.png", "textures/level1_clicked.png", CC_CALLBACK_1(LevelSelectScene::GoToGameScene, this, 1));
+	}
+	//could not unlock this level yet
+	else {
+		startButton1 = MenuItemImage::create("textures/level1.png", "textures/level1.png");
+	}
 	startButton1->setPosition(Point(visibleSize.width / 2 + origin.x - LEVEL_BUTTON_HORIZONTAL_OFFSET*0.5, visibleSize.height / 2 + origin.y + LEVEL_BUTTON_VERTICAL_OFFSET / 2));
 	startButton1->setScale(LEVEL_BUTTON_SCALE);
 
-	auto startButton2 = MenuItemImage::create("textures/level2.png", "textures/level2_clicked.png", CC_CALLBACK_1(LevelSelectScene::GoToGameScene, this, 2));
+
+	MenuItemImage* startButton2;
+	if (2 <= completedLevel) {
+		startButton2 = MenuItemImage::create("textures/level2_completed.png", "textures/level2_completed_clicked.png", CC_CALLBACK_1(LevelSelectScene::GoToGameScene, this, 2));
+	}
+	//next level we need to complete
+	else if (2 == completedLevel + 1) {
+		startButton2 = MenuItemImage::create("textures/level2.png", "textures/level2_clicked.png", CC_CALLBACK_1(LevelSelectScene::GoToGameScene, this, 2));
+	}
+	//could not unlock this level yet
+	else {
+		startButton2 = MenuItemImage::create("textures/level2.png", "textures/level2.png");
+	}
+	
 	startButton2->setPosition(Point(visibleSize.width / 2 + origin.x + LEVEL_BUTTON_HORIZONTAL_OFFSET*0.5, visibleSize.height / 2 + origin.y + LEVEL_BUTTON_VERTICAL_OFFSET / 2));
 	startButton2->setScale(LEVEL_BUTTON_SCALE);
 
-	auto startButton3 = MenuItemImage::create("textures/level3.png", "textures/level3_clicked.png", CC_CALLBACK_1(LevelSelectScene::GoToGameScene, this, 3));
+	MenuItemImage* startButton3;
+	if (3 <= completedLevel) {
+		startButton3 = MenuItemImage::create("textures/level3_completed.png", "textures/level3_completed_clicked.png", CC_CALLBACK_1(LevelSelectScene::GoToGameScene, this, 3));
+	}
+	//next level we need to complete
+	else if (3 == completedLevel + 1) {
+		startButton3 = MenuItemImage::create("textures/level3.png", "textures/level3_clicked.png", CC_CALLBACK_1(LevelSelectScene::GoToGameScene, this, 3));
+	}
+	//could not unlock this level yet
+	else {
+		startButton3 = MenuItemImage::create("textures/level3.png", "textures/level3.png");
+	}
+	
+
 	startButton3->setPosition(Point(visibleSize.width / 2 + origin.x + LEVEL_BUTTON_HORIZONTAL_OFFSET*1.4, visibleSize.height / 2 + origin.y + LEVEL_BUTTON_VERTICAL_OFFSET/2));
 	startButton3->setScale(LEVEL_BUTTON_SCALE);
 
-	auto startButton4 = MenuItemImage::create("textures/level4.png", "textures/level4_clicked.png", CC_CALLBACK_1(LevelSelectScene::GoToGameScene, this, 4));
+	MenuItemImage* startButton4;
+	if (4 <= completedLevel) {
+		startButton4 = MenuItemImage::create("textures/level4_completed.png", "textures/level4_completed_clicked.png", CC_CALLBACK_1(LevelSelectScene::GoToGameScene, this, 4));
+	}
+	//next level we need to complete
+	else if (4 == completedLevel + 1) {
+		startButton4 = MenuItemImage::create("textures/level4.png", "textures/level4_clicked.png", CC_CALLBACK_1(LevelSelectScene::GoToGameScene, this, 4));
+	}
+	//could not unlock this level yet
+	else {
+		startButton4 = MenuItemImage::create("textures/level4.png", "textures/level4.png");
+	}
+
 	startButton4->setPosition(Point(visibleSize.width / 2 + origin.x - LEVEL_BUTTON_HORIZONTAL_OFFSET*1.4, visibleSize.height / 2 + origin.y - LEVEL_BUTTON_VERTICAL_OFFSET / 4));
 	startButton4->setScale(LEVEL_BUTTON_SCALE);
 
-	auto startButton5 = MenuItemImage::create("textures/level5.png", "textures/level5_clicked.png", CC_CALLBACK_1(LevelSelectScene::GoToGameScene, this, 5));
+	MenuItemImage* startButton5;
+	if (5 <= completedLevel) {
+		startButton5 = MenuItemImage::create("textures/level5_completed.png", "textures/level5_completed_clicked.png", CC_CALLBACK_1(LevelSelectScene::GoToGameScene, this, 5));
+	}
+	//next level we need to complete
+	else if (5 == completedLevel + 1) {
+		startButton5 = MenuItemImage::create("textures/level5.png", "textures/level5_clicked.png", CC_CALLBACK_1(LevelSelectScene::GoToGameScene, this, 5));
+	}
+	//could not unlock this level yet
+	else {
+		startButton5 = MenuItemImage::create("textures/level5.png", "textures/level5.png");
+	}
+	
+	
 	startButton5->setPosition(Point(visibleSize.width / 2 + origin.x - LEVEL_BUTTON_HORIZONTAL_OFFSET*0.5, visibleSize.height / 2 + origin.y - LEVEL_BUTTON_VERTICAL_OFFSET / 4));
 	startButton5->setScale(LEVEL_BUTTON_SCALE);
 
-	auto startButton6 = MenuItemImage::create("textures/level6.png", "textures/level6_clicked.png", CC_CALLBACK_1(LevelSelectScene::GoToGameScene, this, 6));
+
+	MenuItemImage* startButton6;
+	if (6 <= completedLevel) {
+		startButton6 = MenuItemImage::create("textures/level6_completed.png", "textures/level6_completed_clicked.png", CC_CALLBACK_1(LevelSelectScene::GoToGameScene, this, 6));
+	}
+	//next level we need to complete
+	else if (6 == completedLevel + 1) {
+		startButton6 = MenuItemImage::create("textures/level6.png", "textures/level6_clicked.png", CC_CALLBACK_1(LevelSelectScene::GoToGameScene, this, 6));
+	}
+	//could not unlock this level yet
+	else {
+		startButton6 = MenuItemImage::create("textures/level6.png", "textures/level6.png");
+	}
+
 	startButton6->setPosition(Point(visibleSize.width / 2 + origin.x + LEVEL_BUTTON_HORIZONTAL_OFFSET*0.5, visibleSize.height / 2 + origin.y - LEVEL_BUTTON_VERTICAL_OFFSET / 4));
 	startButton6->setScale(LEVEL_BUTTON_SCALE);
 
-	auto startButton7 = MenuItemImage::create("textures/level7.png", "textures/level7_clicked.png", CC_CALLBACK_1(LevelSelectScene::GoToGameScene, this, 7));
+	MenuItemImage* startButton7;
+	if (7 <= completedLevel) {
+		startButton7 = MenuItemImage::create("textures/level7_completed.png", "textures/level7_completed_clicked.png", CC_CALLBACK_1(LevelSelectScene::GoToGameScene, this, 7));
+	}
+	//next level we need to complete
+	else if (7 == completedLevel + 1) {
+		startButton7 = MenuItemImage::create("textures/level7.png", "textures/level7_clicked.png", CC_CALLBACK_1(LevelSelectScene::GoToGameScene, this, 7));
+	}
+	//could not unlock this level yet
+	else {
+		startButton7 = MenuItemImage::create("textures/level7.png", "textures/level7.png");
+	}
+
+
 	startButton7->setPosition(Point(visibleSize.width / 2 + origin.x + LEVEL_BUTTON_HORIZONTAL_OFFSET*1.4, visibleSize.height / 2 + origin.y - LEVEL_BUTTON_VERTICAL_OFFSET / 4));
 	startButton7->setScale(LEVEL_BUTTON_SCALE);
 

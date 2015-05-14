@@ -4,6 +4,7 @@
 #include "GameController.h"
 #include "MainMenuScene.h"
 #include "ProgressScene.h"
+#include "SaveSerializer.h"
 #include "View.h"
 USING_NS_CC;
 using namespace cocos2d;
@@ -41,7 +42,20 @@ bool LevelSelectScene2::init()
 	backgroundSprite->setScale(LEVEL_BACKGROUND_SCALE);
 	this->addChild(backgroundSprite);
 
-	auto startButton8 = MenuItemImage::create("textures/level8.png", "textures/level8_clicked.png", CC_CALLBACK_1(LevelSelectScene2::GoToGameScene, this, 8));
+	int completedLevel = save.parseLevel(SAVE_LEVEL_FILE);
+
+	MenuItemImage* startButton8;
+	if (8 <= completedLevel) {
+		startButton8 = MenuItemImage::create("textures/level8_completed.png", "textures/level8_completed_clicked.png", CC_CALLBACK_1(LevelSelectScene2::GoToGameScene, this, 8));
+	}
+	//next level we need to complete
+	else if (8 == completedLevel + 1) {
+		startButton8 = MenuItemImage::create("textures/level8.png", "textures/level8_clicked.png", CC_CALLBACK_1(LevelSelectScene2::GoToGameScene, this, 8));
+	}
+	//could not unlock this level yet
+	else {
+		startButton8 = MenuItemImage::create("textures/level8.png", "textures/level8.png");
+	}
 	startButton8->setPosition(Point(visibleSize.width / 2 + origin.x - LEVEL_BUTTON_HORIZONTAL_OFFSET*1.4, visibleSize.height / 2 + origin.y + LEVEL_BUTTON_VERTICAL_OFFSET / 2));
 	startButton8->setScale(LEVEL_BUTTON_SCALE);
 

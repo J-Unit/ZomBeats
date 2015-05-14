@@ -31,6 +31,7 @@
 #define GAME_VIEW_SCALE 0.7f
 
 #define SAVE_FILE "save.zbs"
+#define SAVE_LEVEL_FILE "save_level.zbs"
 
 //delays
 #define ENVIRONMENTAL_WEAPON_DELAY 1.0f

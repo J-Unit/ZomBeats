@@ -1097,6 +1097,7 @@ void GameController::update(float deltaTime) {
 							ss << "Ok, great.  Video Delay: " << formatMs(audio->videoDelay); //finishing up calibration
 							view->objective->setString(ss.str());
 							save.exportSave(this);
+							//save.exportLevel(0);
 						}
 					}
 				}
