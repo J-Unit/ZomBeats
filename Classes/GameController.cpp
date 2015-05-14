@@ -118,9 +118,12 @@ void GameController::BeginContact(b2Contact* contact){
 	//collecting goal item
 	GoalObject *go;
 	if ((b1->type == GoalType && b2->type == ShipType) || (b1->type == ShipType && b2->type == GoalType)){
-		go = (b1->type == GoalType) ? b1->getGoalObject() : b2->getGoalObject();
-		go->isCollected = true; //signal to remove goal object
-		hasCollectedGoal = true; //signal win condition
+		if (state->zombies.GetCount() <= state->zomGoal){
+			go = (b1->type == GoalType) ? b1->getGoalObject() : b2->getGoalObject();
+			go->isCollected = true; //signal to remove goal object
+			hasCollectedGoal = true; //signal win condition
+			return;
+		}
 	}
 
 	//fucking up zombies
@@ -1524,12 +1527,23 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 		view->redrawGroove(g);
 
 		stringstream ss;
-		ss << state->numZombiesRemain << " zombies left!";
+		if (state->instrument != NULL){
+			ss << "Kill " << state->numZombiesRemain << " more zombies before collecting the instrument!";
+			if (state->numZombiesRemain <= 0){
+				ss.str("");
+				ss.clear();
+				ss << "Go find the instrument to complete the level!";
+			}
+		}
+		else{
+			ss << "You must kill " << state->numZombiesRemain << " more zombies to compelte the level!";
+		}
+		
 		if (!tipActive){
 			view->objective->setString(ss.str());
 		}
 		
-		
+		/*
 		if (state->instrument != NULL && !tipActive){
 			if (!hasCollectedGoal){
 				view->collectionGoal->setString("You must collect the instrument");
@@ -1540,7 +1554,7 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 		}
 		else{
 			view->collectionGoal->setVisible(false);
-		}
+		}*/
 	}
 
 	/*if (!input->clickProcessed) {
