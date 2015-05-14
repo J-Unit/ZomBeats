@@ -14,7 +14,7 @@
 #define PLANET1_POS  Vec2(950, 1100)
 #define PLANET2_POS  Vec2(1600, 1500)
 #define HUD_OFFSET   Vec2(10.0f,10.0f)
-#define SHAKE_STRENGTH 4.0f
+#define SHAKE_STRENGTH 3.0f
 
 #define MUSIC_NOTE_SCALE 0.065f
 
@@ -90,7 +90,7 @@ public:
 
 	void setMesh();
 
-	void shake(float start, float now, Vec2 dir);
+	void shake(float start, float now, Vec2 dir, double errorWindow);
 
 	void redrawDurability(int dur);
 

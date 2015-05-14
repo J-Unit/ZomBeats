@@ -429,8 +429,8 @@ void View::redrawGroove(float g) {
 
 }
 
-void View::shake(float start, float now, Vec2 dir){
-	float v = sin((now - start) * 2 * M_PI / ERROR_WINDOW);
+void View::shake(float start, float now, Vec2 dir, double errorWindow){
+	float v = sin((now - start) * M_PI / errorWindow);
 	allSpace->setPosition(shakeCenter + v * SHAKE_STRENGTH * dir);
 }
 

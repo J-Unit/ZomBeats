@@ -894,7 +894,7 @@ void GameController::update(float deltaTime) {
 					int userOnBeat = audio->wasOnBeat((now - input->clickTime)/1000.0f);
 					if (userOnBeat == 0 && currentLevel != CALIBRATION_LEVEL) {
 						b2Vec2 halfVel = state->ship->body->GetLinearVelocity();
-						halfVel *= 0.25;
+						halfVel *= 0.1;
 						state->ship->body->SetLinearVelocity(halfVel);
 						//destination = 0;
 
@@ -1504,7 +1504,7 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 			view->mainBeatHUD->setString("BEAT!");
 			st << "Difference is: " << audio->keepit;
 			//view->beatHUD->setString(st.str());
-			view->shake(audio->getBeatStart(), audio->songTime, Vec2(1, 0));
+			view->shake(audio->getBeatStart(), audio->songTime, Vec2(1, 0), audio->currentSong->quarterWindow);
 		}
 		else{
 			view->mainBeatHUD->setString("");
