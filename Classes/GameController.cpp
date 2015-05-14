@@ -760,6 +760,7 @@ void GameController::update(float deltaTime) {
 						}
 						else{
 							loadLevel(std::min(currentLevel + 1, MAX_LEVELS));
+							save.exportLevel(currentLevel); //indicate that we have completed the level so far
 							beginCountDown = true;
 							createCountDown();
 							return;
@@ -768,6 +769,7 @@ void GameController::update(float deltaTime) {
 				}
 				else{
 					loadLevel(std::min(currentLevel + 1, MAX_LEVELS));
+					save.exportLevel(currentLevel); //indicate that we have completed the level so far
 					beginCountDown = true;
 					createCountDown();
 					return;
