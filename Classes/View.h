@@ -69,6 +69,8 @@ public:
 	Node*   enviornment;
 	Node* zombies;
 
+	Sprite *grooveBars[45];
+
 	View(int w, int h);
 
 	int screen_size_x;
@@ -95,6 +97,7 @@ public:
 	void redrawDurability(int dur);
 
 	void redrawGroove(float g);
+	void drawGroove();
 
 	void createMusicNotePath(Sprite **mem);
 

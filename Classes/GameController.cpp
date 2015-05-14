@@ -896,6 +896,7 @@ void GameController::update(float deltaTime) {
 						b2Vec2 halfVel = state->ship->body->GetLinearVelocity();
 						halfVel *= 0.1;
 						state->ship->body->SetLinearVelocity(halfVel);
+						state->ship->body->SetLinearDamping(NORMAL_DAMPENING);
 						//destination = 0;
 
 						//if it is not on beat, increase the detection radius slightly
@@ -1374,6 +1375,7 @@ void GameController::update(float deltaTime) {
 				isPaused = false;
 				view->resIndepScreen->removeChild(countDown);
 				unPanning();
+				view->drawGroove();
 				//now we can start playing songs
 				audio->playTrack(ls.getLevelTrack(), currentLevel != CALIBRATION_LEVEL);
 				return;
