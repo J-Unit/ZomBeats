@@ -4,6 +4,7 @@
 using namespace cocos2d::experimental;
 
 void AudioController::preload(){
+	//Force cocos to cache our music because it doesn't let you do it manually
 	AudioEngine::stop(AudioEngine::play2d("songs/01 Overdrive.mp3", true, 0.0f));
 	AudioEngine::stop(AudioEngine::play2d("songs/01 Looking For.mp3", true, 0.0f));
 	AudioEngine::stop(AudioEngine::play2d("songs/01 Pickles.mp3", true, 0.0f));
