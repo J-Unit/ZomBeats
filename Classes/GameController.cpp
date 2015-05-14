@@ -90,6 +90,7 @@ void GameController::BeginContact(b2Contact* contact){
 			if (currentEnvironment->e_weapon_type == 1){
 				audio->playEffect("sound_effects/RummagingThroughTrash.mp3",2.0f);
 			}
+			startedAct = true;
 			state->ship->isActivatingEnvironment = true; //right now, no activation sequence
 			state->ship->hasEnvironmentWeapon = true;
 		}
@@ -249,6 +250,7 @@ bool GameController::init() {
 	activationDelay = true;
 	tipActive = false;
 	tipTimer = 0.0f;
+	startedAct = false;
 	doneActivating = false;
 	hasCollectedGoal = false;
 	Director* director = Director::getInstance();
@@ -828,6 +830,11 @@ void GameController::update(float deltaTime) {
 			//reduce meter by a little bit
 			if (state->ship->isActivatingEnvironment && currentLevel != CALIBRATION_LEVEL){
 				currentEnvironmentMeter -= ENVIRONMENT_METER_DEC;
+				if (startedAct){
+					state->ship->body->SetTransform(b2Vec2(currentEnvironment->body->GetPosition().x, currentEnvironment->body->GetPosition().y), 0.0f);
+					startedAct = false;
+				}
+				
 			}
 
 

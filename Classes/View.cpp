@@ -226,7 +226,7 @@ void View::buildScene(LevelMap *level, Layer* l, int levNum) {
 	enviornment->addChild(zombiePositions, 4); //z-order to zombiePositions should be larger than fog's 
 	enviornment->addChild(detectionRadiusCircle);
 	enviornment->addChild(hitBox, 3);
-	enviornment->addChild(weaponBox);
+	enviornment->addChild(weaponBox,5);
 
 	enviornment->addChild(directionUseEnvironmentWeapon);
 	enviornment->addChild(zombies,2);

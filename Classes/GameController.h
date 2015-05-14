@@ -98,6 +98,8 @@ public:
 	//bool for collection
 	bool hasCollectedGoal;
 
+	bool startedAct;
+
 	GrooveMeter *meter;
 
 	/**
