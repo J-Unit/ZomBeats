@@ -2,7 +2,7 @@
 
 #pragma once
 
-#define AWARENESS_DRAIN 0.002
+#define AWARENESS_DRAIN 0.015
 
 
 class GameState;

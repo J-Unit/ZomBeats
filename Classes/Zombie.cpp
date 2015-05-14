@@ -4,7 +4,7 @@
 #include "FilmStrip.h"
 #include "math.h"
 
-Zombie::Zombie(float x, float y, b2World *world)
+Zombie::Zombie(float x, float y, b2World *world, float originAwareness)
 {
 	bodyDef.type = b2_dynamicBody;
 	bodyDef.position.Set(x, y);
@@ -23,7 +23,7 @@ Zombie::Zombie(float x, float y, b2World *world)
 	prevFrame = 0;
 	setSprite(FilmStrip::create(ResourceLoader::getInstance()->getTexture("zombie"), 8, 3, 24));
 	//initialize the awareness
-	awareness[0] = ORIGIN_AWARENESS;
+	awareness[0] = originAwareness;
 	awareness[1] = INITIAL_AWARENESS;
 	awareness[2] = 0.0;
 	interestPoint.SetZero(); 
@@ -212,6 +212,11 @@ void Zombie::advanceFrame() {
 	
 }
 
+void Zombie::attractToInterestPoint(b2Vec2 point, float amount){
+	interestPoint = point;
+	increaseAwarness(2, amount);
+}
+
 void Zombie::addParticles(){
 	emitter = ParticleSystemQuad::create();
 	emitter->setDuration(2.0f);
@@ -254,9 +259,13 @@ void Zombie::addParticles(){
 	sprite->addChild(emitter, 1);
 }
 
+void Zombie::increaseAwarness(int ixInterest, float amt){
+	awareness[ixInterest] = std::min(awareness[ixInterest] + amt, MAX_AWARENESS);
+}
+
 void Zombie::increaseAwarness()
 {
-	awareness[1] += AWARENESS_INCREASE;
+	increaseAwarness(1, AWARENESS_INCREASE);
 }
 
 

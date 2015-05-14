@@ -9,7 +9,7 @@
 #define IMPULSE 3220.0f
 #define COHESION 50.0f
 #define ALIGNMENT 50.0f
-#define SEPERATION 300.0f
+#define SEPERATION 400.0f
 #define ZOMBIENESS 50.0f
 #define ATTRACTION 30.0f
 
@@ -119,7 +119,7 @@ void AIController::update(GameState *state){
 		curZ->attraction *= ATTRACTION * (curZ->awareness[0] + curZ->awareness[1] + curZ->awareness[2]);
 		dir += curZ->attraction;
 		curZ->awareness[1] = std::max(0.0, curZ->awareness[1] - AWARENESS_DRAIN);
-		curZ->awareness[2] = std::max(0.0, curZ->awareness[2] - AWARENESS_DRAIN);
+		curZ->awareness[2] = std::max(0.0, curZ->awareness[2] - 2 * AWARENESS_DRAIN);
 		//apply
 		dir.Normalize();
 		dir *= IMPULSE;

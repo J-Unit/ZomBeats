@@ -655,6 +655,7 @@ void GameController::removeDeadEWeapons(){
 			if (eweap->e_weapon_type == 2){
 				audio->playEffect("sound_effects/BottleSmash.mp3",2.0f);
 				((Trash *)eweap)->addParticles();
+				attractNearbyZombies(eweap->body->GetPosition(), BOTTLE_AWARENES_INCREASE);
 			}
 			state->world->DestroyBody(eweap->body);
 			toDelete = e_weapon;
@@ -740,6 +741,14 @@ void GameController::createTipPopup(){
 	view->resIndepScreen->addChild(popup, 4);
 	//createOkButton(0);
 	view->objective->setString(state->levelTip);
+}
+
+void GameController::attractNearbyZombies(b2Vec2 point, float amount){
+	for (CTypedPtrDblElement<Zombie> *z = state->zombies.GetHeadPtr(); !state->zombies.IsSentinel(z); z = z->Next()){
+		if ((point - z->Data()->body->GetPosition()).Length() < ENVI_ATTRACT_RANGE){
+			z->Data()->attractToInterestPoint(point, amount);
+		}
+	}
 }
 
 /**
@@ -1266,7 +1275,7 @@ void GameController::update(float deltaTime) {
 				Vec2 mowerDir = currentFingerPos;
 				mowerDir.subtract(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y));
 				mowerDir.normalize();
-
+				attractNearbyZombies(currentMower->body->GetPosition(), MOWER_AWARENES_INCREASE);
 				currentMower->update(deltaTime, mowerDir);
 			}
 

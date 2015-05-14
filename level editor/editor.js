@@ -62,6 +62,7 @@ SWORD_HEIGHT = 35;
 objId = 0;
 level = new function(){
 	this.tip = ""
+	this.zombieOriginAwareness = 0.8;
 	this.bkgX = 1 * 10;
 	this.bkgY = 1 * 10;
 	this.nodesX = this.bkgX * NODES_PER_TILE;
@@ -138,6 +139,8 @@ function importLevel(){
 		generateBackground();
 		if(!level.tip) level.tip = "";
 		document.getElementById("tip").value = level.tip;
+		if(!level.zombieOriginAwareness) level.zombieOriginAwareness = 0.8;
+		document.getElementById("originAwareness").value = level.zombieOriginAwareness;
 		objId = 0;
 		for(i = 0; i<level.walls.length; i++) addImage(level.walls[i], "wall");
 		for(i = 0; i<level.zombies.length; i++) addImage(level.zombies[i], "zombie");
@@ -439,6 +442,9 @@ function clearTip(){
 	updateTip();
 }
 
+function changeOriginAwareness(){
+	level.zombieOriginAwareness = +document.getElementById("originAwareness").value;
+}
 
 ////Main
 generateBackground();

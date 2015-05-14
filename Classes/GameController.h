@@ -226,6 +226,8 @@ public:
 
 	int currentLevel;
 	void setCurrentLevel(int level);
+	void attractNearbyZombies(b2Vec2 point, float amount);
+
 
 private:
 	void createZombies();

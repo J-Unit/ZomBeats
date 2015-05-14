@@ -7,6 +7,7 @@ Tiles Y: <input id="inY" type="number" value="10" min="1" max="100" style="width
 <button id="update">Update</button>
 <!-- Grid:<input id="grid" type="checkbox" checked onchange="flipGrid()"> -->
 Zombies to Kill: <input id="zombieObjective" type="number" value="0" min="0" max="999" style="width:50" onchange="changeZombieObjective()"/>
+Origin Awareness: <input id="originAwareness" type="number" value="0.8" min="0.0" max="10.0" step="0.1" style="width:50" onchange="changeOriginAwareness()" />
  Item: <select id = "ItemAdd">
 	<option value="wall">Wall</option>
 	<option value="zombie">Zombie</option>
@@ -41,9 +42,9 @@ Track: <select id = "Track" onchange="changeTrack()">
 <audio id="audio" controls>
 	<source id="audiosrc" src="../Resources/songs/SimpleBeat.mp3">
 </audio>
+<br />
 Import: <input type="file" id="import"/>
 <button id="export">Export</button>: <span id="download"></span>
-<br />
 Tip: <textarea id="tip" cols="50", rows="2"></textarea> <button onclick="updateTip()">Update</button> <button onclick="clearTip()">Clear</button>
 <br/>
 <br/>
