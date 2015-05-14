@@ -92,7 +92,6 @@ bool LevelSelectScene::init()
 		startButton3 = MenuItemImage::create("textures/level3.png", "textures/level3.png");
 	}
 	
-
 	startButton3->setPosition(Point(visibleSize.width / 2 + origin.x + LEVEL_BUTTON_HORIZONTAL_OFFSET*1.4, visibleSize.height / 2 + origin.y + LEVEL_BUTTON_VERTICAL_OFFSET/2));
 	startButton3->setScale(LEVEL_BUTTON_SCALE);
 
