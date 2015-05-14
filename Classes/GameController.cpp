@@ -1471,10 +1471,10 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 			view->mainBeatHUD->setString("");
 		}
 		float g = meter->getGrooviness();
+		//update the groovy meter
 		view->grooviness->setString(meter->getGroovinessDisplay(g));
-		view->meter->clear();
-		view->meter->drawSolidRect(Vec2(-15, 0), Vec2(+15, g * 180), ccColor4F(0.0f, 1.0f, 1.0f, 1.0f));
-		view->meter->drawRect(Vec2(-15, 0), Vec2(+15, 180), ccColor4F(0.5f, 0.5f, 0.5f, 1.0f));
+		view->redrawGroove(g);
+
 		stringstream ss;
 		ss << state->numZombiesRemain << " zombies left!";
 		view->objective->setString(ss.str());

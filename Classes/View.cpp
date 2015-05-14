@@ -403,6 +403,32 @@ void View::redrawDurability(int dur){
 	}
 }
 
+void View::redrawGroove(float g) {
+	meter->removeAllChildren();
+	//draw outer rectangle
+	meter->drawRect(Vec2(-22, 0), Vec2(+22, 180), ccColor4F(0.5f, 0.5f, 0.5f, 1.0f));
+	int upper_bound = (int)(45 * g);
+	//upper_bound =  45;
+	for (int i = 0; i < upper_bound; i++) {
+
+		Sprite* bar;
+		if (i < 15) {
+			bar = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("groovy_bar_low"));
+		}
+		else if (i >= 15 && i < 30) {
+			bar = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("groovy_bar_medium"));
+		}
+		else {
+			bar = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("groovy_bar_high"));
+		}
+		bar->setPosition(Vec2(0, i*4));
+		meter->addChild(bar);
+
+	}
+	//view->meter->drawSolidRect(Vec2(-15, 0), Vec2(+15, g * 180), ccColor4F(0.0f, 1.0f, 1.0f, 1.0f));
+
+}
+
 void View::shake(float start, float now, Vec2 dir){
 	float v = sin((now - start) * 2 * M_PI / ERROR_WINDOW);
 	allSpace->setPosition(shakeCenter + v * SHAKE_STRENGTH * dir);

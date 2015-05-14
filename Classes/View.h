@@ -94,6 +94,8 @@ public:
 
 	void redrawDurability(int dur);
 
+	void redrawGroove(float g);
+
 	void createMusicNotePath(Sprite **mem);
 
 	/**

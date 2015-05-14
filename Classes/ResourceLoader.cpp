@@ -76,6 +76,9 @@ ResourceLoader::ResourceLoader() {
 	queueTexture("textures/countdown.png", "count_down");
 	queueTexture("textures/record.png", "record");
 	queueTexture("textures/bullet.png", "bullet");
+	queueTexture("textures/groovy_bar_low.png", "groovy_bar_low");
+	queueTexture("textures/groovy_bar_medium.png", "groovy_bar_medium");
+	queueTexture("textures/groovy_bar_high.png", "groovy_bar_high");
 }
 
 /**
