@@ -247,6 +247,7 @@ private:
 	void unPanning();
 	void createTipPopup();
 
+	void indicateWeaponPosition();
 	void removeDeadWeapons();
 	void removeDeadEWeapons();
 	void removeDeadZombies();

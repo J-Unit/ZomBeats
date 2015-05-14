@@ -604,6 +604,19 @@ bool GameController::isZombieHit(b2Vec2 az, b2Vec2 bz, b2Vec2 ab, b2Vec2 bc){
 }
 
 
+void GameController::indicateWeaponPosition() {
+	float closestOffScreenDist;
+	b2Vec2 closestOffScreenCoord;
+	b2Vec2 rickyPos = state->ship->body->GetPosition();
+	for (CTypedPtrDblElement<Weapon> *weapon = state->weapons.GetHeadPtr(); !state->weapons.IsSentinel(weapon); weapon = weapon->Next())
+	{
+		Weapon *weap = weapon->Data();
+		b2Vec2 pos = weap->body->GetPosition();
+	
+	}
+
+}
+
 void GameController::removeCollectedGoals(){
 	GoalObject *go = state->instrument;
 	if (go != NULL && go->isCollected){
@@ -810,6 +823,7 @@ void GameController::update(float deltaTime) {
 			removeDyingZombies();
 			removeCollectedGoals();
 			meter->drain();
+			indicateWeaponPosition();
 
 			if (tipActive){
 				//countdown to stop displaying the tip
@@ -1338,8 +1352,8 @@ void GameController::update(float deltaTime) {
 					}else if (!audio->prevOnBeat){
 					pos = z->Data()->body->GetPosition();
 					view->zombiePositions->drawSolidCircle(Vec2(pos.x, pos.y), 8.0f, 0.0f, 20.0f, ccColor4F(0.5f, 0, 0, 1.0f));
-					}*/
-
+					}*/ 
+					//drawing method here
 				}
 				z = z->Next();
 			}
