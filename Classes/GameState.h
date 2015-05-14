@@ -24,7 +24,7 @@ public:
 	//used to track multiple goals
 	int numZombiesRemain;
 	int zomGoal;
-
+	std::string levelTip;
 	GameState(int tx, int ty, int nx, int ny);
 	~GameState();
 };

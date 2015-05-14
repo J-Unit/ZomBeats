@@ -247,6 +247,8 @@ bool GameController::init() {
 	meter = new GrooveMeter();
 	currentEnvironmentMeter = 0.3f;
 	activationDelay = true;
+	tipActive = false;
+	tipTimer = 0.0f;
 	doneActivating = false;
 	hasCollectedGoal = false;
 	Director* director = Director::getInstance();
@@ -440,7 +442,11 @@ void GameController::loadLevel(int i){
 	}
 	//for normal levels, may need to do sth here later
 	else{
-		
+		if (state->levelTip.compare("") != 0){
+			//not calibration level and there is a tip popup
+			tipActive = true;
+			createTipPopup();
+		}
 	}
 }
 
@@ -725,6 +731,17 @@ void GameController::startVideoCalibration(){
 	}
 }
 
+void GameController::createTipPopup(){
+	popup = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("dialogue_popup"));
+	popup->setScale(DIALOGUE_POPUP_SCALE);
+	popup->setPosition(Vec2(HUD_OFFSET.x*44.5, HUD_OFFSET.y * 10));
+	popup->setOpacity(160);
+	//popup->setPosition(Point(visibleSizeDialogue.width / 2, visibleSizeDialogue.height / 7));
+	view->resIndepScreen->addChild(popup, 4);
+	//createOkButton(0);
+	view->objective->setString(state->levelTip);
+}
+
 /**
 * Update the game state.
 *
@@ -784,6 +801,19 @@ void GameController::update(float deltaTime) {
 			removeDyingZombies();
 			removeCollectedGoals();
 			meter->drain();
+
+			if (tipActive){
+				//countdown to stop displaying the tip
+				tipTimer += deltaTime;
+			}
+
+			if (tipTimer >= TIP_DISPLAY_LEN){
+				//tip has displayed for max time, so now get rid of that shit
+				tipTimer = 0.0f;
+				tipActive = false;
+				popup->setVisible(false);
+				view->resIndepScreen->removeChild(popup);
+			}
 
 
 			//reduce meter by a little bit
@@ -1477,9 +1507,12 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 
 		stringstream ss;
 		ss << state->numZombiesRemain << " zombies left!";
-		view->objective->setString(ss.str());
+		if (!tipActive){
+			view->objective->setString(ss.str());
+		}
 		
-		if (state->instrument != NULL){
+		
+		if (state->instrument != NULL && !tipActive){
 			if (!hasCollectedGoal){
 				view->collectionGoal->setString("You must collect the instrument");
 			}

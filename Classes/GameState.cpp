@@ -8,6 +8,7 @@ GameState::GameState(int tilesX, int tilesY, int nodesX, int nodesY)
 	level = new LevelMap(tilesX, tilesY, nodesX, nodesY);
 	ship = NULL;
 	instrument = NULL;
+	levelTip = "";
 }
 
 
