@@ -390,7 +390,7 @@ void View::buildScene(LevelMap *level, Layer* l, int levNum) {
 }
 
 void View::redrawDurability(int dur){
-	durabilitySpriteContainer->removeAllChildren();
+	durabilitySpriteContainer->removeAllChildrenWithCleanup(true);
 	for (int i = 0; i < 3 && dur>0; ++i){
 		for (int j = 0; j < 2 && dur>0; ++j, dur--){
 			//draw the durability circle
@@ -403,15 +403,10 @@ void View::redrawDurability(int dur){
 	}
 }
 
-void View::redrawGroove(float g) {
-	meter->removeAllChildren();
-	//draw outer rectangle
+void View::drawGroove(){
 	meter->drawRect(Vec2(-22, 0), Vec2(+22, 180), ccColor4F(0.5f, 0.5f, 0.5f, 1.0f));
-	int upper_bound = (int)(45 * g);
-	//upper_bound =  45;
-	for (int i = 0; i < upper_bound; i++) {
-
-		Sprite* bar;
+	Sprite* bar;
+	for (int i = 0; i < 45; i++) {
 		if (i < 15) {
 			bar = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("groovy_bar_low"));
 		}
@@ -421,9 +416,20 @@ void View::redrawGroove(float g) {
 		else {
 			bar = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("groovy_bar_high"));
 		}
-		bar->setPosition(Vec2(0, i*4));
-		meter->addChild(bar);
+		bar->setPosition(Vec2(0, 2 + i * 4));
+		bar->setVisible(false);
+		meter->addChild(bar, -1);
+		grooveBars[i] = bar;
+	}
+}
 
+void View::redrawGroove(float g) {
+	//meter->removeAllChildrenWithCleanup(true);
+	//draw outer rectangle
+	int upper_bound = std::round(45 * g);
+	//upper_bound =  45;
+	for (int i = 0; i < 45; i++) {
+		grooveBars[i]->setVisible(i < upper_bound);
 	}
 	//view->meter->drawSolidRect(Vec2(-15, 0), Vec2(+15, g * 180), ccColor4F(0.0f, 1.0f, 1.0f, 1.0f));
 

@@ -15,7 +15,7 @@ void GrooveMeter::decreaseRadius(){
 }
 
 void GrooveMeter::drain(){
-	detectionRadius = std::min(detectionRadius + 0.04f, MAX_DETECTION_RADIUS);
+	detectionRadius = std::min(detectionRadius + 0.06f, MAX_DETECTION_RADIUS);
 }
 
 std::string GrooveMeter::getGroovinessDisplay(float v){

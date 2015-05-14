@@ -6,6 +6,7 @@
 //
 #include "ResourceLoader.h"
 #include "2d/CCFontAtlasCache.h"  // Not sure why not part of cocos2d.h
+#include "AudioController.h"
 
 /** Initialization of static reference */
 ResourceLoader* ResourceLoader::gLoader = NULL;
@@ -35,7 +36,7 @@ ResourceLoader::ResourceLoader() {
 	else {
 		fontdata["NewFont"] = font;
 	}
-
+	AudioController::preload();
 	queueTexture("textures/tile_new.png", "tile1");
 	queueTexture("textures/blood1.png", "blood");
 	queueTexture("textures/zombie_new.png", "zombie_single");

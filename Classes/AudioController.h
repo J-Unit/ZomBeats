@@ -46,5 +46,7 @@ public:
 	void resumeSounds();
 	void pauseSounds();
 	void stop();
+
+	static void preload();
 };
 

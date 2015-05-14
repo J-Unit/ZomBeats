@@ -3,6 +3,32 @@
 
 using namespace cocos2d::experimental;
 
+void AudioController::preload(){
+	//Force cocos to cache our music because it doesn't let you do it manually
+	AudioEngine::stop(AudioEngine::play2d("songs/01 Overdrive.mp3", true, 0.0f));
+	AudioEngine::stop(AudioEngine::play2d("songs/01 Looking For.mp3", true, 0.0f));
+	AudioEngine::stop(AudioEngine::play2d("songs/01 Pickles.mp3", true, 0.0f));
+	AudioEngine::stop(AudioEngine::play2d("songs/BLANCO.mp3", true, 0.0f));
+	AudioEngine::stop(AudioEngine::play2d("songs/ChillDeepHouse.mp3", true, 0.0f));
+	AudioEngine::stop(AudioEngine::play2d("songs/Galactic_Grass.mp3", true, 0.0f));
+	AudioEngine::stop(AudioEngine::play2d("songs/InPizzaWeCrust.mp3", true, 0.0f));
+	AudioEngine::stop(AudioEngine::play2d("songs/Its_A_Trap.mp3", true, 0.0f));
+	AudioEngine::stop(AudioEngine::play2d("songs/rf1.mp3", true, 0.0f));
+	AudioEngine::stop(AudioEngine::play2d("songs/rf2.mp3", true, 0.0f));
+	AudioEngine::stop(AudioEngine::play2d("songs/rf3.mp3", true, 0.0f));
+	AudioEngine::stop(AudioEngine::play2d("songs/rf4.mp3", true, 0.0f));
+	AudioEngine::stop(AudioEngine::play2d("songs/rf5.mp3", true, 0.0f));
+	AudioEngine::stop(AudioEngine::play2d("songs/rf6.mp3", true, 0.0f));
+	AudioEngine::stop(AudioEngine::play2d("songs/rf7.mp3", true, 0.0f));
+	AudioEngine::stop(AudioEngine::play2d("songs/rf8.mp3", true, 0.0f));
+	AudioEngine::stop(AudioEngine::play2d("songs/rf9.mp3", true, 0.0f));
+	AudioEngine::stop(AudioEngine::play2d("songs/rf10.mp3", true, 0.0f));
+	AudioEngine::stop(AudioEngine::play2d("songs/RobotsInTheRain.mp3", true, 0.0f));
+	AudioEngine::stop(AudioEngine::play2d("songs/CalibrationLong.mp3", true, 0.0f));
+	AudioEngine::stop(AudioEngine::play2d("songs/SimpleBeat.mp3", true, 0.0f));
+	//AudioEngine::stopAll();
+}
+
 AudioController::AudioController()
 {
 	currentSong = NULL;
