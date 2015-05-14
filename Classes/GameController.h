@@ -45,6 +45,8 @@
 #define ENVIRONMENT_METER_DEC_OFFBEAT 0.17f
 #define ENVIRONMENT_METER_DEC 0.002f
 
+#define TIP_DISPLAY_LEN 7.5f
+
 using namespace cocos2d;
 using namespace std;
 
@@ -241,6 +243,7 @@ private:
 	void createCountDown();
 	void panning();
 	void unPanning();
+	void createTipPopup();
 
 	void removeDeadWeapons();
 	void removeDeadEWeapons();
@@ -260,6 +263,8 @@ private:
 	//used for the initial pause and begin count down
 	bool beginCountDown;
 
+	bool tipActive;
+	float tipTimer;
 };
 
 #endif /* defined(__TD_GAME_CONTROLLER_H__) */

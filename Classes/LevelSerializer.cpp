@@ -80,6 +80,13 @@ void LevelSerializer::addObjects(GameState *s){
 		s->numZombiesRemain = d["zombies"].Size();
 		s->zomGoal = 0;
 	}
+
+	if (d.HasMember("tip")){
+		s->levelTip = d["tip"].GetString();
+	}
+	else{
+		s->levelTip = "";
+	}
 	
 }
 
