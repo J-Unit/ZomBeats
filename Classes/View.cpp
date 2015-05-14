@@ -390,11 +390,15 @@ void View::buildScene(LevelMap *level, Layer* l, int levNum) {
 }
 
 void View::redrawDurability(int dur){
-	durabilitySpriteContainer->clear();
+	durabilitySpriteContainer->removeAllChildren();
 	for (int i = 0; i < 3 && dur>0; ++i){
 		for (int j = 0; j < 2 && dur>0; ++j, dur--){
 			//draw the durability circle
-			durabilitySpriteContainer->drawSolidCircle(Vec2(25.0f + j*50.0f, -(25.0f + i*50.0f)), 8.0f, 0.0f, 20.0f, ccColor4F(0.5f, 0, 0, 1.0f));
+			Sprite* new_bullet = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("bullet"));
+			new_bullet->setPosition(Vec2(25.0f + j*50.0f, -(25.0f + i*50.0f)));
+			new_bullet->setScale(0.3f);
+			durabilitySpriteContainer->addChild(new_bullet);
+			//durabilitySpriteContainer->drawSolidCircle(Vec2(25.0f + j*50.0f, -(25.0f + i*50.0f)), 8.0f, 0.0f, 20.0f, ccColor4F(0.5f, 0, 0, 1.0f));
 		}
 	}
 }

@@ -75,6 +75,7 @@ ResourceLoader::ResourceLoader() {
 	queueTexture("textures/ok_button.png", "ok_button");
 	queueTexture("textures/countdown.png", "count_down");
 	queueTexture("textures/record.png", "record");
+	queueTexture("textures/bullet.png", "bullet");
 }
 
 /**
