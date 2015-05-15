@@ -75,7 +75,7 @@ ResourceLoader::ResourceLoader() {
 	queueTexture("textures/dialogue_box.png", "dialogue_popup");
 	queueTexture("textures/ok_button.png", "ok_button");
 	queueTexture("textures/countdown.png", "count_down");
-	queueTexture("textures/record.png", "record");
+	queueTexture("textures/record_sprite_low_res.png", "record");
 	queueTexture("textures/bullet.png", "bullet");
 	queueTexture("textures/groovy_bar_low.png", "groovy_bar_low");
 	queueTexture("textures/groovy_bar_medium.png", "groovy_bar_medium");

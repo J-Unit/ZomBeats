@@ -421,6 +421,7 @@ void GameController::loadLevel(int i){
 		ew->Data()->beingUsed = false;
 	}
 	if (state->instrument != NULL){
+		state->instrument->sprite->setFrame(currentLevel % 8);
 		view->enviornment->addChild(state->instrument->sprite, 2);
 	}
 	//initial detection radius

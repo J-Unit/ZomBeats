@@ -17,10 +17,10 @@ GoalObject::GoalObject(b2World *world, float x, float y, std::string object_name
 	fixture.shape = &box;
 	fixture.isSensor = true;
 	body->CreateFixture(&fixture);
-	setSprite(Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture(object_name)));
+	setSprite(FilmStrip::create(ResourceLoader::getInstance()->getTexture(object_name), 8, 1, 8));
 }
 
-void GoalObject::setSprite(Sprite* value)
+void GoalObject::setSprite(FilmStrip* value)
 {
 	b2Vec2 pos = body->GetPosition();
 	sprite = value;
@@ -29,6 +29,7 @@ void GoalObject::setSprite(Sprite* value)
 		sprite->retain(); // Do not delete it until we are done.
 		sprite->setPosition(pos.x, pos.y);
 		sprite->setAnchorPoint(Vec2(0.5f, 0.5f));
+		sprite->setScale(RECORD_SCALE);
 	}
 }
 
