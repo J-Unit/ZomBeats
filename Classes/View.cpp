@@ -177,6 +177,11 @@ void View::buildScene(LevelMap *level, Layer* l, int levNum) {
 	ai->setPosition(center);
 	ai->setAnchorPoint(anchor);
 
+	weaponPositions = DrawNode::create();
+	weaponPositions->setContentSize(allSpace->getContentSize());
+	weaponPositions->setPosition(center);
+	weaponPositions->setAnchorPoint(anchor);
+
 	zombiePositions = DrawNode::create();
 	zombiePositions->setContentSize(allSpace->getContentSize());
 	zombiePositions->setPosition(center);
@@ -223,6 +228,7 @@ void View::buildScene(LevelMap *level, Layer* l, int levNum) {
 	//enviornment->addChild(meshVis);
 	enviornment->addChild(path);
 	enviornment->addChild(ai, 10);
+	enviornment->addChild(weaponPositions, 10);
 	enviornment->addChild(zombiePositions, 4); //z-order to zombiePositions should be larger than fog's 
 	enviornment->addChild(detectionRadiusCircle);
 	enviornment->addChild(hitBox, 3);

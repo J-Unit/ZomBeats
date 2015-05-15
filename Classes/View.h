@@ -55,6 +55,7 @@ public:
 	DrawNode* hitBox;
 	DrawNode* weaponBox;
 	DrawNode* ai;
+	DrawNode* weaponPositions;
 	DrawNode* zombiePositions;
 	Label* grooviness;
 	Label* durability;

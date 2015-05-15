@@ -603,16 +603,36 @@ bool GameController::isZombieHit(b2Vec2 az, b2Vec2 bz, b2Vec2 ab, b2Vec2 bc){
 	else return false;
 }
 
-
+//indicate the closest weapon that's outside the current screen
 void GameController::indicateWeaponPosition() {
-	float closestOffScreenDist;
-	b2Vec2 closestOffScreenCoord;
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	float closestOffScreenDist = 10000.0f; //make it large enough
+	b2Vec2 closestOffScreenCoord; //closest weapon that is off the screen
 	b2Vec2 rickyPos = state->ship->body->GetPosition();
 	for (CTypedPtrDblElement<Weapon> *weapon = state->weapons.GetHeadPtr(); !state->weapons.IsSentinel(weapon); weapon = weapon->Next())
 	{
 		Weapon *weap = weapon->Data();
-		b2Vec2 pos = weap->body->GetPosition();
-	
+		b2Vec2 weaponPos = weap->body->GetPosition();
+		//not sure if this calculation is correct below
+		if ((std::abs(weaponPos.y - rickyPos.y) > (visibleSize.height / 2)) || (std::abs(weaponPos.x - rickyPos.x) > (visibleSize.width / 2))) {
+			float new_dist = std::abs(weaponPos.y - rickyPos.y) * std::abs(weaponPos.y - rickyPos.y) +
+				std::abs(weaponPos.x - rickyPos.x)*std::abs(weaponPos.x - rickyPos.x);
+			if (new_dist < closestOffScreenDist) {
+				closestOffScreenDist = new_dist;
+				closestOffScreenCoord = weaponPos;
+			}
+		}
+	}
+
+	//display weapon pos if changed
+	if (closestOffScreenDist < 10000.0f) {
+		if (!audio->frameOnBeat){
+			view->weaponPositions->clear();
+		}
+		else if (!audio->prevOnBeat){
+			//Draw the dot here, not implemented yet
+			//view->weaponPositions->drawSolidCircle(Vec2(200.0f, 200.0f), 8000.0f, 0.0f, 20.0f, ccColor4F(0.5f, 0, 0, 1.0f));
+		}
 	}
 
 }
@@ -823,7 +843,7 @@ void GameController::update(float deltaTime) {
 			removeDyingZombies();
 			removeCollectedGoals();
 			meter->drain();
-			indicateWeaponPosition();
+			
 
 			if (tipActive){
 				//countdown to stop displaying the tip
@@ -1353,8 +1373,8 @@ void GameController::update(float deltaTime) {
 					}else if (!audio->prevOnBeat){
 					pos = z->Data()->body->GetPosition();
 					view->zombiePositions->drawSolidCircle(Vec2(pos.x, pos.y), 8.0f, 0.0f, 20.0f, ccColor4F(0.5f, 0, 0, 1.0f));
-					}*/ 
-					//drawing method here
+					}*/
+					//drawing method here 
 				}
 				z = z->Next();
 			}
@@ -1506,6 +1526,7 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 	for (CTypedPtrDblElement<Zombie> *z = state->zombies.GetHeadPtr(); !state->zombies.IsSentinel(z); z = z->Next()){
 	Zombie *zom = z->Data();
 	b2Vec2 pos = zom->body->GetPosition();
+	//view->ai->drawSolidCircle(Vec2(500.0f, 500.0f), 8000.0f, 0.0f, 20.0f, ccColor4F(0.5f, 0, 0, 1.0f));
 	view->ai->drawLine(Vec2(pos.x, pos.y), Vec2(pos.x + zom->seperation.x, pos.y + zom->seperation.y), ccColor4F(1, 0, 0, 1.0f));
 	view->ai->drawLine(Vec2(pos.x, pos.y), Vec2(pos.x + zom->attraction.x, pos.y + zom->attraction.y), ccColor4F(0, 1, 0, 1.0f));
 	view->ai->drawLine(Vec2(pos.x, pos.y), Vec2(pos.x + zom->aidir.x / 28, pos.y + zom->aidir.y / 28), ccColor4F(0, 0, 0, 1.0f));
@@ -1513,6 +1534,9 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 	view->ai->drawLine(Vec2(pos.x, pos.y), Vec2(pos.x + zom->cohesion.x, pos.y + zom->cohesion.y), ccColor4F(0, 0, 1, 1.0f));
 	view->ai->drawLine(Vec2(pos.x, pos.y), Vec2(pos.x + zom->zombiness.x, pos.y + zom->zombiness.y), ccColor4F(1, 1, 0, 1.0f));
 	}
+
+	//indicate the closest weapon that's outside the current screen
+	indicateWeaponPosition();
 
 	if (currentLevel != CALIBRATION_LEVEL){
 		stringstream st;
