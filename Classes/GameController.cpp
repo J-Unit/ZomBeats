@@ -68,6 +68,7 @@ void GameController::BeginContact(b2Contact* contact){
 	//weapon pickup
 	Weapon *w;
 	if ((b1->type == WeaponType && b2->type == ShipType) || (b1->type == ShipType && b2->type == WeaponType)){
+		if (state->ship->hasWeapon) return;
 		w = (b1->type == WeaponType) ? b1->getWeapon() : b2->getWeapon();
 		w->isDesroyed = true;
 		state->ship->hasWeapon = true;
@@ -353,6 +354,11 @@ bool GameController::hasWonLevel(){
 	//target num zombies 
 	//pointer to collectable in level...can be null if level doesnt have collectable
 	if (currentLevel != CALIBRATION_LEVEL) {
+		if (state->zombies.GetCount() - state->zomGoal > 0 && state->weapons.GetCount() < 1 && state->environment_weapons.GetCount() < 1 && !state->ship->hasWeapon && !state->ship->hasEnvironmentWeapon){
+			state->ship->isDestroyed = true;
+			view->objective->setString("No weapons left, try again!");
+			return false;
+		}
 		//logic for multiple goals
 		if (state->instrument != NULL){
 			//the level has a collectable item

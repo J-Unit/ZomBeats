@@ -16,7 +16,7 @@
 #define SHIP_MAX_TURN      1.0f
 #define SHIP_MAX_SPEED    10.0f
 #define SHIP_THRUST_FACTOR 0.4f
-#define IMPULSE 1500 //was 2875, slightly decreased it to see how it works with grooviness
+#define IMPULSE 1000 //was 2875, slightly decreased it to see how it works with grooviness
 #define GROOVY_BONUS 2000
 
 
