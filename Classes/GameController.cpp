@@ -265,8 +265,6 @@ bool GameController::init() {
 	currentTrash = NULL;
 	audio = new AudioController();
 	save.parseSave(this, SAVE_FILE);
-	beginDeathAnimation = false;
-	beginPickUpAnimation = false;
 
 	return true;
 }
@@ -466,6 +464,9 @@ void GameController::loadLevel(int i){
 	pickupAnimation->setFrame(0);
 	this->addChild(pickupAnimation, 10);
 	pickupAnimation->setVisible(false);
+
+	beginDeathAnimation = false;
+	beginPickUpAnimation = false;
 
 }
 
@@ -834,6 +835,7 @@ void GameController::update(float deltaTime) {
 					beginPickUpAnimation = false;
 					pickupAnimation->setVisible(false);
 					state->ship->sprite->setVisible(true);
+					state->instrument->sprite->setVisible(true);
 					save.exportLevel(currentLevel);
 					loadLevel(std::min(currentLevel + 1, MAX_LEVELS));
 					beginCountDown = true;
