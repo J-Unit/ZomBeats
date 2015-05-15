@@ -413,7 +413,7 @@ void GameController::loadLevel(int i){
 		view->allSpace->addChild(state->ship->getSprite());
 	}
 	//createFog();
-	for (int i = 0; i<state->level->nWalls; i++) view->enviornment->addChild(state->level->walls[i].sprite);
+	for (int i = 0; i<state->level->nWalls; i++) view->walls->addChild(state->level->walls[i].sprite, state->level->walls[i].z + 1);
 	for (CTypedPtrDblElement<Zombie> *cz = state->zombies.GetHeadPtr(); !state->zombies.IsSentinel(cz); cz = cz->Next()) view->zombies->addChild(cz->Data()->sprite, 2);
 	for (CTypedPtrDblElement<Weapon> *cw = state->weapons.GetHeadPtr(); !state->weapons.IsSentinel(cw); cw = cw->Next()) view->enviornment->addChild(cw->Data()->sprite, 2);
 	for (CTypedPtrDblElement<EnvironmentWeapon> *ew = state->environment_weapons.GetHeadPtr(); !state->environment_weapons.IsSentinel(ew); ew = ew->Next()) {

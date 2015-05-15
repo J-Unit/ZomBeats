@@ -68,6 +68,7 @@ public:
 
 	Node*   enviornment;
 	Node* zombies;
+	Node* walls;
 
 	Sprite *grooveBars[45];
 

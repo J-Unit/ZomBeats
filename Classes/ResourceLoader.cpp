@@ -58,7 +58,7 @@ ResourceLoader::ResourceLoader() {
 	queueTexture("textures/rock.png", "rock");
 	queueTexture("textures/trash.png", "trash");
 	queueTexture("textures/trashcan.png", "trashcan");
-	queueTexture("textures/tree.png", "tree");
+	queueTexture("textures/tree (1).png", "tree");
 	queueTexture("textures/sword.png", "sword");
 	queueTexture("textures/pistol.png", "pistol");
 	queueTexture("textures/shotgun.png", "shotgun");
