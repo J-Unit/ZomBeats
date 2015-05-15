@@ -143,11 +143,11 @@ bool LevelSelectScene3::init()
 
 	MenuItemImage* startButton22;
 	if (22 <= completedLevel) {
-		startButton22 = MenuItemImage::create("textures/level22_completed.png", "textures/level22_completed_clicked.png", CC_CALLBACK_1(LevelSelectScene3::GoToGameScene, this, 22));
+		startButton22 = MenuItemImage::create("textures/level22_completed.png", "textures/level22_completed_clicked.png");
 	}
 	//next level we need to complete
 	else if (22 == completedLevel + 1) {
-		startButton22 = MenuItemImage::create("textures/level22.png", "textures/level22_clicked.png", CC_CALLBACK_1(LevelSelectScene3::GoToGameScene, this, 22));
+		startButton22 = MenuItemImage::create("textures/level22.png", "textures/level22_clicked.png");
 	}
 	//could not unlock this level yet
 	else {
@@ -159,11 +159,11 @@ bool LevelSelectScene3::init()
 
 	MenuItemImage* startButton23;
 	if (23 <= completedLevel) {
-		startButton23 = MenuItemImage::create("textures/level23_completed.png", "textures/level23_completed_clicked.png", CC_CALLBACK_1(LevelSelectScene3::GoToGameScene, this, 23));
+		startButton23 = MenuItemImage::create("textures/level23_completed.png", "textures/level23_completed_clicked.png");
 	}
 	//next level we need to complete
 	else if (23 == completedLevel + 1) {
-		startButton23 = MenuItemImage::create("textures/level23.png", "textures/level23_clicked.png", CC_CALLBACK_1(LevelSelectScene3::GoToGameScene, this, 23));
+		startButton23 = MenuItemImage::create("textures/level23.png", "textures/level23_clicked.png");
 	}
 	//could not unlock this level yet
 	else {
