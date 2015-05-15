@@ -5,6 +5,9 @@
 #define ERROR_PERCENT 0.12
 #define EIGHTH_ERROR_PERCENT 0.1
 
+//#define ERROR_PERCENT 1.2
+//#define EIGHTH_ERROR_PERCENT 1
+
 class SongDecomposition
 {
 public:

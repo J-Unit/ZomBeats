@@ -80,6 +80,7 @@ ResourceLoader::ResourceLoader() {
 	queueTexture("textures/groovy_bar_low.png", "groovy_bar_low");
 	queueTexture("textures/groovy_bar_medium.png", "groovy_bar_medium");
 	queueTexture("textures/groovy_bar_high.png", "groovy_bar_high");
+	queueTexture("textures/pickupSprite.png", "pickupSprite");
 }
 
 /**

@@ -261,12 +261,19 @@ private:
 	//the okay button menu used in calibration menu
 	Menu* okButtonMenu;
 
+	FilmStrip* pickupAnimation;
+
 	LevelSerializer ls;
 	SaveSerializer save;
 	bool removed;
 
 	//used for the initial pause and begin count down
 	bool beginCountDown;
+	//used for playing pick up goal object animation
+	bool beginPickUpAnimation;
+	//used for playing death animation
+	bool beginDeathAnimation;
+	int specialAnimationFrameCounter;
 
 	bool tipActive;
 	float tipTimer;

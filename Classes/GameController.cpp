@@ -265,6 +265,9 @@ bool GameController::init() {
 	currentTrash = NULL;
 	audio = new AudioController();
 	save.parseSave(this, SAVE_FILE);
+	beginDeathAnimation = false;
+	beginPickUpAnimation = false;
+
 	return true;
 }
 /**
@@ -302,7 +305,6 @@ void GameController::initEnvironment() {
 
 	//ricky texture not initially removed
 	removed = false;
-
 
 }
 
@@ -454,6 +456,17 @@ void GameController::loadLevel(int i){
 			createTipPopup();
 		}
 	}
+
+	//create the pickup animation here and hide it
+	pickupAnimation = FilmStrip::create(ResourceLoader::getInstance()->getTexture("pickupSprite"), 8, 14, 112);
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+	pickupAnimation->setPosition(Point(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
+	pickupAnimation->setScale(RICKY_SCALE);
+	pickupAnimation->setFrame(0);
+	this->addChild(pickupAnimation, 10);
+	pickupAnimation->setVisible(false);
+
 }
 
 //restart the game upon death or reset
@@ -802,30 +815,83 @@ void GameController::update(float deltaTime) {
 		elapsedTime += deltaTime;
 		audio->setFrameOnBeat(deltaTime);
 	}
-	if (!beginCountDown) {
-		if (!isPaused) {
-			if (hasWonLevel()){
-				if (currentLevel == CALIBRATION_LEVEL){
-					if (calibration->audioCalibration){
-						if (calibration->clicks < AUDIO_BEATS){
-							restartGame();
+	if (beginPickUpAnimation) {
+		state->ship->sprite->setVisible(false);
+		state->instrument->sprite->setVisible(false);
+		pickupAnimation->setVisible(true);
+		specialAnimationFrameCounter += 1;
+		if (specialAnimationFrameCounter % 10 == 0) {
+			int frame = pickupAnimation->getFrame();
+			//current animation frame not in the right range
+			if ((frame < (currentLevel % 8)*14) || (frame >((currentLevel % 8+1)*14 - 1))) {
+				frame = ((currentLevel % 8) * 14);
+				pickupAnimation->setFrame(frame);
+				return;
+			}
+			else {
+				//end of anumation frame, load level and restart
+				if (frame == ((currentLevel % 8 + 1) * 14 - 1)) {
+					beginPickUpAnimation = false;
+					pickupAnimation->setVisible(false);
+					state->ship->sprite->setVisible(true);
+					save.exportLevel(currentLevel);
+					loadLevel(std::min(currentLevel + 1, MAX_LEVELS));
+					beginCountDown = true;
+					createCountDown();
+					return;
+				}
+				else {
+					frame += 1;
+					pickupAnimation->setFrame(frame);
+					return;
+				}
+			}
+		}
+	}
+	else if (beginDeathAnimation) {
+
+	}
+	else {
+		if (!beginCountDown) {
+			if (!isPaused) {
+				if (hasWonLevel()){
+					if (currentLevel == CALIBRATION_LEVEL){
+						if (calibration->audioCalibration){
+							if (calibration->clicks < AUDIO_BEATS){
+								restartGame();
+							}
+							else{
+								view->objective->setString("Now tap just as the center of each orange triangle\nlines up with the blue triangle, don't miss any!\nClick ok to continue");
+								createOkButton(1);
+								pauseGameOnly();
+								startVideoCalibration();
+							}
 						}
 						else{
-							view->objective->setString("Now tap just as the center of each orange triangle\nlines up with the blue triangle, don't miss any!\nClick ok to continue");
-							createOkButton(1);
-							pauseGameOnly();
-							startVideoCalibration();
+							if (calibration->clicks < VIDEO_BEATS){
+								view->objective->setString("Now tap just as the center of each orange triangle\nlines up with the blue triangle, don't miss any!\nClick ok to continue");
+								createOkButton(1);
+								pauseGameOnly();
+								startVideoCalibration();
+							}
+							else{
+								//indicate that we have completed the level so far
+								save.exportLevel(currentLevel);
+								loadLevel(std::min(currentLevel + 1, MAX_LEVELS));
+								beginCountDown = true;
+								createCountDown();
+								return;
+							}
 						}
 					}
 					else{
-						if (calibration->clicks < VIDEO_BEATS){
-							view->objective->setString("Now tap just as the center of each orange triangle\nlines up with the blue triangle, don't miss any!\nClick ok to continue");
-							createOkButton(1);
-							pauseGameOnly();
-							startVideoCalibration();
+						//indicate that we have completed the level so far
+						//there is a goal object, need to play pick up animation
+						if (state->instrument != NULL) {
+							beginPickUpAnimation = true;
+							return;
 						}
-						else{
-							//indicate that we have completed the level so far
+						else {
 							save.exportLevel(currentLevel);
 							loadLevel(std::min(currentLevel + 1, MAX_LEVELS));
 							beginCountDown = true;
@@ -834,598 +900,590 @@ void GameController::update(float deltaTime) {
 						}
 					}
 				}
-				else{
-					//indicate that we have completed the level so far
-					save.exportLevel(currentLevel);
-					loadLevel(std::min(currentLevel + 1, MAX_LEVELS));
-					beginCountDown = true;
-					createCountDown();
+				removeDeadWeapons();
+				removeDeadEWeapons();
+				removeDeadZombies();
+				removeDyingZombies();
+				removeCollectedGoals();
+				meter->drain();
+
+
+				if (tipActive){
+					//countdown to stop displaying the tip
+					tipTimer += deltaTime;
+				}
+
+				if (tipTimer >= TIP_DISPLAY_LEN){
+					//tip has displayed for max time, so now get rid of that shit
+					tipTimer = 0.0f;
+					tipActive = false;
+					popup->setVisible(false);
+					view->resIndepScreen->removeChild(popup);
+				}
+
+
+				//reduce meter by a little bit
+				if (state->ship->isActivatingEnvironment && currentLevel != CALIBRATION_LEVEL){
+					currentEnvironmentMeter -= ENVIRONMENT_METER_DEC;
+					if (startedAct){
+						state->ship->body->SetTransform(b2Vec2(currentEnvironment->body->GetPosition().x, currentEnvironment->body->GetPosition().y), 0.0f);
+						startedAct = false;
+					}
+
+				}
+
+
+				EnvironmentWeapon *eweap = NULL;
+				for (CTypedPtrDblElement<EnvironmentWeapon> *e_weapon = state->environment_weapons.GetHeadPtr(); !state->environment_weapons.IsSentinel(e_weapon); e_weapon = e_weapon->Next())
+				{
+					eweap = e_weapon->Data();
+					if (eweap->onCooldown){
+						eweap->cdTimer += deltaTime;
+					}
+					if (eweap->cdTimer >= TRASHCAN_CD){
+						eweap->onCooldown = false;
+						eweap->cdTimer = 0.0f;
+						eweap->update();
+					}
+					if (!(currentEnvironment != NULL && currentEnvironment->e_weapon_type == 1)){
+						if (removed == true) {
+							removed = false;
+							currentEnvironment->beingUsed = false;
+							view->allSpace->addChild(state->ship->getSprite());
+						}
+					}
+					else {
+						if (eweap->beingUsed == true) {
+							eweap->update2(); //update frame of trashcan when ricky's hiding
+						}
+						view->allSpace->removeChild(state->ship->getSprite());
+						removed = true;
+					}
+
+				}
+
+				if (currentEnvironment != NULL && currentEnvironment->e_weapon_type == 1 && !state->ship->hasEnvironmentWeapon && doneActivating){
+					//eweap->update();
+					eweap->sprite->setFrame(0);
+					if (!eweap->onCooldown){
+						eweap->sprite->setFrame(1);
+					}
+					view->allSpace->addChild(state->ship->getSprite());
+					eweap->beingUsed = false;
+					removed = false;
+				}
+
+				if (state->ship->isDestroyed){
+					restartGame();
 					return;
 				}
-			}
-			removeDeadWeapons();
-			removeDeadEWeapons();
-			removeDeadZombies();
-			removeDyingZombies();
-			removeCollectedGoals();
-			meter->drain();
-			
-
-			if (tipActive){
-				//countdown to stop displaying the tip
-				tipTimer += deltaTime;
-			}
-
-			if (tipTimer >= TIP_DISPLAY_LEN){
-				//tip has displayed for max time, so now get rid of that shit
-				tipTimer = 0.0f;
-				tipActive = false;
-				popup->setVisible(false);
-				view->resIndepScreen->removeChild(popup);
-			}
-
-
-			//reduce meter by a little bit
-			if (state->ship->isActivatingEnvironment && currentLevel != CALIBRATION_LEVEL){
-				currentEnvironmentMeter -= ENVIRONMENT_METER_DEC;
-				if (startedAct){
-					state->ship->body->SetTransform(b2Vec2(currentEnvironment->body->GetPosition().x, currentEnvironment->body->GetPosition().y), 0.0f);
-					startedAct = false;
+				if (currentLevel != CALIBRATION_LEVEL) {
+					updateFog();
 				}
-				
-			}
+				float x = state->ship->body->GetPosition().x;
+				float y = state->ship->body->GetPosition().y;
+				MapNode *from = state->level->locateCharacter(x, y);
+				//if (!input->clickProcessed && !activated)
+				if (!input->clickProcessed){
+					if (currentLevel != CALIBRATION_LEVEL || (calibration->audioCalibration && calibration->acceptClicks)){
+						//cout << "PBF: " << elapsedTime << "\n";
+						stringstream st;
+						//char* tempstr = "kgkgk";
+						//std::sprintf(tempstr, "%f", elapsedTime);
 
-
-			EnvironmentWeapon *eweap = NULL;
-			for (CTypedPtrDblElement<EnvironmentWeapon> *e_weapon = state->environment_weapons.GetHeadPtr(); !state->environment_weapons.IsSentinel(e_weapon); e_weapon = e_weapon->Next())
-			{
-				eweap = e_weapon->Data();
-				if (eweap->onCooldown){
-					eweap->cdTimer += deltaTime;
-				}
-				if (eweap->cdTimer >= TRASHCAN_CD){
-					eweap->onCooldown = false;
-					eweap->cdTimer = 0.0f;
-					eweap->update();
-				}
-				if (!(currentEnvironment != NULL && currentEnvironment->e_weapon_type == 1)){
-					if (removed == true) {
-						removed = false;
-						currentEnvironment->beingUsed = false;
-						view->allSpace->addChild(state->ship->getSprite());
-					}
-				}
-				else {
-					if (eweap->beingUsed == true) {
-						eweap->update2(); //update frame of trashcan when ricky's hiding
-					}
-					view->allSpace->removeChild(state->ship->getSprite());
-					removed = true;
-				}
-
-			}
-		
-			if (currentEnvironment != NULL && currentEnvironment->e_weapon_type == 1  && !state->ship->hasEnvironmentWeapon && doneActivating){
-				//eweap->update();
-				eweap->sprite->setFrame(0);
-				if (!eweap->onCooldown){
-					eweap->sprite->setFrame(1);
-				}
-				view->allSpace->addChild(state->ship->getSprite());
-				eweap->beingUsed = false;
-				removed = false;
-			}
-
-			if (state->ship->isDestroyed){
-				restartGame();
-				return;
-			}
-			if (currentLevel != CALIBRATION_LEVEL) {
-				updateFog();
-			}
-			float x = state->ship->body->GetPosition().x;
-			float y = state->ship->body->GetPosition().y;
-			MapNode *from = state->level->locateCharacter(x, y);
-			//if (!input->clickProcessed && !activated)
-			if (!input->clickProcessed){
-				if (currentLevel != CALIBRATION_LEVEL || (calibration->audioCalibration && calibration->acceptClicks)){
-					//cout << "PBF: " << elapsedTime << "\n";
-					stringstream st;
-					//char* tempstr = "kgkgk";
-					//std::sprintf(tempstr, "%f", elapsedTime);
-
-					//view->beatHUD->setString("Actual time: " + std::to_string(elapsedTime) + " song time: " + std::to_string(AudioEngine::getCurrentTime(audioid)));
-					time_t now = time(0);
-					int userOnBeat = audio->wasOnBeat((now - input->clickTime)/1000.0f);
-					if (userOnBeat == 0 && currentLevel != CALIBRATION_LEVEL) {
-						b2Vec2 halfVel = state->ship->body->GetLinearVelocity();
-						halfVel *= 0.1;
-						state->ship->body->SetLinearVelocity(halfVel);
-						state->ship->body->SetLinearDamping(NORMAL_DAMPENING);
-						//destination = 0;
-
-						//if it is not on beat, increase the detection radius slightly
-						meter->increaseRadius();
-
-						//TODO: Decrease meter gradually and when missed
-						if (state->ship->isActivatingEnvironment){
-							currentEnvironmentMeter -= ENVIRONMENT_METER_DEC_OFFBEAT;
-						}
-					}
-					//know we must be on beat 
-					//check if activating environment
-					else if (state->ship->isActivatingEnvironment && userOnBeat != 0 && currentLevel != CALIBRATION_LEVEL){
-						if (currentEnvironment != NULL) {
-							currentEnvironment->beingUsed = true;
-							//set the trashcan to ricky hiding
-							if (currentEnvironment->e_weapon_type == 1) {
-								currentEnvironment->sprite->setFrame(2); 
-							}
-						}
-
-						meter->decreaseRadius();
-
-						if (!activationDelay){
-							currentEnvironmentMeter += ENVIRONMENT_METER_INC;
-						}
-						activationDelay = false;
-					
-						//since this is percentage based, snap it between 0-100 for drawing purposes
-						if (currentEnvironmentMeter < 0.0f){
-							currentEnvironmentMeter = 0.0f;
-						}
-						if (currentEnvironmentMeter > 1.0f){
-							currentEnvironmentMeter = 1.0f;
-						}
-						/*
-					
-					
-						TODO:
-						-Display meter full before it gets released
-						-make meter gradually drain and drain when off beat and make sure cooldown works
-						-make meter different colors to match UI
-					
-					
-						*/
-
-						processDirection = true;// signals to draw meter
-						currentFingerPos = Vec2((input->lastClick.x - view->screen_size_x / 2.0) + state->ship->body->GetPosition().x, -1.0f*(input->lastClick.y - view->screen_size_y / 2.0) + state->ship->body->GetPosition().y);
-						currentFingerPos.subtract(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y));
-						currentFingerPos.normalize();
-						currentFingerPos.scale(TDISTANCE);
-						currentFingerPos.add(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y));
-
-						//check activation status
-						if (currentEnvironmentMeter == 1.0f){
-							//successfully activated
-							activationDelay = true;
-							Vec2 clk = mouseToWorld(input->lastClick);
-							dRickyTap->set(clk.x - state->ship->body->GetPosition().x, clk.y - state->ship->body->GetPosition().y);
-							float tht = atan2(dRickyTap->y, dRickyTap->x);
-							//tht = round(tht / (M_PI / 4.0f)) * (M_PI / 4.0f);
-
-							createEnvironmentActivationMeter(ENVIRONMENT_METER_WIDTH, ENVIRONMENT_METER_LENGTH, 1.0f, b2Vec2(cos(tht), sin(tht)));
-
-							state->ship->isActivatingEnvironment = false;
-							processDirection = false;
-							state->ship->hasEnvironmentWeapon = false;
-
-							currentEnvironment->isUsed = true;
-
-							Vec2 mowerDir = currentFingerPos;
-							mowerDir.subtract(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y));
-							mowerDir.normalize();
-							mowerDir.scale(125.0f);
-							mowerDir.add(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y));
-
-							b2Vec2 dir = b2Vec2(mowerDir.x, mowerDir.y);
-							view->weaponBox->clear();
-							if (currentEnvironment->e_weapon_type == 0){
-								Lawnmower *lm = new Lawnmower(state->world, mowerDir.x, mowerDir.y, dir);
-								state->environment_weapons.AddTail(lm);
-								view->enviornment->addChild(lm->sprite, 2); //lawnmower's z-order needs to be changed the same as envrionment weapon 
-								audio->playEffect("sound_effects/LawnMower.mp3", 1.2f);
-								lm->addParticles();
-								currentMower = lm;
-								currentEnvironment = lm;
-							}
-							else if (currentEnvironment->e_weapon_type == 1){
-								currentEnvironment->beingUsed = false; //not using trashcan anymore
-								Trash *tr = new Trash(state->world, mowerDir.x, mowerDir.y);
-								state->environment_weapons.AddTail(tr);
-								view->enviornment->addChild(tr->sprite, 2);
-								currentTrash = tr;
-								currentEnvironment = tr;
-							}
-
-						}
-					}	
-					else{
-						if (userOnBeat == 2 && currentLevel != CALIBRATION_LEVEL){
-							state->ship->boostFrames = MAX_EIGHTH_NOTE_FRAMES;
-							state->ship->thrustFactor = EIGHTH_NOTE_THRUST_FACTOR;
-							state->ship->body->SetLinearDamping(EIGHTH_NOTE_DAMPENING);
-							state->ship->addDustParticles();
-						}
-						else{
-							state->ship->boostFrames = MAX_BOOST_FRAMES;
-							state->ship->thrustFactor = 1.0f;
-							state->ship->body->SetLinearDamping(NORMAL_DAMPENING);
-						}
-						view->weaponBox->clear();
-						Vec2 click = mouseToWorld(input->lastClick);
-						MapNode *dest = state->level->locateCharacter(click.x, click.y);
-						state->level->shortestPath(from, dest);
-						destination = from->next;
-						MapNode *destPrev = from;
-
-						//if it is on beat, decrease the detection radius slightly
-						meter->decreaseRadius();
-
-						if (state->ship->hasWeapon){
-							//if you have a weapon and click on the beat, check if you kill any zombies in that direction
-							//mouseclick to world coords subtract rickies pos from that...normalize it...snap it to nearest rotation: round nearest int(arctan2(normalized) /. pi/2) * pi/4
-
-							dRickyTap->set(click.x - state->ship->body->GetPosition().x, click.y - state->ship->body->GetPosition().y);
-							float theta = atan2(dRickyTap->y, dRickyTap->x);
-							theta = round(theta / (M_PI / 4.0f)) * (M_PI / 4.0f);
-
-							createWeaponRanges(state->ship->currentWeapon->width, state->ship->currentWeapon->range, state->ship->currentWeapon->detectionRange, b2Vec2(cos(theta), sin(theta)));
-							//detect if zombies are inside rectangle of weapon
-							CTypedPtrDblElement<Zombie> *zambie = state->zombies.GetHeadPtr();
-							int num_zombies_killed = 0;
-							while (!state->zombies.IsSentinel(zambie))
-							{
-								Zombie *zombb = zambie->Data();
-								if (!zombb->isDestroyed){
-									//AB is vector AB, with coordinates (Bx-Ax,By-Ay)
-									b2Vec2 az = b2Vec2(zombb->body->GetPosition().x - weaponRectangle[0].x, zombb->body->GetPosition().y - weaponRectangle[0].y);
-									b2Vec2 bz = b2Vec2(zombb->body->GetPosition().x - weaponRectangle[1].x, zombb->body->GetPosition().y - weaponRectangle[1].y);
-									b2Vec2 ab = b2Vec2(weaponRectangle[1].x - weaponRectangle[0].x, weaponRectangle[1].y - weaponRectangle[0].y);
-									b2Vec2 bc = b2Vec2(weaponRectangle[3].x - weaponRectangle[1].x, weaponRectangle[3].y - weaponRectangle[1].y);
-
-									b2Vec2 az2 = b2Vec2(zombb->body->GetPosition().x - weaponDetectionRectangle[0].x, zombb->body->GetPosition().y - weaponDetectionRectangle[0].y);
-									b2Vec2 bz2 = b2Vec2(zombb->body->GetPosition().x - weaponDetectionRectangle[1].x, zombb->body->GetPosition().y - weaponDetectionRectangle[1].y);
-									b2Vec2 ab2 = b2Vec2(weaponDetectionRectangle[1].x - weaponDetectionRectangle[0].x, weaponDetectionRectangle[1].y - weaponDetectionRectangle[0].y);
-									b2Vec2 bc2 = b2Vec2(weaponDetectionRectangle[3].x - weaponDetectionRectangle[1].x, weaponDetectionRectangle[3].y - weaponDetectionRectangle[1].y);
-
-									if (isZombieHit(az2, bz2, ab2, bc2)){
-										if (isZombieHit(az, bz, ab, bc)){
-											num_zombies_killed += 1;
-											state->numZombiesRemain -= 1;
-											if (state->numZombiesRemain < 0){
-												state->numZombiesRemain = 0;
-											}
-											//zombie got hit so delete it
-											zombb->isDestroyed = true;
-										}
-									}
-								}
-								zambie = zambie->Next();
-							}
-							if (num_zombies_killed > 0){
-								audio->playEffect("sound_effects/shotgun.mp3", 0.4f);
-								state->ship->currentWeapon->durability -= 1;
-								view->redrawDurability(state->ship->currentWeapon->durability);
-								state->ship->addShrapnelParticles(theta * 180 / M_PI);
-
-							}
-							if (state->ship->currentWeapon->durability == 0){
-								state->ship->hasWeapon = false;
-								free(state->ship->currentWeapon);
-								state->ship->currentWeapon = NULL;
-								view->weaponBox->clear();
-							}
-
-						}
-
-					}
-					if (currentLevel == CALIBRATION_LEVEL){
-						if (calibration->acceptClicks){
-							calibration->totalOffset += audio->timeToBeat(4 + calibration->clicks);
-							st << "OFFSET: " << formatMs(audio->timeToBeat(4 + calibration->clicks));
-							calibration->clicks++;
-							view->beatHUD->setString(st.str());
-							if (calibration->clicks >= AUDIO_BEATS) calibration->acceptClicks = false;
-						}
-					}
-					else{
-						if (userOnBeat){
-							st << "HIT";
-						}
-						else{
-							st << "MISS BY: " << formatMs(audio->timeToClosestBeat());
-						}
-						view->beatHUD->setString(st.str());
-					}
-					input->clickProcessed = true;
-					//check if there is a zombie within the radius
-					CTypedPtrDblElement<Zombie> *cur = state->zombies.GetHeadPtr();
-					Zombie *curZ;
-					b2Vec2 tmp;
-					int count = 0;
-					bool hiss = false;
-					while (!state->zombies.IsSentinel(cur)){
-						curZ = cur->Data();
-						tmp = state->ship->body->GetPosition() - curZ->body->GetPosition();
-						//if this zombie is within our detection radius and we messed up the beat
-						float dis;
-						dis = sqrt(tmp.x*tmp.x + tmp.y*tmp.y);
-						if (!userOnBeat && dis < meter->detectionRadius) {
-							hiss = true;
-							curZ->increaseAwarness();
-						}
-						if (count == 0) {
-							currAwareness = curZ->awareness[1];
-						}
-
-						count++;
-						cur = cur->Next();
-					}
-					if (hiss){
-						audio->playEffect("sound_effects/ZombieHiss.mp3", 0.5f);
-					}
-
-
-				}
-				else{
-					if (calibration->acceptClicks){
+						//view->beatHUD->setString("Actual time: " + std::to_string(elapsedTime) + " song time: " + std::to_string(AudioEngine::getCurrentTime(audioid)));
 						time_t now = time(0);
-						float offset = (((elapsedTime - (now - input->clickTime) / 1000.0f) - audio->audioDelay) - calibration->zombieTimes[calibration->clicks]);
-						calibration->zombieTimes[calibration->clicks] = elapsedTime;
-						calibration->totalOffset += offset;
-						stringstream vss;
-						vss << "OFFSET: " << formatMs(offset);
-						view->beatHUD->setString(vss.str());
-						view->zombies->removeChild(calibration->zombies[calibration->clicks]);
-						calibration->clicks++;
-						input->clickProcessed = true;
-						if (calibration->clicks == VIDEO_BEATS){
-							calibration->acceptClicks = false;
-							audio->videoDelay = calibration->videoDelay();
-							stringstream ss;
-							ss << "Ok, great.  Video Delay: " << formatMs(audio->videoDelay); //finishing up calibration
-							view->objective->setString(ss.str());
-							save.exportSave(this);
-							//save.exportLevel(0);
+						int userOnBeat = audio->wasOnBeat((now - input->clickTime) / 1000.0f);
+						if (userOnBeat == 0 && currentLevel != CALIBRATION_LEVEL) {
+							b2Vec2 halfVel = state->ship->body->GetLinearVelocity();
+							halfVel *= 0.1;
+							state->ship->body->SetLinearVelocity(halfVel);
+							state->ship->body->SetLinearDamping(NORMAL_DAMPENING);
+							//destination = 0;
+
+							//if it is not on beat, increase the detection radius slightly
+							meter->increaseRadius();
+
+							//TODO: Decrease meter gradually and when missed
+							if (state->ship->isActivatingEnvironment){
+								currentEnvironmentMeter -= ENVIRONMENT_METER_DEC_OFFBEAT;
+							}
 						}
-					}
-				}
-			}
+						//know we must be on beat 
+						//check if activating environment
+						else if (state->ship->isActivatingEnvironment && userOnBeat != 0 && currentLevel != CALIBRATION_LEVEL){
+							if (currentEnvironment != NULL) {
+								currentEnvironment->beingUsed = true;
+								//set the trashcan to ricky hiding
+								if (currentEnvironment->e_weapon_type == 1) {
+									currentEnvironment->sprite->setFrame(2);
+								}
+							}
 
-			if (destination != 0 && from == destination){
-				destination = from->next;
-			}
-			if (currentEnvironmentMeter < 0.0f){
-				currentEnvironmentMeter = 0.0f;
-			}
-			if (currentEnvironmentMeter > 1.0f){
-				currentEnvironmentMeter = 1.0f;
-			}
+							meter->decreaseRadius();
 
-			if (state->ship->isActivatingEnvironment && currentEnvironmentMeter >= 0.0f && currentLevel != CALIBRATION_LEVEL){
-				Vec2 clk = mouseToWorld(input->lastClick);
-				dRickyTap->set(clk.x - state->ship->body->GetPosition().x, clk.y - state->ship->body->GetPosition().y);
-				float tht = atan2(dRickyTap->y, dRickyTap->x);
+							if (!activationDelay){
+								currentEnvironmentMeter += ENVIRONMENT_METER_INC;
+							}
+							activationDelay = false;
 
-				createEnvironmentActivationMeter(ENVIRONMENT_METER_WIDTH, ENVIRONMENT_METER_LENGTH, currentEnvironmentMeter, b2Vec2(cos(tht), sin(tht)));
+							//since this is percentage based, snap it between 0-100 for drawing purposes
+							if (currentEnvironmentMeter < 0.0f){
+								currentEnvironmentMeter = 0.0f;
+							}
+							if (currentEnvironmentMeter > 1.0f){
+								currentEnvironmentMeter = 1.0f;
+							}
+							/*
 
-				//createEnvironmentActivationMeter(ENVIRONMENT_METER_WIDTH, ENVIRONMENT_METER_LENGTH, currentEnvironmentMeter, b2Vec2(cos(ang), sin(ang)));
-			}
 
-			if (currentEnvironmentMeter <= 0.0f && currentLevel != CALIBRATION_LEVEL){
-				activationDelay = true;
-				doneActivating = true;
-				if (currentEnvironment != NULL) {
-					currentEnvironment->beingUsed = false;
-				}
-				view->weaponBox->clear();
-				//failed to activate
-				state->ship->isActivatingEnvironment = false;
-				processDirection = false;
-				state->ship->hasEnvironmentWeapon = false;
-				//place the specific weapon on cd
-				if (currentEnvironment->e_weapon_type == 0){
-					currentEnvironment->isJammed = true;
-					view->enviornment->addChild(currentEnvironment->sprite);
-				}
-				else if(currentEnvironment->e_weapon_type == 1){
-					currentEnvironment->isUsed = true;
-				}
-			
-				currentEnvironmentMeter = 0.3f;
+							TODO:
+							-Display meter full before it gets released
+							-make meter gradually drain and drain when off beat and make sure cooldown works
+							-make meter different colors to match UI
 
-			}
 
-			if (currentEnvironmentMeter >= 1.0f && currentLevel != CALIBRATION_LEVEL){
-				currentEnvironmentMeter = 0.3f;
-				Vec2 clk = mouseToWorld(input->lastClick);
-				dRickyTap->set(clk.x - state->ship->body->GetPosition().x, clk.y - state->ship->body->GetPosition().y);
-				float tht = atan2(dRickyTap->y, dRickyTap->x);
-				//tht = round(tht / (M_PI / 4.0f)) * (M_PI / 4.0f);
+							*/
 
-				createEnvironmentActivationMeter(ENVIRONMENT_METER_WIDTH, ENVIRONMENT_METER_LENGTH, 1.0f, b2Vec2(cos(tht), sin(tht)));
-			}
+							processDirection = true;// signals to draw meter
+							currentFingerPos = Vec2((input->lastClick.x - view->screen_size_x / 2.0) + state->ship->body->GetPosition().x, -1.0f*(input->lastClick.y - view->screen_size_y / 2.0) + state->ship->body->GetPosition().y);
+							currentFingerPos.subtract(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y));
+							currentFingerPos.normalize();
+							currentFingerPos.scale(TDISTANCE);
+							currentFingerPos.add(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y));
 
-			if (destination != 0 && from == destination){
-				destination = from->next;
-			}
+							//check activation status
+							if (currentEnvironmentMeter == 1.0f){
+								//successfully activated
+								activationDelay = true;
+								Vec2 clk = mouseToWorld(input->lastClick);
+								dRickyTap->set(clk.x - state->ship->body->GetPosition().x, clk.y - state->ship->body->GetPosition().y);
+								float tht = atan2(dRickyTap->y, dRickyTap->x);
+								//tht = round(tht / (M_PI / 4.0f)) * (M_PI / 4.0f);
 
-			if (destination != 0){
-				Vec2 dir = Vec2(state->level->getTileCenterX(destination) - x, state->level->getTileCenterY(destination) - y);
-				dir.normalize();
-				if (!state->ship->update(deltaTime, dir, meter->getGrooviness())){
-					destination = 0;
-				}
-			}
-			if (currentLevel != CALIBRATION_LEVEL){
-				ai->update(state);
-			}
-			else{
-				//calibration->phaseDelay += deltaTime;
-				if (!calibration->audioCalibration){
-					view->zombies->setPosition(view->zombies->getPosition() + Vec2(-2, 0));
-					for (int i = calibration->clicks; i < VIDEO_BEATS; i++){
-						if (calibration->zombieTimes[i]>elapsedTime){
-							calibration->zombieTimes[i] = elapsedTime + (VIDEO_CALIBRATION_OFFSET*i + 2 * VIDEO_CALIBRATION_OFFSET + view->zombies->getPosition().x) / 2 * deltaTime;
+								createEnvironmentActivationMeter(ENVIRONMENT_METER_WIDTH, ENVIRONMENT_METER_LENGTH, 1.0f, b2Vec2(cos(tht), sin(tht)));
+
+								state->ship->isActivatingEnvironment = false;
+								processDirection = false;
+								state->ship->hasEnvironmentWeapon = false;
+
+								currentEnvironment->isUsed = true;
+
+								Vec2 mowerDir = currentFingerPos;
+								mowerDir.subtract(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y));
+								mowerDir.normalize();
+								mowerDir.scale(125.0f);
+								mowerDir.add(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y));
+
+								b2Vec2 dir = b2Vec2(mowerDir.x, mowerDir.y);
+								view->weaponBox->clear();
+								if (currentEnvironment->e_weapon_type == 0){
+									Lawnmower *lm = new Lawnmower(state->world, mowerDir.x, mowerDir.y, dir);
+									state->environment_weapons.AddTail(lm);
+									view->enviornment->addChild(lm->sprite, 2); //lawnmower's z-order needs to be changed the same as envrionment weapon 
+									audio->playEffect("sound_effects/LawnMower.mp3", 1.2f);
+									lm->addParticles();
+									currentMower = lm;
+									currentEnvironment = lm;
+								}
+								else if (currentEnvironment->e_weapon_type == 1){
+									currentEnvironment->beingUsed = false; //not using trashcan anymore
+									Trash *tr = new Trash(state->world, mowerDir.x, mowerDir.y);
+									state->environment_weapons.AddTail(tr);
+									view->enviornment->addChild(tr->sprite, 2);
+									currentTrash = tr;
+									currentEnvironment = tr;
+								}
+
+							}
 						}
-					}
-					if (elapsedTime - calibration->zombieTimes[calibration->clicks] > 1.0f){
-						calibration->acceptClicks = false;
-						if (calibration->clicks != VIDEO_BEATS) {
-							view->objective->setString("You missed some of the triangles, please try again.");
-						}
-					}
-				}
-				else{
-					if (audio->songTime > 11.1f || calibration->clicks == AUDIO_BEATS
-						|| (audio->songTime>3.5f && calibration->clicks < 1)
-						|| (calibration->totalOffset < -0.5f)){
-						audio->stop();
-						//calibration->phaseDelay = 0.0f;ph
-						stringstream ss;
-						if (calibration->clicks < AUDIO_BEATS){
-							if (calibration->clicks > 0 && calibration->totalOffset < -0.5f){
-								ss << "Just listen to the first four beats,\nthen tap to the next 16!";
+						else{
+							if (userOnBeat == 2 && currentLevel != CALIBRATION_LEVEL){
+								state->ship->boostFrames = MAX_EIGHTH_NOTE_FRAMES;
+								state->ship->thrustFactor = EIGHTH_NOTE_THRUST_FACTOR;
+								state->ship->body->SetLinearDamping(EIGHTH_NOTE_DAMPENING);
+								state->ship->addDustParticles();
 							}
 							else{
-								ss << "You missed some of the the beats, try again.";
+								state->ship->boostFrames = MAX_BOOST_FRAMES;
+								state->ship->thrustFactor = 1.0f;
+								state->ship->body->SetLinearDamping(NORMAL_DAMPENING);
+							}
+							view->weaponBox->clear();
+							Vec2 click = mouseToWorld(input->lastClick);
+							MapNode *dest = state->level->locateCharacter(click.x, click.y);
+							state->level->shortestPath(from, dest);
+							destination = from->next;
+							MapNode *destPrev = from;
+
+							//if it is on beat, decrease the detection radius slightly
+							meter->decreaseRadius();
+
+							if (state->ship->hasWeapon){
+								//if you have a weapon and click on the beat, check if you kill any zombies in that direction
+								//mouseclick to world coords subtract rickies pos from that...normalize it...snap it to nearest rotation: round nearest int(arctan2(normalized) /. pi/2) * pi/4
+
+								dRickyTap->set(click.x - state->ship->body->GetPosition().x, click.y - state->ship->body->GetPosition().y);
+								float theta = atan2(dRickyTap->y, dRickyTap->x);
+								theta = round(theta / (M_PI / 4.0f)) * (M_PI / 4.0f);
+
+								createWeaponRanges(state->ship->currentWeapon->width, state->ship->currentWeapon->range, state->ship->currentWeapon->detectionRange, b2Vec2(cos(theta), sin(theta)));
+								//detect if zombies are inside rectangle of weapon
+								CTypedPtrDblElement<Zombie> *zambie = state->zombies.GetHeadPtr();
+								int num_zombies_killed = 0;
+								while (!state->zombies.IsSentinel(zambie))
+								{
+									Zombie *zombb = zambie->Data();
+									if (!zombb->isDestroyed){
+										//AB is vector AB, with coordinates (Bx-Ax,By-Ay)
+										b2Vec2 az = b2Vec2(zombb->body->GetPosition().x - weaponRectangle[0].x, zombb->body->GetPosition().y - weaponRectangle[0].y);
+										b2Vec2 bz = b2Vec2(zombb->body->GetPosition().x - weaponRectangle[1].x, zombb->body->GetPosition().y - weaponRectangle[1].y);
+										b2Vec2 ab = b2Vec2(weaponRectangle[1].x - weaponRectangle[0].x, weaponRectangle[1].y - weaponRectangle[0].y);
+										b2Vec2 bc = b2Vec2(weaponRectangle[3].x - weaponRectangle[1].x, weaponRectangle[3].y - weaponRectangle[1].y);
+
+										b2Vec2 az2 = b2Vec2(zombb->body->GetPosition().x - weaponDetectionRectangle[0].x, zombb->body->GetPosition().y - weaponDetectionRectangle[0].y);
+										b2Vec2 bz2 = b2Vec2(zombb->body->GetPosition().x - weaponDetectionRectangle[1].x, zombb->body->GetPosition().y - weaponDetectionRectangle[1].y);
+										b2Vec2 ab2 = b2Vec2(weaponDetectionRectangle[1].x - weaponDetectionRectangle[0].x, weaponDetectionRectangle[1].y - weaponDetectionRectangle[0].y);
+										b2Vec2 bc2 = b2Vec2(weaponDetectionRectangle[3].x - weaponDetectionRectangle[1].x, weaponDetectionRectangle[3].y - weaponDetectionRectangle[1].y);
+
+										if (isZombieHit(az2, bz2, ab2, bc2)){
+											if (isZombieHit(az, bz, ab, bc)){
+												num_zombies_killed += 1;
+												state->numZombiesRemain -= 1;
+												if (state->numZombiesRemain < 0){
+													state->numZombiesRemain = 0;
+												}
+												//zombie got hit so delete it
+												zombb->isDestroyed = true;
+											}
+										}
+									}
+									zambie = zambie->Next();
+								}
+								if (num_zombies_killed > 0){
+									audio->playEffect("sound_effects/shotgun.mp3", 0.4f);
+									state->ship->currentWeapon->durability -= 1;
+									view->redrawDurability(state->ship->currentWeapon->durability);
+									state->ship->addShrapnelParticles(theta * 180 / M_PI);
+
+								}
+								if (state->ship->currentWeapon->durability == 0){
+									state->ship->hasWeapon = false;
+									free(state->ship->currentWeapon);
+									state->ship->currentWeapon = NULL;
+									view->weaponBox->clear();
+								}
+
+							}
+
+						}
+						if (currentLevel == CALIBRATION_LEVEL){
+							if (calibration->acceptClicks){
+								calibration->totalOffset += audio->timeToBeat(4 + calibration->clicks);
+								st << "OFFSET: " << formatMs(audio->timeToBeat(4 + calibration->clicks));
+								calibration->clicks++;
+								view->beatHUD->setString(st.str());
+								if (calibration->clicks >= AUDIO_BEATS) calibration->acceptClicks = false;
 							}
 						}
 						else{
-							audio->audioDelay = calibration->audioDelay();
-							ss << "Ok, great! Now stop tapping! Audio delay: " << formatMs(audio->audioDelay);
-							calibration->acceptClicks = false;
+							if (userOnBeat){
+								st << "HIT";
+							}
+							else{
+								st << "MISS BY: " << formatMs(audio->timeToClosestBeat());
+							}
+							view->beatHUD->setString(st.str());
 						}
-						view->objective->setString(ss.str());
+						input->clickProcessed = true;
+						//check if there is a zombie within the radius
+						CTypedPtrDblElement<Zombie> *cur = state->zombies.GetHeadPtr();
+						Zombie *curZ;
+						b2Vec2 tmp;
+						int count = 0;
+						bool hiss = false;
+						while (!state->zombies.IsSentinel(cur)){
+							curZ = cur->Data();
+							tmp = state->ship->body->GetPosition() - curZ->body->GetPosition();
+							//if this zombie is within our detection radius and we messed up the beat
+							float dis;
+							dis = sqrt(tmp.x*tmp.x + tmp.y*tmp.y);
+							if (!userOnBeat && dis < meter->detectionRadius) {
+								hiss = true;
+								curZ->increaseAwarness();
+							}
+							if (count == 0) {
+								currAwareness = curZ->awareness[1];
+							}
+
+							count++;
+							cur = cur->Next();
+						}
+						if (hiss){
+							audio->playEffect("sound_effects/ZombieHiss.mp3", 0.5f);
+						}
+
+
 					}
-					if (audio->songIsOver()){
-						calibration->phaseDelay += deltaTime;
+					else{
+						if (calibration->acceptClicks){
+							time_t now = time(0);
+							float offset = (((elapsedTime - (now - input->clickTime) / 1000.0f) - audio->audioDelay) - calibration->zombieTimes[calibration->clicks]);
+							calibration->zombieTimes[calibration->clicks] = elapsedTime;
+							calibration->totalOffset += offset;
+							stringstream vss;
+							vss << "OFFSET: " << formatMs(offset);
+							view->beatHUD->setString(vss.str());
+							view->zombies->removeChild(calibration->zombies[calibration->clicks]);
+							calibration->clicks++;
+							input->clickProcessed = true;
+							if (calibration->clicks == VIDEO_BEATS){
+								calibration->acceptClicks = false;
+								audio->videoDelay = calibration->videoDelay();
+								stringstream ss;
+								ss << "Ok, great.  Video Delay: " << formatMs(audio->videoDelay); //finishing up calibration
+								view->objective->setString(ss.str());
+								save.exportSave(this);
+								//save.exportLevel(0);
+							}
+						}
 					}
 				}
-			}
 
+				if (destination != 0 && from == destination){
+					destination = from->next;
+				}
+				if (currentEnvironmentMeter < 0.0f){
+					currentEnvironmentMeter = 0.0f;
+				}
+				if (currentEnvironmentMeter > 1.0f){
+					currentEnvironmentMeter = 1.0f;
+				}
 
-			//activated = false;
+				if (state->ship->isActivatingEnvironment && currentEnvironmentMeter >= 0.0f && currentLevel != CALIBRATION_LEVEL){
+					Vec2 clk = mouseToWorld(input->lastClick);
+					dRickyTap->set(clk.x - state->ship->body->GetPosition().x, clk.y - state->ship->body->GetPosition().y);
+					float tht = atan2(dRickyTap->y, dRickyTap->x);
 
-			if (state->ship->isActivatingEnvironment){
-				state->ship->body->SetLinearVelocity(b2Vec2_zero);
-				destination = 0;
-			}
+					createEnvironmentActivationMeter(ENVIRONMENT_METER_WIDTH, ENVIRONMENT_METER_LENGTH, currentEnvironmentMeter, b2Vec2(cos(tht), sin(tht)));
 
-			if (state->ship->hasEnvironmentWeapon && currentEnvironment != NULL && currentEnvironment->e_weapon_type != 1 && !currentEnvironment->hasMoved && currentEnvironment->sprite != NULL){
-				view->enviornment->removeChild(currentEnvironment->sprite);
-			}
+					//createEnvironmentActivationMeter(ENVIRONMENT_METER_WIDTH, ENVIRONMENT_METER_LENGTH, currentEnvironmentMeter, b2Vec2(cos(ang), sin(ang)));
+				}
 
-			if (currentMower != NULL && currentMower->hasMoved){
-				Vec2 mowerDir = currentFingerPos;
-				mowerDir.subtract(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y));
-				mowerDir.normalize();
-				attractNearbyZombies(currentMower->body->GetPosition(), MOWER_AWARENES_INCREASE);
-				currentMower->update(deltaTime, mowerDir);
-			}
+				if (currentEnvironmentMeter <= 0.0f && currentLevel != CALIBRATION_LEVEL){
+					activationDelay = true;
+					doneActivating = true;
+					if (currentEnvironment != NULL) {
+						currentEnvironment->beingUsed = false;
+					}
+					view->weaponBox->clear();
+					//failed to activate
+					state->ship->isActivatingEnvironment = false;
+					processDirection = false;
+					state->ship->hasEnvironmentWeapon = false;
+					//place the specific weapon on cd
+					if (currentEnvironment->e_weapon_type == 0){
+						currentEnvironment->isJammed = true;
+						view->enviornment->addChild(currentEnvironment->sprite);
+					}
+					else if (currentEnvironment->e_weapon_type == 1){
+						currentEnvironment->isUsed = true;
+					}
 
-			if (currentTrash != NULL && currentTrash->hasMoved){
-				Vec2 mowerDir = currentFingerPos;
-				mowerDir.subtract(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y));
-				mowerDir.normalize();
+					currentEnvironmentMeter = 0.3f;
 
-				currentTrash->update(deltaTime, mowerDir);
-			}
+				}
 
-			// Move the ship (MODEL ONLY)
-			//shipModel->setForward(thrust.y);
-			//shipModel->setTurning(thrust.x);
-			//shipModel->update(deltaTime, thrust);
-			state->world->Step(deltaTime, 8, 3);
-			//world->ClearForces();
+				if (currentEnvironmentMeter >= 1.0f && currentLevel != CALIBRATION_LEVEL){
+					currentEnvironmentMeter = 0.3f;
+					Vec2 clk = mouseToWorld(input->lastClick);
+					dRickyTap->set(clk.x - state->ship->body->GetPosition().x, clk.y - state->ship->body->GetPosition().y);
+					float tht = atan2(dRickyTap->y, dRickyTap->x);
+					//tht = round(tht / (M_PI / 4.0f)) * (M_PI / 4.0f);
 
+					createEnvironmentActivationMeter(ENVIRONMENT_METER_WIDTH, ENVIRONMENT_METER_LENGTH, 1.0f, b2Vec2(cos(tht), sin(tht)));
+				}
 
-			// "Drawing" code.  Move everything BUT the ship
-			// Update the HUD
-			displayPosition(view->coordHUD, state->ship->body->GetPosition());
+				if (destination != 0 && from == destination){
+					destination = from->next;
+				}
 
-			b2Vec2 pos = state->ship->body->GetPosition();
-			Vec2 offset = Vec2(pos.x, pos.y);// -enviornment->getPosition();
-			Vec2 center(0.5f, 0.5f);
-
-			// Anchor points are in texture coordinates (0 to 1). Scale it.
-			offset.x = offset.x / view->allSpace->getContentSize().width;
-			offset.y = offset.y / view->allSpace->getContentSize().height;
-
-			// Reanchor the node at the center of the screen and rotate about center.
-			//farSpace->setAnchorPoint(offset*PARALLAX_AMT+center);
-			//farSpace->setRotation(-shipModel->body->GetAngle());
-			//shipImage->setAnchorPoint(-offset);
-			view->enviornment->setAnchorPoint(offset);
-
-			// Reanchor the node at the center of the screen and rotate about center.
-			//nearSpace->setAnchorPoint(offset+center);
-			//nearSpace->setRotation(-shipModel->body->GetAngle());
-			//state->ship->getSprite()->setRotation(state->ship->body->GetAngle());
-			CTypedPtrDblElement<Zombie> *z = state->zombies.GetHeadPtr();
-			while (!state->zombies.IsSentinel(z)){
-				pos = z->Data()->body->GetPosition();
-				if ((z->Data()->body->GetPosition() - state->ship->body->GetPosition()).Length() <= meter->detectionRadius + 40){
-					//z->Data()->sprite->setVisible(true);
-					z->Data()->sprite->setOpacity(255);
-					z->Data()->sprite->setPosition(pos.x, pos.y);
-					z->Data()->advanceFrame();
+				if (destination != 0){
+					Vec2 dir = Vec2(state->level->getTileCenterX(destination) - x, state->level->getTileCenterY(destination) - y);
+					dir.normalize();
+					if (!state->ship->update(deltaTime, dir, meter->getGrooviness())){
+						destination = 0;
+					}
+				}
+				if (currentLevel != CALIBRATION_LEVEL){
+					ai->update(state);
 				}
 				else{
-					//z->Data()->sprite->setVisible(true);
-					z->Data()->sprite->setOpacity(200);
-					z->Data()->sprite->setPosition(pos.x, pos.y);
-					z->Data()->advanceFrame();
-					/*
-					z->Data()->sprite->setVisible(false);
-					if (!audio->frameOnBeat){
-					view->zombiePositions->clear();
-					}else if (!audio->prevOnBeat){
+					//calibration->phaseDelay += deltaTime;
+					if (!calibration->audioCalibration){
+						view->zombies->setPosition(view->zombies->getPosition() + Vec2(-2, 0));
+						for (int i = calibration->clicks; i < VIDEO_BEATS; i++){
+							if (calibration->zombieTimes[i]>elapsedTime){
+								calibration->zombieTimes[i] = elapsedTime + (VIDEO_CALIBRATION_OFFSET*i + 2 * VIDEO_CALIBRATION_OFFSET + view->zombies->getPosition().x) / 2 * deltaTime;
+							}
+						}
+						if (elapsedTime - calibration->zombieTimes[calibration->clicks] > 1.0f){
+							calibration->acceptClicks = false;
+							if (calibration->clicks != VIDEO_BEATS) {
+								view->objective->setString("You missed some of the triangles, please try again.");
+							}
+						}
+					}
+					else{
+						if (audio->songTime > 11.1f || calibration->clicks == AUDIO_BEATS
+							|| (audio->songTime > 3.5f && calibration->clicks < 1)
+							|| (calibration->totalOffset < -0.5f)){
+							audio->stop();
+							//calibration->phaseDelay = 0.0f;ph
+							stringstream ss;
+							if (calibration->clicks < AUDIO_BEATS){
+								if (calibration->clicks > 0 && calibration->totalOffset < -0.5f){
+									ss << "Just listen to the first four beats,\nthen tap to the next 16!";
+								}
+								else{
+									ss << "You missed some of the the beats, try again.";
+								}
+							}
+							else{
+								audio->audioDelay = calibration->audioDelay();
+								ss << "Ok, great! Now stop tapping! Audio delay: " << formatMs(audio->audioDelay);
+								calibration->acceptClicks = false;
+							}
+							view->objective->setString(ss.str());
+						}
+						if (audio->songIsOver()){
+							calibration->phaseDelay += deltaTime;
+						}
+					}
+				}
+
+
+				//activated = false;
+
+				if (state->ship->isActivatingEnvironment){
+					state->ship->body->SetLinearVelocity(b2Vec2_zero);
+					destination = 0;
+				}
+
+				if (state->ship->hasEnvironmentWeapon && currentEnvironment != NULL && currentEnvironment->e_weapon_type != 1 && !currentEnvironment->hasMoved && currentEnvironment->sprite != NULL){
+					view->enviornment->removeChild(currentEnvironment->sprite);
+				}
+
+				if (currentMower != NULL && currentMower->hasMoved){
+					Vec2 mowerDir = currentFingerPos;
+					mowerDir.subtract(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y));
+					mowerDir.normalize();
+					attractNearbyZombies(currentMower->body->GetPosition(), MOWER_AWARENES_INCREASE);
+					currentMower->update(deltaTime, mowerDir);
+				}
+
+				if (currentTrash != NULL && currentTrash->hasMoved){
+					Vec2 mowerDir = currentFingerPos;
+					mowerDir.subtract(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y));
+					mowerDir.normalize();
+
+					currentTrash->update(deltaTime, mowerDir);
+				}
+
+				// Move the ship (MODEL ONLY)
+				//shipModel->setForward(thrust.y);
+				//shipModel->setTurning(thrust.x);
+				//shipModel->update(deltaTime, thrust);
+				state->world->Step(deltaTime, 8, 3);
+				//world->ClearForces();
+
+
+				// "Drawing" code.  Move everything BUT the ship
+				// Update the HUD
+				displayPosition(view->coordHUD, state->ship->body->GetPosition());
+
+				b2Vec2 pos = state->ship->body->GetPosition();
+				Vec2 offset = Vec2(pos.x, pos.y);// -enviornment->getPosition();
+				Vec2 center(0.5f, 0.5f);
+
+				// Anchor points are in texture coordinates (0 to 1). Scale it.
+				offset.x = offset.x / view->allSpace->getContentSize().width;
+				offset.y = offset.y / view->allSpace->getContentSize().height;
+
+				// Reanchor the node at the center of the screen and rotate about center.
+				//farSpace->setAnchorPoint(offset*PARALLAX_AMT+center);
+				//farSpace->setRotation(-shipModel->body->GetAngle());
+				//shipImage->setAnchorPoint(-offset);
+				view->enviornment->setAnchorPoint(offset);
+
+				// Reanchor the node at the center of the screen and rotate about center.
+				//nearSpace->setAnchorPoint(offset+center);
+				//nearSpace->setRotation(-shipModel->body->GetAngle());
+				//state->ship->getSprite()->setRotation(state->ship->body->GetAngle());
+				CTypedPtrDblElement<Zombie> *z = state->zombies.GetHeadPtr();
+				while (!state->zombies.IsSentinel(z)){
 					pos = z->Data()->body->GetPosition();
-					view->zombiePositions->drawSolidCircle(Vec2(pos.x, pos.y), 8.0f, 0.0f, 20.0f, ccColor4F(0.5f, 0, 0, 1.0f));
-					}*/
-					//drawing method here 
+					if ((z->Data()->body->GetPosition() - state->ship->body->GetPosition()).Length() <= meter->detectionRadius + 40){
+						//z->Data()->sprite->setVisible(true);
+						z->Data()->sprite->setOpacity(255);
+						z->Data()->sprite->setPosition(pos.x, pos.y);
+						z->Data()->advanceFrame();
+					}
+					else{
+						//z->Data()->sprite->setVisible(true);
+						z->Data()->sprite->setOpacity(200);
+						z->Data()->sprite->setPosition(pos.x, pos.y);
+						z->Data()->advanceFrame();
+						/*
+						z->Data()->sprite->setVisible(false);
+						if (!audio->frameOnBeat){
+						view->zombiePositions->clear();
+						}else if (!audio->prevOnBeat){
+						pos = z->Data()->body->GetPosition();
+						view->zombiePositions->drawSolidCircle(Vec2(pos.x, pos.y), 8.0f, 0.0f, 20.0f, ccColor4F(0.5f, 0, 0, 1.0f));
+						}*/
+						//drawing method here 
+					}
+					z = z->Next();
 				}
-				z = z->Next();
+
+				CTypedPtrDblElement<EnvironmentWeapon> *envwe = state->environment_weapons.GetHeadPtr();
+				while (!state->environment_weapons.IsSentinel(envwe)){
+					pos = envwe->Data()->body->GetPosition();
+					envwe->Data()->sprite->setPosition(pos.x, pos.y);
+					if (envwe->Data()->e_weapon_type == 2){
+						float rot = envwe->Data()->sprite->getRotation();
+						envwe->Data()->sprite->setRotation(rot + 15);
+					}
+					envwe = envwe->Next();
+				}
 			}
 
-			CTypedPtrDblElement<EnvironmentWeapon> *envwe = state->environment_weapons.GetHeadPtr();
-			while (!state->environment_weapons.IsSentinel(envwe)){
-				pos = envwe->Data()->body->GetPosition();
-				envwe->Data()->sprite->setPosition(pos.x, pos.y);
-				if (envwe->Data()->e_weapon_type == 2){
-					float rot = envwe->Data()->sprite->getRotation();
-					envwe->Data()->sprite->setRotation(rot + 15);
-				}
-				envwe = envwe->Next();
+			//game is paused, check if they click on the game menu buttons
+			else {
+				//do nothing, might gonna need it to do something later
 			}
 		}
-
-		//game is paused, check if they click on the game menu buttons
+		//begin count down
 		else {
-			//do nothing, might gonna need it to do something later
-		}
-	}
-	//begin count down
-	else {
-		countDownCounter += 1;
-		if (countDownCounter % 50 == 0) {
-			int currentFrame = countDown->getFrame();
-			currentFrame++;
-			if (currentFrame == 3) {
-				countDownCounter = 0;
-				beginCountDown = false;
-				audio->paused = false;
-				isPaused = false;
-				view->resIndepScreen->removeChild(countDown);
-				unPanning();
-				view->drawGroove();
-				//now we can start playing songs
-				audio->playTrack(ls.getLevelTrack(), currentLevel != CALIBRATION_LEVEL);
-				return;
+			countDownCounter += 1;
+			if (countDownCounter % 50 == 0) {
+				int currentFrame = countDown->getFrame();
+				currentFrame++;
+				if (currentFrame == 3) {
+					countDownCounter = 0;
+					beginCountDown = false;
+					audio->paused = false;
+					isPaused = false;
+					view->resIndepScreen->removeChild(countDown);
+					unPanning();
+					view->drawGroove();
+					//now we can start playing songs
+					audio->playTrack(ls.getLevelTrack(), currentLevel != CALIBRATION_LEVEL);
+					return;
+				}
+				countDown->setFrame(currentFrame);
 			}
-			countDown->setFrame(currentFrame);
 		}
 	}
 }
