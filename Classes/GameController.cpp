@@ -34,7 +34,7 @@
 #include "MainMenuScene.h"
 
 #define STARTING_LEVEL 0
-#define MAX_LEVELS 13
+#define MAX_LEVELS 21
 
 GameController *GameController::globalGC = NULL;
 
