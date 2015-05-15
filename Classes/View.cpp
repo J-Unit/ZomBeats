@@ -12,6 +12,8 @@
 
 #define VIEW_SCALE 0.70
 
+float View::resIndepScale = 1.0f;
+
 View::View(int w, int h){
 	screen_size_x = w;
 	screen_size_y = h;
@@ -94,7 +96,9 @@ void View::makeResolutionIndependent(Node *n){
 	else {
 		n->setScale(size.width / width);
 	}
+	resIndepScale = n->getScale();
 }
+
 #define RELEASE(p) if(p!=NULL) p->release();
 void View::releaseScene(){
 	/*RELEASE(path);
@@ -188,9 +192,9 @@ void View::buildScene(LevelMap *level, Layer* l, int levNum) {
 	zombiePositions->setAnchorPoint(anchor);
 
 	detectionRadiusCircle = DrawNode::create();
-	detectionRadiusCircle->setContentSize(allSpace->getContentSize());
-	detectionRadiusCircle->setPosition(center);
-	detectionRadiusCircle->setAnchorPoint(anchor);
+	//detectionRadiusCircle->setContentSize(allSpace->getContentSize());
+	//detectionRadiusCircle->setPosition(center);
+	//detectionRadiusCircle->setAnchorPoint(anchor);
 	detectionRadiusCircle->setVisible(false);
 
 	directionUseEnvironmentWeapon = DrawNode::create();
@@ -434,7 +438,7 @@ void View::drawGroove(){
 void View::redrawGroove(float g) {
 	//meter->removeAllChildrenWithCleanup(true);
 	//draw outer rectangle
-	int upper_bound = std::round(45 * g);
+	int upper_bound = round(45 * g);
 	//upper_bound =  45;
 	for (int i = 0; i < 45; i++) {
 		grooveBars[i]->setVisible(i < upper_bound);

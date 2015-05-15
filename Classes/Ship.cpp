@@ -7,6 +7,7 @@
 #include "Ship.h"
 #include "FilmStrip.h"
 #include "math.h"
+#include "View.h"
 #include "ResourceLoader.h"
 #include "Box2D/Box2D.h"
 
@@ -91,11 +92,11 @@ void Ship::setSprite(FilmStrip* value, float mx, float my) {
     }
     sprite = value;
 	value->setPhysicsBody(0);
-	sprite->setScale(RICKY_SCALE);
+	sprite->setScale(RICKY_SCALE * View::resIndepScale);
     if (sprite != NULL) {
         sprite->retain(); // Do not delete it until we are done.
         sprite->setFrame(SHIP_IMG_FLAT);
-        sprite->setPosition(Vec2(mx, my));
+		sprite->setPosition(Vec2(mx, my));
         sprite->setAnchorPoint(Vec2(0.5f,0.5f));
     }
 	sprite->setFrame(0);

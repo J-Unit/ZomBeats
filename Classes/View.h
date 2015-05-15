@@ -29,6 +29,8 @@ struct b2Vec2;
 class View : public Layer
 {
 public:
+	static float resIndepScale;
+
 	// VIEW
 	Scene* scene;
 	

@@ -199,7 +199,7 @@ void GameController::removeGameMenu() {
 void GameController::updateFog() {
 	if (fogSp != NULL) {
 		//if (INITIAL_DETECTION_RADIUS / detectionRadius > 0.65f) {
-		fogSp->setScale(FOG_SCALE + (meter->detectionRadius - MIN_DETECTION_RADIUS) / 120.0f, FOG_SCALE + (meter->detectionRadius - MIN_DETECTION_RADIUS) / 120.0f);
+		fogSp->setScale(FOG_SCALE + (meter->detectionRadius - MIN_DETECTION_RADIUS) / 125.0f);
 
 		//}
 
@@ -389,6 +389,7 @@ bool GameController::hasWonLevel(){
 
 
 void GameController::loadLevel(int i){
+	audio->stop();
 	currentLevel = i;
 	destination = 0;
 	isPaused = false;
@@ -467,7 +468,7 @@ void GameController::loadLevel(int i){
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	pickupAnimation->setPosition(Point(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
-	pickupAnimation->setScale(RICKY_SCALE);
+	pickupAnimation->setScale((RICKY_SCALE-0.32f)*View::resIndepScale);
 	pickupAnimation->setFrame(0);
 	this->addChild(pickupAnimation, 10);
 	pickupAnimation->setVisible(false);
@@ -475,7 +476,7 @@ void GameController::loadLevel(int i){
 
 	deathAnimation = FilmStrip::create(ResourceLoader::getInstance()->getTexture("deathSprite"), 1, 8, 8);
 	deathAnimation->setPosition(Point(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
-	deathAnimation->setScale(RICKY_SCALE - 0.3f);
+	deathAnimation->setScale(View::resIndepScale * (RICKY_SCALE - 0.3f));
 	deathAnimation->setFrame(0);
 	this->addChild(deathAnimation, 10);
 	deathAnimation->setVisible(false);
@@ -806,7 +807,7 @@ void GameController::startVideoCalibration(){
 void GameController::createTipPopup(){
 	popup = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("dialogue_popup"));
 	popup->setScale(DIALOGUE_POPUP_SCALE);
-	popup->setPosition(Vec2(HUD_OFFSET.x*44.5, HUD_OFFSET.y * 10));
+	popup->setPosition(Vec2(HUD_OFFSET.x*46, HUD_OFFSET.y * 10));
 	popup->setOpacity(160);
 	//popup->setPosition(Point(visibleSizeDialogue.width / 2, visibleSizeDialogue.height / 7));
 	view->resIndepScreen->addChild(popup, 4);
@@ -1486,13 +1487,13 @@ void GameController::update(float deltaTime) {
 					pos = z->Data()->body->GetPosition();
 					if ((z->Data()->body->GetPosition() - state->ship->body->GetPosition()).Length() <= meter->detectionRadius + 40){
 						//z->Data()->sprite->setVisible(true);
-						z->Data()->sprite->setOpacity(255);
+						//z->Data()->sprite->setOpacity(255);
 						z->Data()->sprite->setPosition(pos.x, pos.y);
 						z->Data()->advanceFrame();
 					}
 					else{
 						//z->Data()->sprite->setVisible(true);
-						z->Data()->sprite->setOpacity(200);
+						//z->Data()->sprite->setOpacity(255);
 						z->Data()->sprite->setPosition(pos.x, pos.y);
 						z->Data()->advanceFrame();
 						/*
@@ -1652,7 +1653,7 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 		//view->weaponBox->drawRect(Vec2(weaponRectangle[0].x, weaponRectangle[0].y), Vec2(weaponRectangle[1].x, weaponRectangle[1].y), Vec2(weaponRectangle[3].x, weaponRectangle[3].y), Vec2(weaponRectangle[2].x, weaponRectangle[2].y), ccColor4F(2.0f, 2.0f, 2.0f, 1.0f));
 	}
 	//view->directionUseEnvironmentWeapon->drawLine(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y), currentFingerPos, ccColor4F(128.0f, 128.0f, 128.0f, 0.5f));
-	view->ai->clear();
+	/*view->ai->clear();
 	for (CTypedPtrDblElement<Zombie> *z = state->zombies.GetHeadPtr(); !state->zombies.IsSentinel(z); z = z->Next()){
 		Zombie *zom = z->Data();
 		b2Vec2 pos = zom->body->GetPosition();
@@ -1663,10 +1664,10 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 		view->ai->drawLine(Vec2(pos.x, pos.y), Vec2(pos.x + zom->alignment.x, pos.y + zom->alignment.y), ccColor4F(1, 0, 1, 1.0f));
 		view->ai->drawLine(Vec2(pos.x, pos.y), Vec2(pos.x + zom->cohesion.x, pos.y + zom->cohesion.y), ccColor4F(0, 0, 1, 1.0f));
 		view->ai->drawLine(Vec2(pos.x, pos.y), Vec2(pos.x + zom->zombiness.x, pos.y + zom->zombiness.y), ccColor4F(1, 1, 0, 1.0f));
-	}
+	}*/
 
 	//indicate the closest weapon that's outside the current screen
-	indicateWeaponPosition();
+	//indicateWeaponPosition();
 
 	if (currentLevel != CALIBRATION_LEVEL){
 		stringstream st;

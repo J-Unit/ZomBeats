@@ -18,14 +18,14 @@
 #include "SaveSerializer.h"
 
 //fog scale
-#define FOG_SCALE 1.25f
+#define FOG_SCALE 1.75f
 #define OUTER_FOG_SCALE 2.8f
 #define PAUSE_BUTTON_HALF_WIDTH 15
 #define PAUSE_BUTTON_HALF_HEIGHT 15
 #define GAME_MENU_SCALE 0.2f
 #define GAME_MENU_BUTTON_SCALE 0.75f
 #define GAME_MENU_BUTTON_OFFSET 160
-#define DIALOGUE_POPUP_SCALE 0.13f
+#define DIALOGUE_POPUP_SCALE 0.78f
 #define COUNT_DOWN_SCALE 0.6f
 #define PANNING_SCALE 0.4f
 #define GAME_VIEW_SCALE 0.7f
