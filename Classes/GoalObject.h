@@ -8,7 +8,7 @@
 #include <string>
 #include "FilmStrip.h"
 
-#define RECORD_SCALE 5.0f
+#define RECORD_SCALE 2.5f
 using namespace cocos2d;
 
 class GoalObject : public BoxObject
