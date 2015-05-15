@@ -73,6 +73,8 @@ public:
 	Node* zombies;
 	Node* walls;
 
+	Sprite* hitSprite, *missSprite, *beatSprite;
+
 	Sprite *grooveBars[45];
 
 	View(int w, int h);

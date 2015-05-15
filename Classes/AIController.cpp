@@ -3,6 +3,7 @@
 #include "Zombie.h"
 #include "Wall.h"
 #include "LevelMap.h"
+#include "AudioController.h"
 
 #define FLOCK_RADIUS 400.0f
 #define MIN_DIST 115.0f
@@ -24,7 +25,7 @@ AIController::~AIController()
 }
 
 //Flocking algorithm implementation
-void AIController::update(GameState *state){
+void AIController::update(GameState *state, AudioController *audio){
 	CTypedPtrDblList<Zombie> flock;
 	CTypedPtrDblList<b2Body> tooClose;
 	Zombie *curZ, *othZ;
@@ -119,6 +120,13 @@ void AIController::update(GameState *state){
 		curZ->attraction *= ATTRACTION * (curZ->awareness[0] + curZ->awareness[1] + curZ->awareness[2]);
 		dir += curZ->attraction;
 		curZ->awareness[1] = std::max(0.0, curZ->awareness[1] - AWARENESS_DRAIN);
+		if (curZ->awareness[1] < 0.75){
+			if (curZ->exclamation->isVisible()){
+				curZ->exclamation->setVisible(false);
+				audio->playEffect("sound_effects/ZombieGrowl.mp3", 0.25f);
+			}
+
+		}
 		curZ->awareness[2] = std::max(0.0, curZ->awareness[2] - 2 * AWARENESS_DRAIN);
 		//apply
 		dir.Normalize();

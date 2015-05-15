@@ -1271,12 +1271,16 @@ void GameController::update(float deltaTime) {
 						}
 						else{
 							if (userOnBeat){
-								st << "HIT";
+								view->hitSprite->setVisible(true);
+								view->missSprite->setVisible(false);
+								//st << "HIT";
 							}
 							else{
-								st << "MISS BY: " << formatMs(audio->timeToClosestBeat());
+								view->hitSprite->setVisible(false);
+								view->missSprite->setVisible(true);
+								//st << "MISS BY: " << formatMs(audio->timeToClosestBeat());
 							}
-							view->beatHUD->setString(st.str());
+							//view->beatHUD->setString(st.str());
 						}
 						input->clickProcessed = true;
 						//check if there is a zombie within the radius
@@ -1294,6 +1298,7 @@ void GameController::update(float deltaTime) {
 							if (!userOnBeat && dis < meter->detectionRadius) {
 								hiss = true;
 								curZ->increaseAwarness();
+								curZ->exclamation->setVisible(true);
 							}
 							if (count == 0) {
 								currAwareness = curZ->awareness[1];
@@ -1399,7 +1404,7 @@ void GameController::update(float deltaTime) {
 					}
 				}
 				if (currentLevel != CALIBRATION_LEVEL){
-					ai->update(state);
+					ai->update(state, audio);
 				}
 				else{
 					//calibration->phaseDelay += deltaTime;
@@ -1693,13 +1698,15 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 	if (currentLevel != CALIBRATION_LEVEL){
 		stringstream st;
 		if (audio->frameOnBeat){//AudioEngine::getCurrentTime(audioid))){
-			view->mainBeatHUD->setString("BEAT!");
-			st << "Difference is: " << audio->keepit;
+			//view->mainBeatHUD->setString("BEAT!");
+			view->beatSprite->setVisible(true);
+			//st << "Difference is: " << audio->keepit;
 			//view->beatHUD->setString(st.str());
 			view->shake(audio->getBeatStart(), audio->songTime, Vec2(1, 0), audio->currentSong->quarterWindow);
 		}
 		else{
-			view->mainBeatHUD->setString("");
+			view->beatSprite->setVisible(false);
+			//view->mainBeatHUD->setString("");
 		}
 		float g = meter->getGrooviness();
 		//update the groovy meter

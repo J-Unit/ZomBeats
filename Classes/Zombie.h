@@ -18,6 +18,7 @@ using namespace cocos2d;
 class Zombie : public BoxObject
 {
 public:
+	Sprite *exclamation;
 	float awareness[3];
 	b2Vec2 initialLocation;
 	b2Vec2 interestPoint;

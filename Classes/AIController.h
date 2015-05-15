@@ -6,6 +6,7 @@
 
 
 class GameState;
+class AudioController;
 
 class AIController
 {
@@ -13,6 +14,6 @@ public:
 	AIController();
 	~AIController();
 
-	void update(GameState *s);
+	void update(GameState *s, AudioController *audio);
 };
 

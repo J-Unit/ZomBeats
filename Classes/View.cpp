@@ -330,6 +330,23 @@ void View::buildScene(LevelMap *level, Layer* l, int levNum) {
 	grooviness->setTTFConfig(*ResourceLoader::getInstance()->getFont("MarkerFelt"));
 	grooviness->setPosition(Vec2(HUD_OFFSET.x, HUD_OFFSET.y * 42));
 	grooviness->setAnchorPoint(Vec2::ZERO);
+
+	beatSprite = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("hudBeat"));
+	beatSprite->setPosition(Vec2(0, HUD_OFFSET.y * 49.5));
+	beatSprite->setVisible(false);
+	beatSprite->setAnchorPoint(Vec2::ZERO);
+	beatSprite->setScale(0.3f);
+	hitSprite = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("hudHit"));
+	hitSprite->setPosition(Vec2(2, HUD_OFFSET.y * 42.5));
+	hitSprite->setVisible(false);
+	hitSprite->setAnchorPoint(Vec2::ZERO);
+	hitSprite->setScale(0.3f);
+	missSprite = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("hudMiss"));
+	missSprite->setPosition(Vec2(0, HUD_OFFSET.y * 42.5));
+	missSprite->setVisible(false);
+	missSprite->setScale(0.3f);
+	missSprite->setAnchorPoint(Vec2::ZERO);
+
 	
 	meter = DrawNode::create();
 	meter->setPosition(HUD_OFFSET.x * 4.0f, HUD_OFFSET.y * 23);
@@ -389,6 +406,9 @@ void View::buildScene(LevelMap *level, Layer* l, int levNum) {
 	//l->addChild(velHUD);
 	//l->addChild(thrustHUD);
 	resIndepScreen->addChild(beatHUD);
+	resIndepScreen->addChild(beatSprite);
+	resIndepScreen->addChild(hitSprite);
+	resIndepScreen->addChild(missSprite);
 	resIndepScreen->addChild(mainBeatHUD);
 	resIndepScreen->addChild(grooviness);
 	resIndepScreen->addChild(durability);

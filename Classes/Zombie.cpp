@@ -47,6 +47,12 @@ void Zombie::setSprite(FilmStrip* value)
 		sprite->setPosition(pos.x, pos.y);
 		sprite->setAnchorPoint(Vec2(0.5f, 0.5f));
 	}
+	exclamation = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("exclamation"));
+	exclamation->setAnchorPoint(Vec2(0.5f, 0.5f));
+	exclamation->setPosition(Vec2(sprite->getContentSize().width/2, sprite->getContentSize().height * 1.1f));
+	exclamation->setVisible(false);
+	exclamation->setScale(0.2f);
+	sprite->addChild(exclamation, 1);
 }
 
 void Zombie::advanceFrame() {
