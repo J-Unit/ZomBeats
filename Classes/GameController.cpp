@@ -750,6 +750,7 @@ void GameController::removeDeadZombies(){
 			zomb->body->GetWorld()->DestroyBody(zomb->body);
 			zomb->isDestroyed = false;
 			zomb->addParticles();
+
 			zomb->sprite->setColor(Color3B(128, 128, 128));
 			zomb->needToPlayDeathAnimation = true;
 			zombsToDel.AddTail(zombie);
@@ -772,6 +773,7 @@ void GameController::removeDyingZombies(){
 			view->zombies->removeChild(z->sprite);
 			//playing dead zombie animation here
 			if (z->needToPlayDeathAnimation) {
+				audio->playEffect("sound_effects/ZombieDeath1.mp3", 0.4f);
 				z->dyingSprite = FilmStrip::create(ResourceLoader::getInstance()->getTexture("zombie_dead"), 1, 6, 6);
 				z->dyingSprite->setScale(ZOMBIE_SCALE, ZOMBIE_SCALE);
 				z->dyingSprite->setFrame(0);

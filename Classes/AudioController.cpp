@@ -73,7 +73,7 @@ void AudioController::playTrack(SongDecomposition *track, bool loop){
 }
 
 void AudioController::playEffect(std::string effect, float vol){
-	if (effect == "sound_effects/ZombieHiss.mp3" || effect == "sound_effects/ZombieGrowl.mp3"){
+	if (effect == "sound_effects/ZombieHiss.mp3" || effect == "sound_effects/ZombieGrowl.mp3" || effect == "sound_effects/ZombieDeath1.mp3"){
 		AudioEngine::play2d(effect, false, vol, &hisses);
 
 	}
