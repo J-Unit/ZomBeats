@@ -819,7 +819,7 @@ void GameController::playPickUpAnimation() {
 	state->instrument->sprite->setVisible(false);
 	pickupAnimation->setVisible(true);
 	specialAnimationFrameCounter += 1;
-	if (specialAnimationFrameCounter % 10 == 0) {
+	if (specialAnimationFrameCounter % 5 == 0) {
 		int frame = pickupAnimation->getFrame();
 		//current animation frame not in the right range
 		if ((frame < (currentLevel % 8) * 14) || (frame >((currentLevel % 8 + 1) * 14 - 1))) {
