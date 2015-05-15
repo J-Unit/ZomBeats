@@ -26,6 +26,7 @@
 
 #define RANGE_CLAMP(x,y,z)  (x < y ? y : (x > z ? z : x))
 
+float Ship::RickScale = 1.0f;
 /**
  * Creates a new ship at the specified position (in world space).
  *
@@ -92,7 +93,10 @@ void Ship::setSprite(FilmStrip* value, float mx, float my) {
     }
     sprite = value;
 	value->setPhysicsBody(0);
-	sprite->setScale(RICKY_SCALE * View::resIndepScale);
+	if (RickScale == 1.0f){
+		RickScale = RICKY_SCALE * View::resIndepScale;
+	}
+	sprite->setScale(RickScale);
     if (sprite != NULL) {
         sprite->retain(); // Do not delete it until we are done.
         sprite->setFrame(SHIP_IMG_FLAT);

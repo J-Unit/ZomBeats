@@ -471,7 +471,7 @@ void GameController::loadLevel(int i){
 	pickupAnimation->setPosition(Point(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
 	pickupAnimation->setScale((RICKY_SCALE-0.32f)*View::resIndepScale);
 	pickupAnimation->setFrame(0);
-	this->addChild(pickupAnimation, 10);
+	this->addChild(pickupAnimation);
 	pickupAnimation->setVisible(false);
 
 
@@ -479,7 +479,7 @@ void GameController::loadLevel(int i){
 	deathAnimation->setPosition(Point(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
 	deathAnimation->setScale(View::resIndepScale * (RICKY_SCALE - 0.3f));
 	deathAnimation->setFrame(0);
-	this->addChild(deathAnimation, 10);
+	this->addChild(deathAnimation);
 	deathAnimation->setVisible(false);
 
 	//create the death animation and hide it
@@ -915,6 +915,7 @@ void GameController::update(float deltaTime) {
 		elapsedTime += deltaTime;
 		audio->setFrameOnBeat(deltaTime);
 	}
+	if (isPaused && !beginCountDown) return;
 	if (beginPickUpAnimation) {
 		playPickUpAnimation();
 		return;

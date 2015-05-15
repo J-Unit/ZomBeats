@@ -75,6 +75,7 @@ protected:
 
     
 public:
+	static float RickScale;
     /**
      * Creates a new ship at the origin
      */

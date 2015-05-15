@@ -96,7 +96,7 @@ void View::makeResolutionIndependent(Node *n){
 	else {
 		n->setScale(size.width / width);
 	}
-	resIndepScale = n->getScale();
+	if(resIndepScale == 1.0f) resIndepScale = n->getScale();
 }
 
 #define RELEASE(p) if(p!=NULL) p->release();
