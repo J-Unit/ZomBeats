@@ -465,6 +465,16 @@ void GameController::loadLevel(int i){
 	this->addChild(pickupAnimation, 10);
 	pickupAnimation->setVisible(false);
 
+
+	deathAnimation = FilmStrip::create(ResourceLoader::getInstance()->getTexture("deathSprite"), 1, 8, 8);
+	deathAnimation->setPosition(Point(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
+	deathAnimation->setScale(RICKY_SCALE - 0.3f);
+	deathAnimation->setFrame(0);
+	this->addChild(deathAnimation, 10);
+	deathAnimation->setVisible(false);
+
+	//create the death animation and hide it
+
 	beginDeathAnimation = false;
 	beginPickUpAnimation = false;
 
@@ -804,6 +814,66 @@ void GameController::attractNearbyZombies(b2Vec2 point, float amount){
 	}
 }
 
+void GameController::playPickUpAnimation() {
+	state->ship->sprite->setVisible(false);
+	state->instrument->sprite->setVisible(false);
+	pickupAnimation->setVisible(true);
+	specialAnimationFrameCounter += 1;
+	if (specialAnimationFrameCounter % 10 == 0) {
+		int frame = pickupAnimation->getFrame();
+		//current animation frame not in the right range
+		if ((frame < (currentLevel % 8) * 14) || (frame >((currentLevel % 8 + 1) * 14 - 1))) {
+			frame = ((currentLevel % 8) * 14);
+			pickupAnimation->setFrame(frame);
+			return;
+		}
+		else {
+			//end of anumation frame, load level and restart
+			if (frame == ((currentLevel % 8 + 1) * 14 - 1)) {
+				beginPickUpAnimation = false;
+				specialAnimationFrameCounter = 0;
+				pickupAnimation->setVisible(false);
+				state->ship->sprite->setVisible(true);
+				state->instrument->sprite->setVisible(true);
+				save.exportLevel(currentLevel);
+				loadLevel(std::min(currentLevel + 1, MAX_LEVELS));
+				beginCountDown = true;
+				createCountDown();
+				return;
+			}
+			else {
+				frame += 1;
+				pickupAnimation->setFrame(frame);
+				return;
+			}
+		}
+	}
+}
+
+void GameController::playDeathAnimation() {
+	state->ship->sprite->setVisible(false);
+	deathAnimation->setVisible(true);
+	specialAnimationFrameCounter += 1;
+	if (specialAnimationFrameCounter % 10 == 0) {
+		int frame = deathAnimation->getFrame();
+		if (frame == 7) {
+			specialAnimationFrameCounter = 0;
+			deathAnimation->setFrame(0);
+			deathAnimation->setVisible(false);
+			state->ship->sprite->setVisible(true);
+			restartGame();
+		}
+		else {
+			frame++;
+			deathAnimation->setFrame(frame);
+			return;
+		}
+
+	}
+}
+
+
+
 /**
 * Update the game state.
 *
@@ -817,41 +887,12 @@ void GameController::update(float deltaTime) {
 		audio->setFrameOnBeat(deltaTime);
 	}
 	if (beginPickUpAnimation) {
-		state->ship->sprite->setVisible(false);
-		state->instrument->sprite->setVisible(false);
-		pickupAnimation->setVisible(true);
-		specialAnimationFrameCounter += 1;
-		if (specialAnimationFrameCounter % 10 == 0) {
-			int frame = pickupAnimation->getFrame();
-			//current animation frame not in the right range
-			if ((frame < (currentLevel % 8)*14) || (frame >((currentLevel % 8+1)*14 - 1))) {
-				frame = ((currentLevel % 8) * 14);
-				pickupAnimation->setFrame(frame);
-				return;
-			}
-			else {
-				//end of anumation frame, load level and restart
-				if (frame == ((currentLevel % 8 + 1) * 14 - 1)) {
-					beginPickUpAnimation = false;
-					pickupAnimation->setVisible(false);
-					state->ship->sprite->setVisible(true);
-					state->instrument->sprite->setVisible(true);
-					save.exportLevel(currentLevel);
-					loadLevel(std::min(currentLevel + 1, MAX_LEVELS));
-					beginCountDown = true;
-					createCountDown();
-					return;
-				}
-				else {
-					frame += 1;
-					pickupAnimation->setFrame(frame);
-					return;
-				}
-			}
-		}
+		playPickUpAnimation();
+		return;
 	}
 	else if (beginDeathAnimation) {
-
+		playDeathAnimation();
+		return;
 	}
 	else {
 		if (!beginCountDown) {
@@ -975,7 +1016,9 @@ void GameController::update(float deltaTime) {
 				}
 
 				if (state->ship->isDestroyed){
-					restartGame();
+					//ricky died, go play death animation and then restart
+					beginDeathAnimation = true;
+					//restartGame();
 					return;
 				}
 				if (currentLevel != CALIBRATION_LEVEL) {

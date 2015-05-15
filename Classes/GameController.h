@@ -262,6 +262,7 @@ private:
 	Menu* okButtonMenu;
 
 	FilmStrip* pickupAnimation;
+	FilmStrip* deathAnimation;
 
 	LevelSerializer ls;
 	SaveSerializer save;
@@ -274,6 +275,10 @@ private:
 	//used for playing death animation
 	bool beginDeathAnimation;
 	int specialAnimationFrameCounter;
+
+	void playPickUpAnimation();
+
+	void playDeathAnimation();
 
 	bool tipActive;
 	float tipTimer;
