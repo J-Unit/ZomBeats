@@ -26,6 +26,52 @@ Lawnmower::Lawnmower(b2World *world, float x, float y)
 	setSprite(FilmStrip::create(ResourceLoader::getInstance()->getTexture("mower"), 1, 1, 1));
 }
 
+void Lawnmower::addSmoke(){
+	CCParticleSun *emitter = CCParticleSun::createWithTotalParticles(100);
+	emitter->setAutoRemoveOnFinish(true);
+	emitter->setDuration(kCCParticleDurationInfinity);
+	emitter->setAngle(90.0f);
+	emitter->setAngleVar(10.0f);
+	emitter->setLife(0.45);
+	emitter->setLifeVar(0.08);
+	emitter->setSpeed(60.0f);
+	emitter->setSpeedVar(10.0f);
+	emitter->setPosVar(Vec2(13, 13));
+	emitter->setScale(1.0f);
+	//emitter->setSpeed(0.0f);
+	//emitter->setSpeedVar(0.0f);
+	emitter->setEmissionRate(50.0f);
+
+	emitter->setGravity(ccp(0, 150.0f));
+	//emitter->setTangentialAccelVar(10.0f);
+	//emitter->setRadialAccelVar(10.0f);
+	/*emitter->setSpeed(1000.0f);
+
+	emitter->setEmissionRate(5.0f);
+
+
+	emitter->setRadialAccelVar(200.0f);*/
+	//emitter->setRadialAccel(2.0f);
+	//emitter->setTangentialAccelVar(200.0f);
+	emitter->setAnchorPoint(Vec2(0.5f, 0.5f));
+	float w = sprite->getContentSize().width / 2;
+	float h = sprite->getContentSize().height / 2;
+	emitter->setPosition(w, h);
+	emitter->setStartSize(35.0);
+	emitter->setEndSize(65.5);
+	emitter->setStartSizeVar(15.0);
+	emitter->setEndSizeVar(25.0);
+	emitter->setBlendAdditive(false);
+	emitter->setBlendFunc(BlendFunc::ALPHA_NON_PREMULTIPLIED);
+
+	emitter->setTexture(ResourceLoader::getInstance()->getTexture("smoke"));
+	emitter->setStartColorVar(ccColor4F(0.25f, 0.25f, 0.25f, 0.3f));
+	emitter->setEndColorVar(ccColor4F(0.2f, 0.2f, 0.2f, 0.2f));
+	emitter->setEndColor(ccColor4F(1.0f, 1.0f, 1.0f, 0.0f));
+	emitter->setStartColor(ccColor4F(0.8f, 0.8f, 0.8f, 0.5f));
+	sprite->addChild(emitter, 1);
+}
+
 void Lawnmower::addParticles(){
 	addParticlesForTexture("grass1", 1, 8.0f, 0.32f);
 	addParticlesForTexture("grass2", -1, 13.5f, 1.0f);

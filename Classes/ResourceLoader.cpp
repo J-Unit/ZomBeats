@@ -82,6 +82,7 @@ ResourceLoader::ResourceLoader() {
 	queueTexture("textures/groovy_bar_high.png", "groovy_bar_high");
 	queueTexture("textures/pickupSprite.png", "pickupSprite");
 	queueTexture("textures/deathSprite.png", "deathSprite");
+	queueTexture("textures/smoke.png", "smoke");
 }
 
 /**

@@ -16,6 +16,7 @@ public:
 	bool   update(float deltaTime, Vec2 thrust);
 	~Lawnmower();
 	CCParticleSystemQuad *emitter;
+	void addSmoke();
 	void addParticles();
 	void addParticlesForTexture(std::string t, int z, float r, float sa);
 };

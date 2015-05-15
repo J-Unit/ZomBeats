@@ -704,6 +704,7 @@ void GameController::removeDeadEWeapons(){
 	{
 		eweap = e_weapon->Data();
 		if ((eweap->e_weapon_type == 0) && (eweap->isJammed)){
+			((Lawnmower *)eweap)->addSmoke();
 			eweap->onCooldown = true;
 			eweap->isUsed = false;
 			eweap->isJammed = false;
@@ -983,6 +984,7 @@ void GameController::update(float deltaTime) {
 						eweap->cdTimer += deltaTime;
 					}
 					if (eweap->cdTimer >= TRASHCAN_CD){
+						eweap->sprite->removeAllChildrenWithCleanup(true);
 						eweap->onCooldown = false;
 						eweap->cdTimer = 0.0f;
 						eweap->update();
