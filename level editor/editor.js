@@ -18,7 +18,7 @@ SIMPLE_BEAT = {"bpm":128.0, "path":"songs/SimpleBeat.mp3", "offset":0.0}
 OVERDRIVE = {"bpm":128.0, "path":"songs/01 OverDrive.mp3", "offset":0.0}
 LOOKING_FOR = {"bpm":128.0, "path":"songs/01 Looking For.mp3", "offset":0.0}
 CHILL_DEEP = {"bpm":120.0, "path":"songs/ChillDeepHouse.mp3", "offset":0.0}
-IN_PIZZA = {"bpm":90.0, "path":"songs/InPizzaWeCrust.mp3", "offset":0.0}
+IN_PIZZA = {"bpm":90.0, "path":"songs/InPizzaWeCrust.mp3", "offset":0.04}
 BLANCO = {"bpm":90.0, "path":"songs/BLANCO.mp3", "offset":0.0}
 PICKLE = {"bpm":140.0, "path":"songs/01 Pickles.mp3", "offset":0.0}
 GRASS = {"bpm":120.0, "path":"songs/Galactic_Grass.mp3", "offset":0.0}
@@ -34,6 +34,21 @@ RF7 = {"bpm":125.0, "path":"songs/rf7.mp3", "offset":0.0}
 RF8 = {"bpm":125.0, "path":"songs/rf8.mp3", "offset":0.0}
 RF9 = {"bpm":93.0, "path":"songs/rf9.mp3", "offset":0.0}
 RF10 = {"bpm":138.0, "path":"songs/rf10.mp3", "offset":0.0}
+
+ENTICE = {"bpm":128.0, "path":"songs/Entice.mp3", "offset":0.0}
+HUGE = {"bpm":128.0, "path":"songs/Huge Room.mp3", "offset":0.0}
+CUT = {"bpm":110.0, "path":"songs/Cut Trance 110.mp3", "offset":0.0}
+MONSTER = {"bpm":120.0, "path":"songs/Dance Monster 120.mp3", "offset":0.0}
+DRUMS = {"bpm":153.0, "path":"songs/Drums of the Deep 153.mp3", "offset":0.0}
+EDM = {"bpm":128.0, "path":"songs/EDM Detection Mode 128.mp3", "offset":0.0}
+SKETCH = {"bpm":168.0, "path":"songs/Electro Sketch 168.mp3", "offset":0.0}
+OUR = {"bpm":107.0, "path":"songs/Ouroboros 107.mp3", "offset":0.0}
+CONCERN = {"bpm":120.0, "path":"songs/Overriding Concern 120.mp3", "offset":0.0}
+PRELUDE = {"bpm":132.0, "path":"songs/Prelude and Action 132.mp3", "offset":0.0}
+RETRO = {"bpm":91.0, "path":"songs/RetroFuture Clean 91.mp3", "offset":0.0}
+SECRETS = {"bpm":100.0, "path":"songs/Secrets of the Schoolyard 100.mp3", "offset":0.0}
+SON = {"bpm":110.0, "path":"songs/Son of a Rocket 110.mp3", "offset":0.0}
+EGMONT = {"bpm":111.0, "path":"songs/Variation on Egmont 111.mp3", "offset":0.0}
 /* rf1-10
 	1- 78
 	2- 130
@@ -392,6 +407,48 @@ function changeTrack(){
 			break;
 		case "songs/rf10.mp3":
 			level.track = RF10;
+			break;
+		case "songs/Entice.mp3":
+			level.track = ENTICE;
+			break;
+		case "songs/Huge Room.mp3":
+			level.track = HUGE;
+			break;
+		case "songs/Cut Trance 110.mp3":
+			level.track = CUT;
+			break;
+		case "songs/Dance Monster 120.mp3":
+			level.track = MONSTER;
+			break;
+		case "songs/Drums of the Deep 153.mp3":
+			level.track = DRUMS;
+			break;
+		case "songs/EDM Detection Mode 128.mp3":
+			level.track = EDM;
+			break;
+		case "songs/Electro Sketch 168.mp3":
+			level.track = SKETCH;
+			break;
+		case "songs/Ouroboros 107.mp3":
+			level.track = OUR;
+			break;
+		case "songs/Overriding Concern 120.mp3":
+			level.track = CONCERN;
+			break;
+		case "songs/Prelude and Action 132.mp3":
+			level.track = PRELUDE;
+			break;
+		case "songs/RetroFuture Clean 91.mp3":
+			level.track = RETRO;
+			break;
+		case "songs/Secrets of the Schoolyard 100.mp3":
+			level.track = SECRETS;
+			break;
+		case "songs/Son of a Rocket 110.mp3":
+			level.track = SON;
+			break;
+		case "songs/Variation on Egmont 111.mp3":
+			level.track = EGMONT;
 			break;
 	}
 	playing = !document.getElementById("audio").paused;

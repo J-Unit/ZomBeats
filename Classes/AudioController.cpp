@@ -26,6 +26,20 @@ void AudioController::preload(){
 	AudioEngine::stop(AudioEngine::play2d("songs/RobotsInTheRain.mp3", true, 0.0f));
 	AudioEngine::stop(AudioEngine::play2d("songs/CalibrationLong.mp3", true, 0.0f));
 	AudioEngine::stop(AudioEngine::play2d("songs/SimpleBeat.mp3", true, 0.0f));
+	AudioEngine::stop(AudioEngine::play2d("songs/Cut Trance 110.mp3", true, 0.0f));
+	AudioEngine::stop(AudioEngine::play2d("songs/Dance Monster 120.mp3", true, 0.0f));
+	AudioEngine::stop(AudioEngine::play2d("songs/Drums of the Deep 153.mp3", true, 0.0f));
+	AudioEngine::stop(AudioEngine::play2d("songs/EDM Detection Mode 128.mp3", true, 0.0f));
+	AudioEngine::stop(AudioEngine::play2d("songs/Electro Sketch.mp3", true, 0.0f));
+	AudioEngine::stop(AudioEngine::play2d("songs/Entice.mp3", true, 0.0f));
+	AudioEngine::stop(AudioEngine::play2d("songs/Huge Room.mp3", true, 0.0f));
+	AudioEngine::stop(AudioEngine::play2d("songs/Ouroboros 107.mp3", true, 0.0f));
+	AudioEngine::stop(AudioEngine::play2d("songs/Overriding Concern 120.mp3", true, 0.0f));
+	AudioEngine::stop(AudioEngine::play2d("songs/Prelude and Action 132.mp3", true, 0.0f));
+	AudioEngine::stop(AudioEngine::play2d("songs/RetroFuture Clean 91.mp3", true, 0.0f));
+	AudioEngine::stop(AudioEngine::play2d("songs/Secrets of the Schoolyard 100.mp3", true, 0.0f));
+	AudioEngine::stop(AudioEngine::play2d("songs/Son of a Rocket 110.mp3", true, 0.0f));
+	AudioEngine::stop(AudioEngine::play2d("songs/Variation on Egmont 111.mp3", true, 0.0f));
 	//AudioEngine::stopAll();
 }
 
