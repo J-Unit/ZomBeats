@@ -1229,7 +1229,7 @@ void GameController::update(float deltaTime) {
 							cur = cur->Next();
 						}
 						if (hiss){
-							audio->playEffect("sound_effects/ZombieHiss.mp3", 0.5f);
+							audio->playEffect("sound_effects/ZombieHiss.mp3", 0.25f);
 						}
 
 
