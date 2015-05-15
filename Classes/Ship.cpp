@@ -483,7 +483,7 @@ void Ship::advanceFrameShotty(Vec2* dir) {
 void Ship::addShrapnelParticles(float a){
 	ParticleSystemQuad *emitter = ParticleSystemQuad::create();
 	emitter->setDuration(0.17f);
-	emitter->setLife(0.16f);
+	emitter->setLife(0.17f);
 	emitter->setLifeVar(0.05f);
 	emitter->setSpeed(1000.0f);
 	emitter->setSpeedVar(80.0f);

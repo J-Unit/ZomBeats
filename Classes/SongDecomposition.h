@@ -2,8 +2,8 @@
 
 //#define ERROR_WINDOW 0.08 //in seconds
 //#define EIGHTH_NOTE_WINDOW 0.075
-#define ERROR_PERCENT 0.12
-#define EIGHTH_ERROR_PERCENT 0.1
+#define ERROR_PERCENT 0.13
+#define EIGHTH_ERROR_PERCENT 0.11
 
 class SongDecomposition
 {
