@@ -255,6 +255,7 @@ private:
 	void removeDeadZombies();
 	void removeDyingZombies();
 	void removeCollectedGoals();
+	void playDeadZombieAnimations();
 
 	//the dialogue popup used in calibration level
 	Sprite* popup;

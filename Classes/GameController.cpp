@@ -388,6 +388,7 @@ bool GameController::hasWonLevel(){
 }
 
 
+//load level here
 void GameController::loadLevel(int i){
 	audio->stop();
 	currentLevel = i;
@@ -750,6 +751,7 @@ void GameController::removeDeadZombies(){
 			zomb->isDestroyed = false;
 			zomb->addParticles();
 			zomb->sprite->setColor(Color3B(128, 128, 128));
+			zomb->needToPlayDeathAnimation = true;
 			zombsToDel.AddTail(zombie);
 		}
 
@@ -768,15 +770,33 @@ void GameController::removeDyingZombies(){
 		Zombie *z = zombie->Data();
 		if (!z->emitter->isActive()){
 			view->zombies->removeChild(z->sprite);
-			zombsToDel.AddTail(zombie);
+			//playing dead zombie animation here
+			if (z->needToPlayDeathAnimation) {
+				z->dyingSprite = FilmStrip::create(ResourceLoader::getInstance()->getTexture("zombie_dead"), 1, 6, 6);
+				z->dyingSprite->setScale(ZOMBIE_SCALE, ZOMBIE_SCALE);
+				z->dyingSprite->setFrame(0);
+				z->dyingSprite->setPosition(z->sprite->getPosition());
+				z->dyingSprite->setAnchorPoint(Vec2(0.5f, 0.5f));
+				view->zombies->addChild(z->dyingSprite);
+				z->needToPlayDeathAnimation = false;
+			}
+			else {
+				if (z->dyingSprite->getFrame() < 5) {
+					z->playZombieDeathAnimation();
+				}
+				else {
+					view->zombies->removeChild(z->dyingSprite);
+					zombsToDel.AddTail(zombie);
+				}
+			}
 		}
 	}
 	for (CTypedPtrDblElement<CTypedPtrDblElement<Zombie>> *z = zombsToDel.GetHeadPtr(); !zombsToDel.IsSentinel(z); z = z->Next()){
 		delete z->Data()->Data();
 		state->dyingZombies.Remove(z->Data());
-
 	}
 }
+
 
 #define VIDEO_CALIBRATION_OFFSET 150
 void GameController::startVideoCalibration(){
@@ -1216,7 +1236,7 @@ void GameController::update(float deltaTime) {
 												if (state->numZombiesRemain < 0){
 													state->numZombiesRemain = 0;
 												}
-												//zombie got hit so delete it
+												//zombie got hit so delete it, play animation?
 												zombb->isDestroyed = true;
 											}
 										}

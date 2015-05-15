@@ -22,6 +22,7 @@ Zombie::Zombie(float x, float y, b2World *world, float originAwareness)
 	frameRate = 0;
 	prevFrame = 0;
 	setSprite(FilmStrip::create(ResourceLoader::getInstance()->getTexture("zombie"), 8, 3, 24));
+	//setDyingSprite();
 	//initialize the awareness
 	awareness[0] = originAwareness;
 	awareness[1] = INITIAL_AWARENESS;
@@ -216,6 +217,23 @@ void Zombie::attractToInterestPoint(b2Vec2 point, float amount){
 	interestPoint = point;
 	increaseAwarness(2, amount);
 }
+
+
+
+void Zombie::playZombieDeathAnimation() 
+{
+	deadFrameRate++;
+	if (deadFrameRate > 10000) {
+		deadFrameRate = 0;
+	}
+
+	if (deadFrameRate % ZOMBIE_FRAME_INTERVAL == 0) {
+		unsigned int frame = dyingSprite->getFrame();
+		frame++;
+		dyingSprite->setFrame(frame);
+	}
+}
+
 
 void Zombie::addParticles(){
 	emitter = ParticleSystemQuad::create();

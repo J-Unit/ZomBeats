@@ -83,6 +83,7 @@ ResourceLoader::ResourceLoader() {
 	queueTexture("textures/pickupSprite.png", "pickupSprite");
 	queueTexture("textures/deathSprite.png", "deathSprite");
 	queueTexture("textures/smoke.png", "smoke");
+	queueTexture("textures/zombie_dead.png", "zombie_dead");
 }
 
 /**

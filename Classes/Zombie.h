@@ -22,11 +22,14 @@ public:
 	b2Vec2 initialLocation;
 	b2Vec2 interestPoint;
 	int frameRate;
+	int deadFrameRate;
 	int prevFrame; //the previous animation frame
 	bool isDestroyed;
+	bool needToPlayDeathAnimation;
 	b2PolygonShape dynamicBox;
 	b2Vec2 lastPosition;
 	FilmStrip* sprite;
+	FilmStrip* dyingSprite;
 	b2Vec2 direction, seperation, zombiness, cohesion, alignment, attraction, aidir;
 	ParticleSystemQuad *emitter;
 
@@ -34,6 +37,7 @@ public:
 
 	void setSprite(FilmStrip* value);
 	void advanceFrame();
+	void playZombieDeathAnimation();
 	void increaseAwarness();
 	void addParticles();
 	void attractToInterestPoint(b2Vec2 p, float a);
