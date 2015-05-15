@@ -224,6 +224,7 @@ void View::buildScene(LevelMap *level, Layer* l, int levNum) {
 	}
 
 	zombies = Node::create();
+	walls = Node::create();
 
 	//enviornment->addChild(meshVis);
 	enviornment->addChild(path);
@@ -232,10 +233,11 @@ void View::buildScene(LevelMap *level, Layer* l, int levNum) {
 	enviornment->addChild(zombiePositions, 4); //z-order to zombiePositions should be larger than fog's 
 	enviornment->addChild(detectionRadiusCircle);
 	enviornment->addChild(hitBox, 3);
-	enviornment->addChild(weaponBox);
+	enviornment->addChild(weaponBox,5);
 
 	enviornment->addChild(directionUseEnvironmentWeapon);
-	enviornment->addChild(zombies,2);
+	enviornment->addChild(zombies, 2);
+	enviornment->addChild(walls, 2);
 	// Put planets in the foreground.
 	/*nearSpace = Node::create();
 	nearSpace->setContentSize(allSpace->getContentSize());

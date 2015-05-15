@@ -33,7 +33,7 @@ void LevelSerializer::addObjects(GameState *s){
 	s->level->walls = new Wall[s->level->nWalls];
 	for (int i = 0; i < s->level->nWalls; i++){
 		float off = getWallOffsetByType(d["walls"][i]["type"].GetString());
-		s->level->walls[i].init(s->world, s->level->tileWidth*(d["walls"][i]["x"].GetInt()+off), top-s->level->tileHeight*(d["walls"][i]["y"].GetInt()+off), d["walls"][i]["type"].GetString());
+		s->level->walls[i].init(s->world, s->level->tileWidth*(d["walls"][i]["x"].GetInt() + off), top - s->level->tileHeight*(d["walls"][i]["y"].GetInt() + off), d["walls"][i]["type"].GetString(), d["walls"][i]["y"].GetInt());
 	}
 	s->level->markWallTiles();
 	for (unsigned int i = 0; i < d["weapons"].Size(); i++){

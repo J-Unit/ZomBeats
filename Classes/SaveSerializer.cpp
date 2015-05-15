@@ -5,6 +5,8 @@
 #include "json\writer.h"
 #include <fstream>
 
+int SaveSerializer::curMaxLevel = -1;
+
 void SaveSerializer::parseSave(GameController *gc, std::string f){
 	f = cocos2d::FileUtils::getInstance()->getWritablePath() + f;
 	if (FileUtils::getInstance()->isFileExist(f)){
@@ -51,7 +53,8 @@ int SaveSerializer::parseLevel(std::string f){
 		std::string zz = FileUtils::getInstance()->getStringFromFile(f);
 		const char *data = zz.c_str();
 		e.Parse<0>(data);
-		return e["level_completed"].GetInt();
+		curMaxLevel = e["level_completed"].GetInt();
+		return curMaxLevel;
 	}
 	//file doesn't exist yet
 	else {
@@ -62,6 +65,8 @@ int SaveSerializer::parseLevel(std::string f){
 
 
 void SaveSerializer::exportLevel(int level){
+	if (curMaxLevel >= level) return;
+	curMaxLevel = level;
 	e.SetObject();
 	e.AddMember("level_completed", level, e.GetAllocator());
 

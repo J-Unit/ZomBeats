@@ -21,10 +21,11 @@ public:
 	//Wall(b2World *world, float x, float y);
 	Wall(){
 	}
-	void init(b2World *world, float x, float y, std::string ty);
+	void init(b2World *world, float x, float y, std::string ty, int z);
+	int z;
 	Sprite* sprite;
 	b2PolygonShape box;
-	void    setSprite(Sprite* value);
+	void    setSprite(Sprite* value, float ay);
 	~Wall();
 
 private:

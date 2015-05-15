@@ -20,5 +20,6 @@ public:
 	//for save level
 	int parseLevel(std::string f);
 	void exportLevel(int level);
+	static int SaveSerializer::curMaxLevel;
 };
 

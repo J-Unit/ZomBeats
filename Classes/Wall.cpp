@@ -20,7 +20,8 @@ Wall::Wall(b2World *world, float x, float y)
 
 }*/
 
-void Wall::init(b2World *world, float x, float y, std::string ty){
+void Wall::init(b2World *world, float x, float y, std::string ty, int zz){
+	z = zz;
 	bodyDef.type = b2_staticBody;
 	bodyDef.position.Set(x, y);
 	body = world->CreateBody(&bodyDef);
@@ -30,7 +31,7 @@ void Wall::init(b2World *world, float x, float y, std::string ty){
 	box.SetAsBox(width, height);
 	fixture.shape = &box;
 	body->CreateFixture(&fixture);
-	setSprite(Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture(ty)));
+	setSprite(Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture(ty)), ty == "tree" ? 0.34375f : 0.5f);
 }
 
 void Wall::setSize(std::string type){
@@ -48,7 +49,7 @@ void Wall::setSize(std::string type){
 	}
 }
 
-void Wall::setSprite(Sprite* value)
+void Wall::setSprite(Sprite* value, float yAnchor)
 {
 	b2Vec2 pos = body->GetPosition();
 	sprite = value;
@@ -56,7 +57,7 @@ void Wall::setSprite(Sprite* value)
 	if (sprite != NULL) {
 		sprite->retain(); // Do not delete it until we are done.
 		sprite->setPosition(pos.x, pos.y);
-		sprite->setAnchorPoint(Vec2(0.5f, 0.5f));
+		sprite->setAnchorPoint(Vec2(0.5f, yAnchor));
 	}
 }
 

@@ -90,6 +90,7 @@ void GameController::BeginContact(b2Contact* contact){
 			if (currentEnvironment->e_weapon_type == 1){
 				audio->playEffect("sound_effects/RummagingThroughTrash.mp3",2.0f);
 			}
+			startedAct = true;
 			state->ship->isActivatingEnvironment = true; //right now, no activation sequence
 			state->ship->hasEnvironmentWeapon = true;
 		}
@@ -117,9 +118,12 @@ void GameController::BeginContact(b2Contact* contact){
 	//collecting goal item
 	GoalObject *go;
 	if ((b1->type == GoalType && b2->type == ShipType) || (b1->type == ShipType && b2->type == GoalType)){
-		go = (b1->type == GoalType) ? b1->getGoalObject() : b2->getGoalObject();
-		go->isCollected = true; //signal to remove goal object
-		hasCollectedGoal = true; //signal win condition
+		if (state->zombies.GetCount() <= state->zomGoal){
+			go = (b1->type == GoalType) ? b1->getGoalObject() : b2->getGoalObject();
+			go->isCollected = true; //signal to remove goal object
+			hasCollectedGoal = true; //signal win condition
+			return;
+		}
 	}
 
 	//fucking up zombies
@@ -249,6 +253,7 @@ bool GameController::init() {
 	activationDelay = true;
 	tipActive = false;
 	tipTimer = 0.0f;
+	startedAct = false;
 	doneActivating = false;
 	hasCollectedGoal = false;
 	Director* director = Director::getInstance();
@@ -408,7 +413,7 @@ void GameController::loadLevel(int i){
 		view->allSpace->addChild(state->ship->getSprite());
 	}
 	//createFog();
-	for (int i = 0; i<state->level->nWalls; i++) view->enviornment->addChild(state->level->walls[i].sprite);
+	for (int i = 0; i<state->level->nWalls; i++) view->walls->addChild(state->level->walls[i].sprite, state->level->walls[i].z + 1);
 	for (CTypedPtrDblElement<Zombie> *cz = state->zombies.GetHeadPtr(); !state->zombies.IsSentinel(cz); cz = cz->Next()) view->zombies->addChild(cz->Data()->sprite, 2);
 	for (CTypedPtrDblElement<Weapon> *cw = state->weapons.GetHeadPtr(); !state->weapons.IsSentinel(cw); cw = cw->Next()) view->enviornment->addChild(cw->Data()->sprite, 2);
 	for (CTypedPtrDblElement<EnvironmentWeapon> *ew = state->environment_weapons.GetHeadPtr(); !state->environment_weapons.IsSentinel(ew); ew = ew->Next()) {
@@ -862,6 +867,11 @@ void GameController::update(float deltaTime) {
 			//reduce meter by a little bit
 			if (state->ship->isActivatingEnvironment && currentLevel != CALIBRATION_LEVEL){
 				currentEnvironmentMeter -= ENVIRONMENT_METER_DEC;
+				if (startedAct){
+					state->ship->body->SetTransform(b2Vec2(currentEnvironment->body->GetPosition().x, currentEnvironment->body->GetPosition().y), 0.0f);
+					startedAct = false;
+				}
+				
 			}
 
 
@@ -1555,12 +1565,23 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 		view->redrawGroove(g);
 
 		stringstream ss;
-		ss << state->numZombiesRemain << " zombies left!";
+		if (state->instrument != NULL){
+			ss << "Kill " << state->numZombiesRemain << " more zombies before collecting the instrument!";
+			if (state->numZombiesRemain <= 0){
+				ss.str("");
+				ss.clear();
+				ss << "Go find the instrument to complete the level!";
+			}
+		}
+		else{
+			ss << "You must kill " << state->numZombiesRemain << " more zombies to compelte the level!";
+		}
+		
 		if (!tipActive){
 			view->objective->setString(ss.str());
 		}
 		
-		
+		/*
 		if (state->instrument != NULL && !tipActive){
 			if (!hasCollectedGoal){
 				view->collectionGoal->setString("You must collect the instrument");
@@ -1571,7 +1592,7 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 		}
 		else{
 			view->collectionGoal->setVisible(false);
-		}
+		}*/
 	}
 
 	/*if (!input->clickProcessed) {
