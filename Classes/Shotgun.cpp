@@ -7,10 +7,10 @@ Shotgun::Shotgun(b2World *world, float x, float y)
 {
 	pos_x = x;
 	pos_y = y;
-	width = 190.0f;
+	width = 195.0f;
 	durability = 3;
-	range = 200.0f;
-	detectionRange = 0.55f * range;
+	range = 250.0f;
+	detectionRange = 0.35f * range;
 	isDesroyed = false;
 	weapon_type = 2; //TODO: Make array of different weapon types somewhere
 	bodyDef.type = b2_staticBody;

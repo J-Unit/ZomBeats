@@ -608,9 +608,9 @@ void GameController::createWeaponRanges(float weapWidth, float weapRange, float 
 		weaponDetectionRectangle[i] = weaponDetectionRectangle[i] + rickPos + ((weapRange / 2.0f + SHIP_HEIGHT)*dir);
 
 	}
-	view->weaponBox->clear();
-	view->weaponBox->drawRect(Vec2(weaponRectangle[0].x, weaponRectangle[0].y), Vec2(weaponRectangle[1].x, weaponRectangle[1].y), Vec2(weaponRectangle[3].x, weaponRectangle[3].y), Vec2(weaponRectangle[2].x, weaponRectangle[2].y), ccColor4F(2.0f, 2.0f, 2.0f, 1.0f));
-	view->weaponBox->drawRect(Vec2(weaponDetectionRectangle[0].x, weaponDetectionRectangle[0].y), Vec2(weaponDetectionRectangle[1].x, weaponDetectionRectangle[1].y), Vec2(weaponDetectionRectangle[3].x, weaponDetectionRectangle[3].y), Vec2(weaponDetectionRectangle[2].x, weaponDetectionRectangle[2].y), ccColor4F(1.0f, 0.0f, 0.0f, 1.0f));
+	//view->weaponBox->clear();
+	//view->weaponBox->drawRect(Vec2(weaponRectangle[0].x, weaponRectangle[0].y), Vec2(weaponRectangle[1].x, weaponRectangle[1].y), Vec2(weaponRectangle[3].x, weaponRectangle[3].y), Vec2(weaponRectangle[2].x, weaponRectangle[2].y), ccColor4F(2.0f, 2.0f, 2.0f, 1.0f));
+	//view->weaponBox->drawRect(Vec2(weaponDetectionRectangle[0].x, weaponDetectionRectangle[0].y), Vec2(weaponDetectionRectangle[1].x, weaponDetectionRectangle[1].y), Vec2(weaponDetectionRectangle[3].x, weaponDetectionRectangle[3].y), Vec2(weaponDetectionRectangle[2].x, weaponDetectionRectangle[2].y), ccColor4F(1.0f, 0.0f, 0.0f, 1.0f));
 }
 
 bool GameController::isZombieHit(b2Vec2 az, b2Vec2 bz, b2Vec2 ab, b2Vec2 bc){
@@ -886,7 +886,6 @@ void GameController::update(float deltaTime) {
 					}
 					else{
 						//indicate that we have completed the level so far
-						//there is a goal object, need to play pick up animation
 						if (state->instrument != NULL) {
 							beginPickUpAnimation = true;
 							return;
@@ -1136,17 +1135,30 @@ void GameController::update(float deltaTime) {
 									Zombie *zombb = zambie->Data();
 									if (!zombb->isDestroyed){
 										//AB is vector AB, with coordinates (Bx-Ax,By-Ay)
-										b2Vec2 az = b2Vec2(zombb->body->GetPosition().x - weaponRectangle[0].x, zombb->body->GetPosition().y - weaponRectangle[0].y);
-										b2Vec2 bz = b2Vec2(zombb->body->GetPosition().x - weaponRectangle[1].x, zombb->body->GetPosition().y - weaponRectangle[1].y);
-										b2Vec2 ab = b2Vec2(weaponRectangle[1].x - weaponRectangle[0].x, weaponRectangle[1].y - weaponRectangle[0].y);
-										b2Vec2 bc = b2Vec2(weaponRectangle[3].x - weaponRectangle[1].x, weaponRectangle[3].y - weaponRectangle[1].y);
-
 										b2Vec2 az2 = b2Vec2(zombb->body->GetPosition().x - weaponDetectionRectangle[0].x, zombb->body->GetPosition().y - weaponDetectionRectangle[0].y);
 										b2Vec2 bz2 = b2Vec2(zombb->body->GetPosition().x - weaponDetectionRectangle[1].x, zombb->body->GetPosition().y - weaponDetectionRectangle[1].y);
 										b2Vec2 ab2 = b2Vec2(weaponDetectionRectangle[1].x - weaponDetectionRectangle[0].x, weaponDetectionRectangle[1].y - weaponDetectionRectangle[0].y);
 										b2Vec2 bc2 = b2Vec2(weaponDetectionRectangle[3].x - weaponDetectionRectangle[1].x, weaponDetectionRectangle[3].y - weaponDetectionRectangle[1].y);
 
 										if (isZombieHit(az2, bz2, ab2, bc2)){
+											num_zombies_killed += 1;
+											break;
+										}
+									}
+									zambie = zambie->Next();
+								}
+								if (num_zombies_killed > 0){
+									zambie = state->zombies.GetHeadPtr();
+									num_zombies_killed = 0;
+									while (!state->zombies.IsSentinel(zambie))
+									{
+										Zombie *zombb = zambie->Data();
+										if (!zombb->isDestroyed){
+											//AB is vector AB, with coordinates (Bx-Ax,By-Ay)
+											b2Vec2 az = b2Vec2(zombb->body->GetPosition().x - weaponRectangle[0].x, zombb->body->GetPosition().y - weaponRectangle[0].y);
+											b2Vec2 bz = b2Vec2(zombb->body->GetPosition().x - weaponRectangle[1].x, zombb->body->GetPosition().y - weaponRectangle[1].y);
+											b2Vec2 ab = b2Vec2(weaponRectangle[1].x - weaponRectangle[0].x, weaponRectangle[1].y - weaponRectangle[0].y);
+											b2Vec2 bc = b2Vec2(weaponRectangle[3].x - weaponRectangle[1].x, weaponRectangle[3].y - weaponRectangle[1].y);
 											if (isZombieHit(az, bz, ab, bc)){
 												num_zombies_killed += 1;
 												state->numZombiesRemain -= 1;
@@ -1157,16 +1169,15 @@ void GameController::update(float deltaTime) {
 												zombb->isDestroyed = true;
 											}
 										}
+										zambie = zambie->Next();
 									}
-									zambie = zambie->Next();
-								}
-								if (num_zombies_killed > 0){
+
 									audio->playEffect("sound_effects/shotgun.mp3", 0.4f);
 									state->ship->currentWeapon->durability -= 1;
 									view->redrawDurability(state->ship->currentWeapon->durability);
 									state->ship->addShrapnelParticles(theta * 180 / M_PI);
-
 								}
+
 								if (state->ship->currentWeapon->durability == 0){
 									state->ship->hasWeapon = false;
 									free(state->ship->currentWeapon);
@@ -1336,7 +1347,7 @@ void GameController::update(float deltaTime) {
 					}
 					else{
 						if (audio->songTime > 11.1f || calibration->clicks == AUDIO_BEATS
-							|| (audio->songTime > 3.5f && calibration->clicks < 1)
+							|| (audio->songTime>3.5f && calibration->clicks < 1)
 							|| (calibration->totalOffset < -0.5f)){
 							audio->stop();
 							//calibration->phaseDelay = 0.0f;ph
