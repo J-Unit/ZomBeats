@@ -88,7 +88,7 @@ void GameController::BeginContact(b2Contact* contact){
 		if (!cew->onCooldown){
 			currentEnvironment = (b1->type == EnvironmentWeaponType) ? b1->getEnvironmentWeapon() : b2->getEnvironmentWeapon();
 			if (currentEnvironment->e_weapon_type == 1){
-				audio->playEffect("sound_effects/RummagingThroughTrash.mp3",2.0f);
+				audio->playEffect("sound_effects/RummagingThroughTrash.mp3", 2.0f);
 			}
 			startedAct = true;
 			state->ship->isActivatingEnvironment = true; //right now, no activation sequence
@@ -147,8 +147,8 @@ void GameController::setCurrentLevel(int level){
 void GameController::createFog() {
 	//add the fog of war here
 	fogSp = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("fog"));
-	
-	if(currentLevel == CALIBRATION_LEVEL) fogSp->setVisible(false);
+
+	if (currentLevel == CALIBRATION_LEVEL) fogSp->setVisible(false);
 	//fogSpOuter = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("fog_outer"));
 	fogSp->setScale(FOG_SCALE, FOG_SCALE);
 	//fogSpOuter->setScale(OUTER_FOG_SCALE, OUTER_FOG_SCALE);
@@ -439,7 +439,7 @@ void GameController::loadLevel(int i){
 
 		popup = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("dialogue_popup"));
 		popup->setScale(DIALOGUE_POPUP_SCALE);
-		popup->setPosition(Vec2(HUD_OFFSET.x*44.5, HUD_OFFSET.y*10));
+		popup->setPosition(Vec2(HUD_OFFSET.x*44.5, HUD_OFFSET.y * 10));
 		//popup->setPosition(Point(visibleSizeDialogue.width / 2, visibleSizeDialogue.height / 7));
 		view->resIndepScreen->addChild(popup, 4);
 		createOkButton(0);
@@ -503,7 +503,7 @@ void GameController::pauseGame() {
 		audio->pauseSounds();
 	}
 	createGameMenu();
-	
+
 }
 
 //only pause the game without creating the game menu,
@@ -549,7 +549,7 @@ void GameController::createEnvironmentActivationMeter(float meterWidth, float me
 	outterEnvironmentActivation[3] = b2Vec2(-meterLength / 2.0f, -meterWidth / 2.0f); //bottom left
 
 	innerEnvironmentActivation[0] = b2Vec2(-meterLength / 2.0f, meterWidth / 2.0f); //top left
-	innerEnvironmentActivation[1] = b2Vec2(-meterLength /2.0f + (meterLength * percentFull), meterWidth / 2.0f); //top right
+	innerEnvironmentActivation[1] = b2Vec2(-meterLength / 2.0f + (meterLength * percentFull), meterWidth / 2.0f); //top right
 	innerEnvironmentActivation[2] = b2Vec2(-meterLength / 2.0f + (meterLength * percentFull), -meterWidth / 2.0f); //bottom right
 	innerEnvironmentActivation[3] = b2Vec2(-meterLength / 2.0f, -meterWidth / 2.0f); //bottom left
 
@@ -575,7 +575,7 @@ void GameController::createEnvironmentActivationMeter(float meterWidth, float me
 
 	}
 	view->weaponBox->clear();
-	view->weaponBox->drawPoly(transformedOuterEnvironmnetActivation,4, true, ccColor4F(0.0f, 0.0f, 0.0f, 1.0f));
+	view->weaponBox->drawPoly(transformedOuterEnvironmnetActivation, 4, true, ccColor4F(0.0f, 0.0f, 0.0f, 1.0f));
 	view->weaponBox->drawSolidPoly(transformedInnerEnvironmentActivation, 4, ccColor4F(1.0f, 0.0f, 0.0f, 0.6f));
 	//view->weaponBox->drawRect(Vec2(outterEnvironmentActivation[0].x, outterEnvironmentActivation[0].y), Vec2(outterEnvironmentActivation[1].x, outterEnvironmentActivation[1].y), Vec2(outterEnvironmentActivation[3].x, outterEnvironmentActivation[3].y), Vec2(outterEnvironmentActivation[2].x, outterEnvironmentActivation[2].y), ccColor4F(2.0f, 2.0f, 2.0f, 1.0f));
 	//view->weaponBox->drawRect(Vec2(innerEnvironmentActivation[0].x, innerEnvironmentActivation[0].y), Vec2(innerEnvironmentActivation[1].x, innerEnvironmentActivation[1].y), Vec2(innerEnvironmentActivation[3].x, innerEnvironmentActivation[3].y), Vec2(innerEnvironmentActivation[2].x, innerEnvironmentActivation[2].y), ccColor4F(1.0f, 0.0f, 0.0f, 1.0f));
@@ -706,7 +706,7 @@ void GameController::removeDeadEWeapons(){
 		if ((eweap->e_weapon_type != 1) && (eweap->isUsed || eweap->hitWall)){
 			eweap->isUsed = false;
 			if (eweap->e_weapon_type == 2){
-				audio->playEffect("sound_effects/BottleSmash.mp3",2.0f);
+				audio->playEffect("sound_effects/BottleSmash.mp3", 2.0f);
 				((Trash *)eweap)->addParticles();
 				attractNearbyZombies(eweap->body->GetPosition(), BOTTLE_AWARENES_INCREASE);
 			}
@@ -721,7 +721,7 @@ void GameController::removeDeadEWeapons(){
 	}
 }
 
-void GameController::removeDeadZombies(){ 
+void GameController::removeDeadZombies(){
 	CTypedPtrDblList<CTypedPtrDblElement<Zombie>> zombsToDel;
 	for (CTypedPtrDblElement<Zombie> *zombie = state->zombies.GetHeadPtr(); !state->zombies.IsSentinel(zombie); zombie = zombie->Next())
 	{
@@ -736,7 +736,7 @@ void GameController::removeDeadZombies(){
 
 	}
 
-	for (CTypedPtrDblElement<CTypedPtrDblElement<Zombie>> *z = zombsToDel.GetHeadPtr(); !zombsToDel.IsSentinel(z);  z = z->Next()){
+	for (CTypedPtrDblElement<CTypedPtrDblElement<Zombie>> *z = zombsToDel.GetHeadPtr(); !zombsToDel.IsSentinel(z); z = z->Next()){
 		state->dyingZombies.AddTail(z->Data()->Data());
 		state->zombies.Remove(z->Data());
 	}
@@ -770,7 +770,7 @@ void GameController::startVideoCalibration(){
 	Sprite *hat = Sprite::createWithTexture(ResourceLoader::getInstance()->getTexture("triangle1"));
 	hat->setAnchorPoint(anchor);
 	hat->setScale(0.6f);
-	hat->setPosition(state->ship->sprite->getContentSize().width/2, state->ship->sprite->getContentSize().height/2+ 50);
+	hat->setPosition(state->ship->sprite->getContentSize().width / 2, state->ship->sprite->getContentSize().height / 2 + 50);
 	state->ship->sprite->addChild(hat);
 	calibration->audioCalibration = false;
 	view->zombies->removeAllChildren();
@@ -824,7 +824,7 @@ void GameController::update(float deltaTime) {
 		if (specialAnimationFrameCounter % 10 == 0) {
 			int frame = pickupAnimation->getFrame();
 			//current animation frame not in the right range
-			if ((frame < (currentLevel % 8)*14) || (frame >((currentLevel % 8+1)*14 - 1))) {
+			if ((frame < (currentLevel % 8) * 14) || (frame >((currentLevel % 8 + 1) * 14 - 1))) {
 				frame = ((currentLevel % 8) * 14);
 				pickupAnimation->setFrame(frame);
 				return;
@@ -1036,14 +1036,10 @@ void GameController::update(float deltaTime) {
 								currentEnvironmentMeter = 1.0f;
 							}
 							/*
-
-
 							TODO:
 							-Display meter full before it gets released
 							-make meter gradually drain and drain when off beat and make sure cooldown works
 							-make meter different colors to match UI
-
-
 							*/
 
 							processDirection = true;// signals to draw meter
@@ -1606,15 +1602,15 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 	//view->directionUseEnvironmentWeapon->drawLine(Vec2(state->ship->body->GetPosition().x, state->ship->body->GetPosition().y), currentFingerPos, ccColor4F(128.0f, 128.0f, 128.0f, 0.5f));
 	view->ai->clear();
 	for (CTypedPtrDblElement<Zombie> *z = state->zombies.GetHeadPtr(); !state->zombies.IsSentinel(z); z = z->Next()){
-	Zombie *zom = z->Data();
-	b2Vec2 pos = zom->body->GetPosition();
-	//view->ai->drawSolidCircle(Vec2(500.0f, 500.0f), 8000.0f, 0.0f, 20.0f, ccColor4F(0.5f, 0, 0, 1.0f));
-	view->ai->drawLine(Vec2(pos.x, pos.y), Vec2(pos.x + zom->seperation.x, pos.y + zom->seperation.y), ccColor4F(1, 0, 0, 1.0f));
-	view->ai->drawLine(Vec2(pos.x, pos.y), Vec2(pos.x + zom->attraction.x, pos.y + zom->attraction.y), ccColor4F(0, 1, 0, 1.0f));
-	view->ai->drawLine(Vec2(pos.x, pos.y), Vec2(pos.x + zom->aidir.x / 28, pos.y + zom->aidir.y / 28), ccColor4F(0, 0, 0, 1.0f));
-	view->ai->drawLine(Vec2(pos.x, pos.y), Vec2(pos.x + zom->alignment.x, pos.y + zom->alignment.y), ccColor4F(1, 0, 1, 1.0f));
-	view->ai->drawLine(Vec2(pos.x, pos.y), Vec2(pos.x + zom->cohesion.x, pos.y + zom->cohesion.y), ccColor4F(0, 0, 1, 1.0f));
-	view->ai->drawLine(Vec2(pos.x, pos.y), Vec2(pos.x + zom->zombiness.x, pos.y + zom->zombiness.y), ccColor4F(1, 1, 0, 1.0f));
+		Zombie *zom = z->Data();
+		b2Vec2 pos = zom->body->GetPosition();
+		//view->ai->drawSolidCircle(Vec2(500.0f, 500.0f), 8000.0f, 0.0f, 20.0f, ccColor4F(0.5f, 0, 0, 1.0f));
+		view->ai->drawLine(Vec2(pos.x, pos.y), Vec2(pos.x + zom->seperation.x, pos.y + zom->seperation.y), ccColor4F(1, 0, 0, 1.0f));
+		view->ai->drawLine(Vec2(pos.x, pos.y), Vec2(pos.x + zom->attraction.x, pos.y + zom->attraction.y), ccColor4F(0, 1, 0, 1.0f));
+		view->ai->drawLine(Vec2(pos.x, pos.y), Vec2(pos.x + zom->aidir.x / 28, pos.y + zom->aidir.y / 28), ccColor4F(0, 0, 0, 1.0f));
+		view->ai->drawLine(Vec2(pos.x, pos.y), Vec2(pos.x + zom->alignment.x, pos.y + zom->alignment.y), ccColor4F(1, 0, 1, 1.0f));
+		view->ai->drawLine(Vec2(pos.x, pos.y), Vec2(pos.x + zom->cohesion.x, pos.y + zom->cohesion.y), ccColor4F(0, 0, 1, 1.0f));
+		view->ai->drawLine(Vec2(pos.x, pos.y), Vec2(pos.x + zom->zombiness.x, pos.y + zom->zombiness.y), ccColor4F(1, 1, 0, 1.0f));
 	}
 
 	//indicate the closest weapon that's outside the current screen
@@ -1648,22 +1644,22 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 		else{
 			ss << "You must kill " << state->numZombiesRemain << " more zombies to compelte the level!";
 		}
-		
+
 		if (!tipActive){
 			view->objective->setString(ss.str());
 		}
-		
+
 		/*
 		if (state->instrument != NULL && !tipActive){
-			if (!hasCollectedGoal){
-				view->collectionGoal->setString("You must collect the instrument");
-			}
-			else{
-				view->collectionGoal->setString("You have found the instrument!");
-			}
+		if (!hasCollectedGoal){
+		view->collectionGoal->setString("You must collect the instrument");
 		}
 		else{
-			view->collectionGoal->setVisible(false);
+		view->collectionGoal->setString("You have found the instrument!");
+		}
+		}
+		else{
+		view->collectionGoal->setVisible(false);
 		}*/
 	}
 
@@ -1681,4 +1677,3 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 	view->beatHUD->setString(st.str());*/
 	//TODO: Add new HUD for BPM
 }
-

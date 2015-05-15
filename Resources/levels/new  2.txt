@@ -1,0 +1,2 @@
+weapons: dest node game controller, next and prev doubly for path if take dest and dest->prev get dest and subtract its previous ndoes position in path and make unit vector and get angle from this. Have 4 contstant rectangles in 4 directions centered at ricky then just add rickies .5 width + .5 range weapon ....... USE range and width of weapon and when facing left and right he width is actually the height
+weapon has two ints defining radius
