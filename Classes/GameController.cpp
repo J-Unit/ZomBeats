@@ -34,7 +34,7 @@
 #include "MainMenuScene.h"
 
 #define STARTING_LEVEL 0
-#define MAX_LEVELS 11
+#define MAX_LEVELS 12
 
 GameController *GameController::globalGC = NULL;
 
@@ -354,11 +354,12 @@ bool GameController::hasWonLevel(){
 	//target num zombies 
 	//pointer to collectable in level...can be null if level doesnt have collectable
 	if (currentLevel != CALIBRATION_LEVEL) {
-		if (state->zombies.GetCount() - state->zomGoal > 0 && state->weapons.GetCount() < 1 && state->environment_weapons.GetCount() < 1 && !state->ship->hasWeapon && !state->ship->hasEnvironmentWeapon){
+		/*
+		if (state->zombies.GetCount() > state->zomGoal && state->weapons.GetCount() < 1 && state->environment_weapons.GetCount() < 1 && !state->ship->hasWeapon && !state->ship->hasEnvironmentWeapon){
 			state->ship->isDestroyed = true;
 			view->objective->setString("No weapons left, try again!");
 			return false;
-		}
+		}*/
 		//logic for multiple goals
 		if (state->instrument != NULL){
 			//the level has a collectable item
@@ -1685,8 +1686,8 @@ void GameController::displayPosition(Label* label, const b2Vec2& coords) {
 
 		stringstream ss;
 		if (state->instrument != NULL){
-			ss << "Kill " << state->numZombiesRemain << " more zombies before collecting the instrument!";
-			if (state->numZombiesRemain <= 0){
+			ss << "Kill " << state->zombies.GetCount() - state->zomGoal << " more zombies before collecting the instrument!";
+			if (state->zombies.GetCount() <= state->zomGoal){
 				ss.str("");
 				ss.clear();
 				ss << "Go find the instrument to complete the level!";
